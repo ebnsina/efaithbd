@@ -1,0 +1,451 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  name      String
+  phone     String?
+  role      Role       @default(CUSTOMER)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  orders    Order[]
+  reviews   Review[]
+  questions Question[]
+  answers   Answer[]
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+model Category {
+  id            String        @id @default(cuid())
+  name          String
+  slug          String        @unique
+  description   String?
+  image         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  subcategories SubCategory[]
+  products      Product[]
+}
+
+model SubCategory {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  description   String?
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  products      Product[]
+
+  @@index([categoryId])
+}
+
+model Product {
+  id            String           @id @default(cuid())
+  name          String
+  slug          String           @unique
+  description   String
+  price         Float
+  comparePrice  Float?           // Original price for discount display
+  stock         Int              @default(0)
+  images        String[]         // Array of image URLs
+  categoryId    String
+  category      Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subcategoryId String?
+  subcategory   SubCategory?     @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+  featured      Boolean          @default(false)
+  active        Boolean          @default(true)
+  rating        Float            @default(0) // Average rating 0-5
+  reviewCount   Int              @default(0) // Number of reviews
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  reviews       Review[]
+  questions     Question[]
+
+  @@index([categoryId])
+  @@index([subcategoryId])
+  @@index([slug])
+}
+
+model ProductVariant {
+  id         String      @id @default(cuid())
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name       String      // e.g., "Size", "Color"
+  value      String      // e.g., "Large", "Red"
+  price      Float?      // Additional price for this variant
+  stock      Int         @default(0)
+  sku        String?     @unique
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
+
+  @@index([productId])
+}
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  description String?
+  type        CouponType
+  value       Float     // Percentage or fixed amount
+  minPurchase Float?    // Minimum purchase amount required
+  maxDiscount Float?    // Maximum discount for percentage type
+  validFrom   DateTime
+  validTo     DateTime
+  usageLimit  Int?      // Total usage limit
+  usageCount  Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  orders      Order[]
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName    String
+  customerPhone   String
+  customerAddress String
+  subtotal        Float
+  discount        Float         @default(0)
+  total           Float
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  orderStatus     OrderStatus   @default(PENDING)
+  bkashNumber     String?       // For bKash payment
+  bkashTrxId      String?       // For bKash transaction ID
+  couponId        String?
+  coupon          Coupon?       @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  items           OrderItem[]
+
+  @@index([userId])
+  @@index([orderNumber])
+}
+
+enum PaymentMethod {
+  COD
+  BKASH
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id         String          @id @default(cuid())
+  orderId    String
+  order      Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variantId  String?
+  variant    ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  quantity   Int
+  price      Float           // Price at the time of order
+  total      Float
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// Settings Configuration Models
+
+// Basic Settings Tab
+model BasicSettings {
+  id              String   @id @default(cuid())
+  siteName        String   @default("SuperMart")
+  siteDescription String?
+  logo            String?  // Logo image URL
+  favicon         String?  // Favicon URL
+  // Promo Bar
+  promoText       String?  // Promotional text in top bar
+  promoActive     Boolean  @default(false)
+  promoLink       String?  // Optional link for promo
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  // Social
+  ogImage         String?  // Open Graph image
+  // Contact
+  supportEmail    String?
+  supportPhone    String?
+  // Business
+  currency        String   @default("BDT")
+  currencySymbol  String   @default("৳")
+  timezone        String   @default("Asia/Dhaka")
+  // Features
+  enableWishlist  Boolean  @default(true)
+  enableReviews   Boolean  @default(true)
+  enableCoupons   Boolean  @default(true)
+  // Payment Settings
+  bkashNumber     String?
+  bkashNote       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Menu Management Tab
+model MenuItem {
+  id          String     @id @default(cuid())
+  label       String
+  url         String
+  parentId    String?    // For nested menus
+  parent      MenuItem?  @relation("MenuHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children    MenuItem[] @relation("MenuHierarchy")
+  type        MenuType   @default(CUSTOM)
+  targetId    String?    // Category ID or Product ID if type is not CUSTOM
+  icon        String?    // Optional icon
+  order       Int        @default(0)
+  active      Boolean    @default(true)
+  openInNewTab Boolean   @default(false)
+  megaMenu    Boolean    @default(false) // Enable mega menu for this item
+  featured    Boolean    @default(false) // Show in featured menu section
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([parentId])
+  @@index([order])
+}
+
+enum MenuType {
+  CUSTOM      // Custom link
+  CATEGORY    // Link to category
+  PRODUCT     // Link to product
+  PAGE        // Link to page
+}
+
+// Footer Management Tab (existing models remain, just adding a group model)
+model FooterSettings {
+  id                String   @id @default(cuid())
+  logo              String?  // Footer logo
+  description       String?
+  copyrightText     String?
+  // Contact Info
+  phone             String?
+  email             String?
+  address           String?
+  workingHours      String?
+  // Trust & Payment
+  paymentMethods    String[] // Array of payment method image URLs
+  showPaymentMethods Boolean @default(true)
+  // Newsletter
+  enableNewsletter  Boolean  @default(true)
+  newsletterTitle   String?
+  newsletterText    String?
+  // Layout
+  backgroundColor   String?  @default("#1a1a1a")
+  textColor         String?  @default("#ffffff")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Homepage Configuration Models
+
+model Banner {
+  id          String   @id @default(cuid())
+  title       String?
+  subtitle    String?
+  image       String   // Banner image URL
+  link        String?  // Optional link when banner is clicked
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+model ProductSection {
+  id         String            @id @default(cuid())
+  title      String            // "Featured Products", "New Arrivals", etc.
+  type       ProductSectionType
+  order      Int               @default(0)
+  limit      Int               @default(10) // Number of products to show
+  active     Boolean           @default(true)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@index([order])
+}
+
+enum ProductSectionType {
+  FEATURED
+  NEW_ARRIVAL
+  HOT_DEALS
+  BEST_SELLING
+}
+
+model MidBanner {
+  id          String   @id @default(cuid())
+  title       String?
+  subtitle    String?
+  image       String   // Banner image URL
+  link        String?  // Optional link when banner is clicked
+  position    Int      @default(1) // Position on homepage (after which section)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([position])
+}
+
+model FeatureCard {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  icon        String   // Icon name or image URL
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Footer Configuration Models
+
+model FooterSection {
+  id          String       @id @default(cuid())
+  title       String
+  order       Int          @default(0)
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  links       FooterLink[]
+
+  @@index([order])
+}
+
+model FooterLink {
+  id        String        @id @default(cuid())
+  sectionId String
+  section   FooterSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  label     String
+  url       String
+  order     Int           @default(0)
+  active    Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([sectionId])
+  @@index([order])
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String   // facebook, twitter, linkedin, youtube, instagram
+  url       String
+  icon      String?  // Icon name from lucide-react
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model ContactInfo {
+  id          String   @id @default(cuid())
+  phone       String?
+  email       String?
+  address     String?
+  workingHours String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Review System
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rating    Int      // 1-5 stars
+  title     String?
+  comment   String
+  verified  Boolean  @default(false) // Verified purchase
+  helpful   Int      @default(0) // Helpful count
+  approved  Boolean  @default(false) // Admin approval
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
+  @@index([approved])
+}
+
+// Question & Answer System
+model Question {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  question  String
+  approved  Boolean  @default(false) // Admin approval
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  answers   Answer[]
+
+  @@index([productId])
+  @@index([userId])
+  @@index([approved])
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  answer     String
+  isOfficial Boolean  @default(false) // Answer from admin/seller
+  approved   Boolean  @default(false) // Admin approval
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([questionId])
+  @@index([userId])
+  @@index([approved])
+}
