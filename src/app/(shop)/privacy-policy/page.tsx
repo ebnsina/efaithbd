@@ -1,7 +1,17 @@
-'use client'
+import { getSiteSettings } from '@/lib/site-settings'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const siteName = settings?.siteName || 'Online Store'
+  
+  return {
+    title: `Privacy Policy - ${siteName}`,
+    description: `Privacy Policy for ${siteName}. Learn how we collect, use, and protect your information.`,
+  }
+}
 
 export default function PrivacyPolicyPage() {
-  
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold mb-6">Privacy Policy</h1>

@@ -177,7 +177,7 @@ export default function SiteSettingsPage() {
 
   // Basic Settings State
   const [basicSettings, setBasicSettings] = useState({
-    siteName: 'SuperMart',
+    siteName: '',
     siteDescription: '',
     logo: '',
     favicon: '',

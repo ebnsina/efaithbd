@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { getSiteName } from '@/lib/site-settings'
 import { notFound } from 'next/navigation'
 import CategoryProductsClient from '@/components/CategoryProductsClient'
 import type { Metadata } from 'next'
@@ -11,9 +12,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const category = await prisma.category.findUnique({
-    where: { slug },
-  })
+  const [category, siteName] = await Promise.all([
+    prisma.category.findUnique({
+      where: { slug },
+    }),
+    getSiteName(),
+  ])
 
   if (!category) {
     return {
@@ -22,8 +26,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${category.name} - Products`,
-    description: category.description || `Shop ${category.name} products`,
+    title: `${category.name} - ${siteName}`,
+    description: category.description || `Shop ${category.name} products at ${siteName}`,
   }
 }
 

@@ -1,30 +1,30 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { Facebook, Twitter, Linkedin, Youtube } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import Link from 'next/link';
+import { Facebook, Twitter, Linkedin, Youtube } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface SocialLink {
-  id: string
-  platform: string
-  url: string
-  icon?: string | null
-  order: number
+  id: string;
+  platform: string;
+  url: string;
+  icon?: string | null;
+  order: number;
 }
 
 interface ContactInfo {
-  phone?: string | null
-  email?: string | null
-  address?: string | null
-  workingHours?: string | null
-  logo?: string | null
-  description?: string | null
-  paymentMethods: string[]
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  workingHours?: string | null;
+  logo?: string | null;
+  description?: string | null;
+  paymentMethods: string[];
 }
 
 interface FooterData {
-  socialLinks: SocialLink[]
-  contactInfo: ContactInfo | null
+  socialLinks: SocialLink[];
+  contactInfo: ContactInfo | null;
 }
 
 const socialIcons: Record<string, any> = {
@@ -32,27 +32,27 @@ const socialIcons: Record<string, any> = {
   twitter: Twitter,
   linkedin: Linkedin,
   youtube: Youtube,
-}
+};
 
 export default function Footer() {
   const [footerData, setFooterData] = useState<FooterData>({
     socialLinks: [],
     contactInfo: null,
-  })
-  const [loading, setLoading] = useState(true)
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/footer')
-      .then(res => res.json())
-      .then(data => {
-        setFooterData(data)
-        setLoading(false)
+      .then((res) => res.json())
+      .then((data) => {
+        setFooterData(data);
+        setLoading(false);
       })
-      .catch(error => {
-        console.error('Error fetching footer data:', error)
-        setLoading(false)
-      })
-  }, [])
+      .catch((error) => {
+        console.error('Error fetching footer data:', error);
+        setLoading(false);
+      });
+  }, []);
 
   // Static footer links
   const staticLinks = {
@@ -69,19 +69,17 @@ export default function Footer() {
       },
       { label: 'Terms & Conditions', labelBn: 'শর্তাবলী', url: '/terms' },
     ],
-  }
+  };
 
   if (loading) {
     return (
       <footer className="bg-gray-100 py-8">
-        <div className="container mx-auto px-4 text-center text-gray-500">
-          {'Loading...'}
-        </div>
+        <div className="container mx-auto px-4 text-center text-gray-500">{'Loading...'}</div>
       </footer>
-    )
+    );
   }
 
-  const { socialLinks, contactInfo } = footerData
+  const { socialLinks, contactInfo } = footerData;
 
   return (
     <footer className="bg-gray-50 border-t">
@@ -91,34 +89,23 @@ export default function Footer() {
           {/* Company Info Column */}
           <div>
             {contactInfo?.logo ? (
-              <img
-                src={contactInfo.logo}
-                alt="Logo"
-                className="h-12 w-auto mb-4"
-              />
+              <img src={contactInfo.logo} alt="Logo" className="h-12 w-auto mb-4" />
             ) : (
-              <h3 className="text-xl font-bold text-primary mb-4">
-                {'Company Name'}
-              </h3>
+              <h3 className="text-xl font-bold text-primary mb-4">{'Company Name'}</h3>
             )}
 
             {contactInfo?.description && (
-              <p className="text-gray-600 text-sm mb-4">
-                {contactInfo.description}
-              </p>
+              <p className="text-gray-600 text-sm mb-4">{contactInfo.description}</p>
             )}
 
             {contactInfo?.workingHours && (
               <p className="text-gray-700 text-sm mb-2">
-                <span className="font-semibold">{'Working Hours'}:</span>{' '}
-                {contactInfo.workingHours}
+                <span className="font-semibold">{'Working Hours'}:</span> {contactInfo.workingHours}
               </p>
             )}
 
             {contactInfo?.phone && (
-              <p className="text-gray-900 text-lg font-bold mb-4">
-                {contactInfo.phone}
-              </p>
+              <p className="text-gray-900 text-lg font-bold mb-4">{contactInfo.phone}</p>
             )}
 
             {/* Social Links */}
@@ -126,9 +113,8 @@ export default function Footer() {
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">{'Follow Us'}</p>
                 <div className="flex space-x-2">
-                  {socialLinks?.map(link => {
-                    const IconComponent =
-                      socialIcons[link.platform.toLowerCase()]
+                  {socialLinks?.map((link) => {
+                    const IconComponent = socialIcons[link.platform.toLowerCase()];
                     return (
                       <a
                         key={link.id}
@@ -139,7 +125,7 @@ export default function Footer() {
                       >
                         {IconComponent && <IconComponent className="w-5 h-5" />}
                       </a>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -148,9 +134,7 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4 uppercase text-sm">
-              Company
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-4 uppercase text-sm">Company</h3>
             <ul className="space-y-2">
               {staticLinks.company.map((link, index) => (
                 <li key={index}>
@@ -167,9 +151,7 @@ export default function Footer() {
 
           {/* Help & Support Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4 uppercase text-sm">
-              Help & Support
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-4 uppercase text-sm">Help & Support</h3>
             <ul className="space-y-2">
               {staticLinks.help.map((link, index) => (
                 <li key={index}>
@@ -186,9 +168,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-4 uppercase text-sm">
-              Quick Links
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-4 uppercase text-sm">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -225,30 +205,27 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright */}
             <div className="text-sm text-gray-600">
-              © {new Date().getFullYear()} {'Company Name'}.{' '}
+              © {new Date().getFullYear()} efaithbd.
               {'All Rights Reserved'}.
             </div>
 
             {/* Payment Methods */}
-            {contactInfo?.paymentMethods &&
-              contactInfo.paymentMethods.length > 0 && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600 mr-2">
-                    {'Secure Payment'}:
-                  </span>
-                  {contactInfo.paymentMethods.map((method, index) => (
-                    <img
-                      key={index}
-                      src={method}
-                      alt="Payment method"
-                      className="h-8 object-contain"
-                    />
-                  ))}
-                </div>
-              )}
+            {contactInfo?.paymentMethods && contactInfo.paymentMethods.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 mr-2">{'Secure Payment'}:</span>
+                {contactInfo.paymentMethods.map((method, index) => (
+                  <img
+                    key={index}
+                    src={method}
+                    alt="Payment method"
+                    className="h-8 object-contain"
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

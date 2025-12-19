@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import { Toaster } from "@/components/ui/sonner";
-import { Button } from "@/components/ui/button";
-import { QueryProvider } from "@/providers/query-provider";
-import { AdminNav } from "@/components/admin-nav";
-import { LogOut, Home, Menu, ExternalLink } from "lucide-react";
-import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Link from "next/link";
+import { Toaster } from '@/components/ui/sonner';
+import { Button } from '@/components/ui/button';
+import { QueryProvider } from '@/providers/query-provider';
+import { AdminNav } from '@/components/admin-nav';
+import { LogOut, Home, Menu, ExternalLink } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import Link from 'next/link';
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
@@ -20,51 +21,63 @@ interface AdminLayoutClientProps {
   };
 }
 
-export function AdminLayoutClient({
-  children,
-  session,
-}: AdminLayoutClientProps) {
+export function AdminLayoutClient({ children, session }: AdminLayoutClientProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [siteName, setSiteName] = useState('Online Store');
+
+  const { data: settings } = useQuery({
+    queryKey: ['basicSettings'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/site-settings/basic');
+      return res.json();
+    },
+  });
+
+  useEffect(() => {
+    if (settings?.siteName) {
+      setSiteName(settings.siteName);
+    }
+  }, [settings]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const menuItems = [
-    { href: "/admin", label: "Dashboard", icon: "LayoutGrid", exact: true },
+    { href: '/admin', label: 'Dashboard', icon: 'LayoutGrid', exact: true },
     {
-      href: "/admin/site-settings",
-      label: "Site Settings",
-      icon: "Settings",
+      href: '/admin/site-settings',
+      label: 'Site Settings',
+      icon: 'Settings',
     },
     {
-      href: "/admin/banners",
-      label: "Banners",
-      icon: "Image",
+      href: '/admin/banners',
+      label: 'Banners',
+      icon: 'Image',
     },
-    { href: "/admin/categories", label: "Categories", icon: "Layers" },
-    { href: "/admin/products", label: "Products", icon: "Package" },
-    { href: "/admin/orders", label: "Orders", icon: "ShoppingBag" },
+    { href: '/admin/categories', label: 'Categories', icon: 'Layers' },
+    { href: '/admin/products', label: 'Products', icon: 'Package' },
+    { href: '/admin/orders', label: 'Orders', icon: 'ShoppingBag' },
     {
-      href: "/admin/coupons",
-      label: "Coupons",
-      icon: "Ticket",
-    },
-    {
-      href: "/admin/reviews",
-      label: "Reviews",
-      icon: "StarIcon",
+      href: '/admin/coupons',
+      label: 'Coupons',
+      icon: 'Ticket',
     },
     {
-      href: "/admin/questions",
-      label: "Q&A",
-      icon: "MessageSquare",
+      href: '/admin/reviews',
+      label: 'Reviews',
+      icon: 'StarIcon',
     },
     {
-      href: "/admin/homepage",
-      label: "Manage Homepage",
-      icon: "Star",
+      href: '/admin/questions',
+      label: 'Q&A',
+      icon: 'MessageSquare',
+    },
+    {
+      href: '/admin/homepage',
+      label: 'Manage Homepage',
+      icon: 'Star',
     },
   ];
 
@@ -77,7 +90,7 @@ export function AdminLayoutClient({
           </div>
           <div>
             <h1 className="text-xl font-bold">Admin Panel</h1>
-            <p className="text-xs text-muted-foreground">SuperMart</p>
+            <p className="text-xs text-muted-foreground">{siteName}</p>
           </div>
         </div>
         <div className="bg-muted rounded-lg p-3 border">
@@ -87,10 +100,7 @@ export function AdminLayoutClient({
       </div>
 
       <nav className="mt-4 px-3 overflow-y-auto flex-1">
-        <AdminNav
-          items={menuItems}
-          onItemClick={() => setMobileMenuOpen(false)}
-        />
+        <AdminNav items={menuItems} onItemClick={() => setMobileMenuOpen(false)} />
       </nav>
 
       <div className="p-4 border-t bg-card mt-auto space-y-2">
@@ -107,7 +117,7 @@ export function AdminLayoutClient({
             className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="w-5 h-5" />
-            <span>{"Logout"}</span>
+            <span>{'Logout'}</span>
           </Button>
         </form>
       </div>

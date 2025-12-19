@@ -18,7 +18,7 @@ interface NavbarProps {
 }
 
 export default async function Navbar({
-  siteName = 'SuperMart',
+  siteName,
   logo,
   promoText,
   promoActive = false,
@@ -36,7 +36,7 @@ export default async function Navbar({
 
       <nav className="bg-white backdrop-blur-lg sticky top-0 z-50">
         <NavbarClient
-          siteName={siteName}
+          siteName={siteName || 'Online Store'}
           logo={logo}
           isLoggedIn={!!session}
           userName={session?.user?.name}

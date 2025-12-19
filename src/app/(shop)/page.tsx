@@ -1,11 +1,30 @@
 import { prisma } from '@/lib/prisma'
+import { getSiteSettings } from '@/lib/site-settings'
 import BannerCarousel from '@/components/BannerCarousel'
 import CategoryGrid from '@/components/CategoryGrid'
 import ProductCarousel from '@/components/ProductCarousel'
 import MidBanner from '@/components/MidBanner'
 import FeatureCards from '@/components/FeatureCards'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const siteName = settings?.siteName || 'Online Store'
+  
+  return {
+    title: settings?.metaTitle || `${siteName} - Online Shopping`,
+    description: settings?.metaDescription || settings?.siteDescription || `Welcome to ${siteName} - Best online shopping platform`,
+    keywords: settings?.metaKeywords || undefined,
+    openGraph: {
+      title: settings?.metaTitle || `${siteName} - Online Shopping`,
+      description: settings?.metaDescription || settings?.siteDescription || `Welcome to ${siteName}`,
+      images: settings?.ogImage ? [settings.ogImage] : undefined,
+      siteName: siteName,
+    },
+  }
+}
 
 export default async function Home() {
   // Fetch all homepage data

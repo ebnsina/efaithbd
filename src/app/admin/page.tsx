@@ -1,62 +1,46 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import {
-  Package,
-  ShoppingBag,
-  Users,
-  DollarSign,
-  TrendingUp,
-  Clock,
-  CheckCircle2,
-  XCircle,
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LoaderFullScreen } from '@/components/ui/loader'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Clock, Package, ShoppingBag, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-type OrderStatus =
-  | 'PENDING'
-  | 'CONFIRMED'
-  | 'PROCESSING'
-  | 'SHIPPED'
-  | 'DELIVERED'
-  | 'CANCELLED'
+type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
 interface Order {
-  id: string
-  orderNumber: string
-  customerName: string
-  customerPhone: string
-  total: number
-  orderStatus: OrderStatus
-  createdAt: string
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  total: number;
+  orderStatus: OrderStatus;
+  createdAt: string;
   items: Array<{
     product: {
-      name: string
-    }
-  }>
+      name: string;
+    };
+  }>;
 }
 
 interface DashboardData {
-  totalProducts: number
-  totalOrders: number
-  pendingOrders: number
-  totalRevenue: number
-  todayOrders: number
-  activeProducts: number
-  recentOrders: Order[]
+  totalProducts: number;
+  totalOrders: number;
+  pendingOrders: number;
+  totalRevenue: number;
+  todayOrders: number;
+  activeProducts: number;
+  recentOrders: Order[];
 }
 
 export default function AdminDashboard() {
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/admin/dashboard')
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setData)
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
   if (loading || !data) {
     return (
@@ -66,7 +50,7 @@ export default function AdminDashboard() {
           <p className="mt-4 text-gray-600">{'Loading...'}</p>
         </div>
       </div>
-    )
+    );
   }
 
   const stats = [
@@ -106,7 +90,7 @@ export default function AdminDashboard() {
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
     },
-  ]
+  ];
 
   const getStatusConfig = (status: OrderStatus) => {
     switch (status) {
@@ -116,51 +100,51 @@ export default function AdminDashboard() {
           text: 'text-yellow-700',
           border: 'border-yellow-200',
           label: 'Pending',
-        }
+        };
       case 'CONFIRMED':
         return {
           bg: 'bg-blue-50',
           text: 'text-blue-700',
           border: 'border-blue-200',
           label: 'Confirmed',
-        }
+        };
       case 'PROCESSING':
         return {
           bg: 'bg-indigo-50',
           text: 'text-indigo-700',
           border: 'border-indigo-200',
           label: 'Processing',
-        }
+        };
       case 'SHIPPED':
         return {
           bg: 'bg-cyan-50',
           text: 'text-cyan-700',
           border: 'border-cyan-200',
           label: 'Shipped',
-        }
+        };
       case 'DELIVERED':
         return {
           bg: 'bg-green-50',
           text: 'text-green-700',
           border: 'border-green-200',
           label: 'Delivered',
-        }
+        };
       case 'CANCELLED':
         return {
           bg: 'bg-red-50',
           text: 'text-red-700',
           border: 'border-red-200',
           label: 'Cancelled',
-        }
+        };
       default:
         return {
           bg: 'bg-gray-50',
           text: 'text-gray-700',
           border: 'border-gray-200',
           label: status,
-        }
+        };
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -172,20 +156,13 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map(stat => (
-          <Card
-            key={stat.title}
-            className="overflow-hidden hover:shadow-lg transition-shadow"
-          >
+        {stats.map((stat) => (
+          <Card key={stat.title} className="overflow-hidden hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    {stat.title}
-                  </p>
-                  <p className="text-3xl font-bold text-gray-900 mb-1">
-                    {stat.value}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                  <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
                   <p className="text-xs text-gray-500">{stat.subtitle}</p>
                 </div>
                 <div className={`${stat.bgColor} p-3 rounded-lg`}>
@@ -239,13 +216,10 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {data.recentOrders.map(order => {
-                  const statusConfig = getStatusConfig(order.orderStatus)
+                {data.recentOrders.map((order) => {
+                  const statusConfig = getStatusConfig(order.orderStatus);
                   return (
-                    <tr
-                      key={order.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
+                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm font-medium text-gray-900">
                           {order.orderNumber}
@@ -253,18 +227,12 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm">
-                          <div className="font-medium text-gray-900">
-                            {order.customerName}
-                          </div>
-                          <div className="text-gray-500">
-                            {order.customerPhone}
-                          </div>
+                          <div className="font-medium text-gray-900">{order.customerName}</div>
+                          <div className="text-gray-500">{order.customerPhone}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">
-                          {order.items.length} items
-                        </span>
+                        <span className="text-sm text-gray-600">{order.items.length} items</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm font-semibold text-gray-900">
@@ -286,7 +254,7 @@ export default function AdminDashboard() {
                         })}
                       </td>
                     </tr>
-                  )
+                  );
                 })}
               </tbody>
             </table>
@@ -294,5 +262,5 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

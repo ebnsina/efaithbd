@@ -1,16 +1,21 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { getSiteName } from '@/lib/site-settings'
 import ProductDetailClient from '@/components/ProductDetailClient'
+import type { Metadata } from 'next'
 
 interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const product = await prisma.product.findUnique({
-    where: { slug },
-  })
+  const [product, siteName] = await Promise.all([
+    prisma.product.findUnique({
+      where: { slug },
+    }),
+    getSiteName(),
+  ])
 
   if (!product) {
     return {
@@ -19,8 +24,8 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   return {
-    title: `${product.name} - সুপারমার্ট`,
-    description: product.description,
+    title: `${product.name} - ${siteName}`,
+    description: product.description || `Buy ${product.name} from ${siteName}`,
   }
 }
 

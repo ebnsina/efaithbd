@@ -1,7 +1,17 @@
-'use client'
+import { getSiteSettings } from '@/lib/site-settings'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const siteName = settings?.siteName || 'Online Store'
+  
+  return {
+    title: `Terms & Conditions - ${siteName}`,
+    description: `Terms and Conditions for ${siteName}. Please read these terms carefully.`,
+  }
+}
 
 export default function TermsPage() {
-  
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold mb-6">Terms & Conditions</h1>

@@ -1,5 +1,6 @@
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
+import { getSiteSettings } from '@/lib/site-settings'
 import { prisma } from '@/lib/prisma'
 import { QueryProvider } from '@/providers/query-provider'
 import { Toaster } from 'sonner'
@@ -9,7 +10,7 @@ export default async function ShopLayout({
 }: {
   children: React.ReactNode
 }) {
-  const settings = await prisma.basicSettings.findFirst()
+  const settings = await getSiteSettings()
 
   const menuItems = await prisma.menuItem.findMany({
     where: {
@@ -28,7 +29,7 @@ export default async function ShopLayout({
   return (
     <QueryProvider>
       <Navbar
-        siteName={settings?.siteName}
+        siteName={settings?.siteName || 'Online Store'}
         logo={settings?.logo}
         promoText={settings?.promoText}
         promoActive={settings?.promoActive}

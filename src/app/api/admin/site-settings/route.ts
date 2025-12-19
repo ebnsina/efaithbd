@@ -9,7 +9,7 @@ export async function GET() {
     if (!settings) {
       settings = await prisma.basicSettings.create({
         data: {
-          siteName: 'SuperMart',
+          siteName: 'Online Store',
           promoActive: false,
         },
       })

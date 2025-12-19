@@ -1,7 +1,19 @@
 import { prisma } from '@/lib/prisma'
+import { getSiteSettings } from '@/lib/site-settings'
 import ProductFilterClient from '@/components/ProductFilterClient'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const siteName = settings?.siteName || 'Online Store'
+  
+  return {
+    title: `Products - ${siteName}`,
+    description: `Browse all products at ${siteName}. Find the best deals and quality products.`,
+  }
+}
 
 interface SearchParams {
   category?: string

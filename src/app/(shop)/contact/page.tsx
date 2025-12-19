@@ -1,15 +1,26 @@
-'use client'
-
 import { Mail, Phone, MapPin, Clock } from 'lucide-react'
+import { getSiteSettings } from '@/lib/site-settings'
+import type { Metadata } from 'next'
 
-export default function ContactPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const siteName = settings?.siteName || 'Online Store'
   
+  return {
+    title: `Contact Us - ${siteName}`,
+    description: `Get in touch with ${siteName}. We'd love to hear from you.`,
+  }
+}
+
+export default async function ContactPage() {
+  const settings = await getSiteSettings()
+  const supportEmail = settings?.supportEmail || ''
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
       <p className="text-gray-700 text-lg mb-8">
-        We'd love to hear from you. Please reach out to us through any of the
-        following channels.
+        We'd love to hear from you. Please reach out to us through any of the following channels.
       </p>
 
       <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -20,10 +31,8 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-semibold text-lg mb-2">Phone</h3>
-              <p className="text-gray-700">+880 1234-567890</p>
-              <p className="text-sm text-gray-500 mt-1">
-                Available 9 AM - 9 PM
-              </p>
+              <p className="text-gray-700">{settings?.supportPhone || '+880 1234-567890'}</p>
+              <p className="text-sm text-gray-500 mt-1">Available 9 AM - 9 PM</p>
             </div>
           </div>
         </div>
@@ -35,10 +44,8 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-semibold text-lg mb-2">Email</h3>
-              <p className="text-gray-700">support@supermart.com</p>
-              <p className="text-sm text-gray-500 mt-1">
-                We'll respond within 24 hours
-              </p>
+              <p className="text-gray-700">{supportEmail || 'support@example.com'}</p>
+              <p className="text-sm text-gray-500 mt-1">We'll respond within 24 hours</p>
             </div>
           </div>
         </div>
@@ -50,9 +57,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-semibold text-lg mb-2">Address</h3>
-              <p className="text-gray-700">
-                123 Main Street, Dhaka 1000, Bangladesh
-              </p>
+              <p className="text-gray-700">123 Main Street, Dhaka 1000, Bangladesh</p>
             </div>
           </div>
         </div>
