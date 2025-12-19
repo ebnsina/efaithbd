@@ -6,7 +6,6 @@ import { QueryProvider } from '@/providers/query-provider';
 import { AdminNav } from '@/components/admin-nav';
 import { LogOut, Home, Menu, ExternalLink } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Link from 'next/link';
 
@@ -19,26 +18,12 @@ interface AdminLayoutClientProps {
       role?: string;
     };
   };
+  siteName?: string | null;
 }
 
-export function AdminLayoutClient({ children, session }: AdminLayoutClientProps) {
+export function AdminLayoutClient({ children, session, siteName }: AdminLayoutClientProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [siteName, setSiteName] = useState('Online Store');
-
-  const { data: settings } = useQuery({
-    queryKey: ['basicSettings'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/site-settings/basic');
-      return res.json();
-    },
-  });
-
-  useEffect(() => {
-    if (settings?.siteName) {
-      setSiteName(settings.siteName);
-    }
-  }, [settings]);
 
   useEffect(() => {
     setMounted(true);
@@ -90,7 +75,7 @@ export function AdminLayoutClient({ children, session }: AdminLayoutClientProps)
           </div>
           <div>
             <h1 className="text-xl font-bold">Admin Panel</h1>
-            <p className="text-xs text-muted-foreground">{siteName}</p>
+            <p className="text-xs text-muted-foreground">{siteName || 'Online Store'}</p>
           </div>
         </div>
         <div className="bg-muted rounded-lg p-3 border">

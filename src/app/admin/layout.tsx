@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
+import { getSiteSettings } from '@/lib/site-settings'
 import { AdminLayoutClient } from './layout-client'
 
 export default async function AdminLayout({
@@ -14,5 +15,12 @@ export default async function AdminLayout({
     redirect('/auth/admin-login')
   }
 
-  return <AdminLayoutClient session={session}>{children}</AdminLayoutClient>
+  // Fetch site settings server-side
+  const settings = await getSiteSettings()
+
+  return (
+    <AdminLayoutClient session={session} siteName={settings?.siteName}>
+      {children}
+    </AdminLayoutClient>
+  )
 }

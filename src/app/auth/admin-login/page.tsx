@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button'
 export default function AdminLoginPage() {
   const router = useRouter()
   const [formData, setFormData] = useState({
-    email: 'admin@supermart.com',
-    password: 'admin123',
+    email: '',
+    password: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
