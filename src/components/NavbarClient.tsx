@@ -58,13 +58,13 @@ export default function NavbarClient({
 
   return (
     <div className="bg-white">
-      <div className="container mx-auto px-2 md:px-0">
-        <div className="flex items-center justify-between gap-4 py-5">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="flex items-center justify-between gap-2 sm:gap-4 py-3 sm:py-4 md:py-5">
           <Link href="/" className="flex items-center shrink-0">
             {logo ? (
-              <img src={logo} alt={siteName} className="h-10 w-auto" />
+              <img src={logo} alt={siteName} className="h-8 sm:h-10 w-auto" />
             ) : (
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
                 {siteName}
               </span>
             )}
@@ -72,7 +72,7 @@ export default function NavbarClient({
 
           <form
             onSubmit={handleSearch}
-            className="hidden md:flex flex-1 max-w-3xl"
+            className="hidden md:flex flex-1 max-w-3xl mx-4"
           >
             <div className="relative w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -81,21 +81,21 @@ export default function NavbarClient({
                 placeholder="Search here..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full h-12 pl-12 pr-4 text-sm border border-gray-300 focus:rounded-none! focus:outline-none focus:border-primary! transition-colors"
+                className="w-full h-11 md:h-12 pl-12 pr-4 text-sm border border-gray-300 focus:rounded-none! focus:outline-none focus:border-primary! transition-colors"
               />
             </div>
           </form>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
             {/* Account (Desktop) */}
             {isLoggedIn ? (
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden lg:flex items-center gap-2">
                 <Link
                   href="/orders"
                   className="flex flex-col items-start px-2 py-1 text-gray-700 hover:bg-gray-100 rounded transition-all"
                 >
                   <span className="text-xs">
-                    Hello, {userName?.split(' ')[0] || 'User'}
+                    Hello, {userName?.length ? userName : 'User'}
                   </span>
                   <span className="text-sm font-bold">Account & Orders</span>
                 </Link>
@@ -115,22 +115,21 @@ export default function NavbarClient({
             ) : (
               <Link
                 href="/login"
-                className="hidden md:flex flex-col items-start px-2 py-1 text-gray-700 hover:bg-gray-100 rounded transition-all"
+                className="hidden lg:flex flex-col items-start px-2 py-1 text-gray-700 hover:bg-gray-100 rounded transition-all"
               >
-                <span className="text-xs">Hello, Sign in</span>
-                <span className="text-sm font-bold">Account & Lists</span>
+                <span className="text-xs">Sign in</span>
               </Link>
             )}
 
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative text-gray-700 hover:bg-gray-100 p-2 rounded transition-all hidden md:flex items-center"
+              className="relative text-gray-700 hover:bg-gray-100 p-1.5 sm:p-2 rounded transition-all hidden md:flex items-center"
               title="Wishlist"
             >
-              <Heart className="w-6 h-6" />
+              <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">
                   {wishlistCount}
                 </span>
               )}
@@ -139,17 +138,17 @@ export default function NavbarClient({
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative text-gray-700 hover:bg-gray-100 p-2 rounded transition-all flex items-center gap-2"
+              className="relative text-gray-700 hover:bg-gray-100 p-1.5 sm:p-2 rounded transition-all flex items-center gap-1 sm:gap-2"
             >
               <div className="relative">
-                <ShoppingCart className="w-7 h-7" />
+                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">
                     {cartCount}
                   </span>
                 )}
               </div>
-              <span className="hidden md:block text-sm font-bold">Cart</span>
+              <span className="hidden lg:block text-sm font-bold">Cart</span>
             </Link>
 
             {/* Mobile Menu Button */}
@@ -170,8 +169,8 @@ export default function NavbarClient({
       </div>
 
       <div className="bg-white border-t border-slate-200">
-        <div className="container mx-auto px-2 md:px-0">
-          <div className="hidden md:flex items-center gap-2 py-3">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+          <div className="hidden md:flex items-center gap-1 sm:gap-2 py-2 sm:py-3 overflow-x-auto scrollbar-hide">
             {menuItems.length > 0 ? (
               menuItems.map(item => (
                 <div
@@ -186,11 +185,11 @@ export default function NavbarClient({
                 >
                   <Link
                     href={item.url}
-                    className="text-gray-700 hover:text-gray-900 text-sm font-semibold flex items-center gap-1.5 px-4 py-2 hover:bg-gray-50 rounded-lg transition-all"
+                    className="text-gray-700 hover:text-gray-900 text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 hover:bg-gray-50 rounded-lg transition-all whitespace-nowrap"
                   >
                     {item.label}
                     {item.children && item.children.length > 0 && (
-                      <ChevronDown className="w-3.5 h-3.5 transition-transform group-hover:translate-y-0.5" />
+                      <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform group-hover:translate-y-0.5" />
                     )}
                   </Link>
 
@@ -199,28 +198,25 @@ export default function NavbarClient({
                     item.children.length > 0 &&
                     hoveredMenu === item.id && (
                       <div
-                        className={`absolute left-0 top-full pt-1 z-50 ${
-                          item.megaMenu ? 'w-[600px]' : 'min-w-60'
-                        }`}
+                        className={`absolute left-0 top-full pt-1 z-50 ${item.megaMenu ? 'w-[600px]' : 'min-w-60'
+                          }`}
                         onMouseEnter={() => setHoveredMenu(item.id)}
                         onMouseLeave={() => setHoveredMenu(null)}
                       >
                         <div
-                          className={`bg-white border border-slate-100 overflow-hidden ${
-                            item.megaMenu
+                          className={`bg-white border border-slate-100 overflow-hidden ${item.megaMenu
                               ? 'grid grid-cols-2 gap-1 p-3'
                               : 'py-2'
-                          }`}
+                            }`}
                         >
                           {item.children.map(child => (
                             <Link
                               key={child.id}
                               href={child.url}
-                              className={`block text-sm hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-all font-medium ${
-                                item.megaMenu
+                              className={`block text-sm hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-all font-medium ${item.megaMenu
                                   ? 'p-3 rounded-lg'
                                   : 'px-4 py-2.5 text-sm rounded-md mx-1'
-                              }`}
+                                }`}
                             >
                               {child.label}
                             </Link>
@@ -264,18 +260,18 @@ export default function NavbarClient({
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white py-4 space-y-4 border-t border-gray-200">
+        <div className="md:hidden bg-white py-4 space-y-4 border-t border-gray-200 max-h-[calc(100vh-200px)] overflow-y-auto">
           <div className="container mx-auto px-4">
             {/* Mobile Search */}
             <form onSubmit={handleSearch} className="mb-4">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search here..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full h-12 pl-12 pr-4 text-sm border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full h-11 sm:h-12 pl-10 sm:pl-12 pr-4 text-sm border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary transition-colors"
                 />
               </div>
             </form>

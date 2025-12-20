@@ -117,9 +117,9 @@ export default function CartPage() {
           </AlertDialog>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-3 sm:space-y-4">
             {items.map(item => {
               const itemTotal = item.price * item.quantity
               const itemKey = `${item.productId}-${item.variantId || ''}`
@@ -129,11 +129,11 @@ export default function CartPage() {
                   key={itemKey}
                   className="transition-all duration-300 hover:shadow-md"
                 >
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row gap-4">
+                  <CardContent className="p-3 sm:p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                       <Link
                         href={`/products/${item.productId}`}
-                        className="relative w-full sm:w-28 h-32 sm:h-28 shrink-0 group overflow-hidden rounded-lg"
+                        className="relative w-full sm:w-24 md:w-28 h-24 sm:h-24 md:h-28 shrink-0 group overflow-hidden rounded-lg"
                       >
                         <img
                           src={item.image}

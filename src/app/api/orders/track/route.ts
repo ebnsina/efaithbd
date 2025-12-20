@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const phone = searchParams.get('Phone')
+    const phone = searchParams.get('phone')
 
     if (!phone) {
       return NextResponse.json(

@@ -283,8 +283,8 @@ export default function ProductDetailClient({
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600 overflow-x-auto scrollbar-hide">
             <Link href="/" className="hover:text-orange-600">
               {"Home"}
             </Link>
@@ -306,20 +306,20 @@ export default function ProductDetailClient({
       </div>
 
       {/* Product Detail Section */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-lg shadow-sm p-6">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 bg-white rounded-lg shadow-sm p-3 sm:p-4 md:p-6">
           {/* Left: Images */}
           <div>
             {/* Main Image */}
-            <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+            <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 sm:mb-4">
               {discount > 0 && (
-                <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold z-10">
+                <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-red-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold z-10">
                   -{discount}%
                 </div>
               )}
               {isOutOfStock && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
-                  <span className="text-white text-2xl font-bold">
+                  <span className="text-white text-lg sm:text-xl md:text-2xl font-bold px-4 text-center">
                     {"Out Of Stock"}
                   </span>
                 </div>
@@ -333,13 +333,13 @@ export default function ProductDetailClient({
 
             {/* Thumbnail Images */}
             {product.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {product.images.map((image, index) => (
                   <Button
                     key={index}
                     variant="outline"
                     onClick={() => setSelectedImage(index)}
-                    className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 p-0 ${
+                    className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 p-0 ${
                       selectedImage === index
                         ? "border-primary"
                         : "border-gray-200 hover:border-primary/50"
@@ -358,7 +358,7 @@ export default function ProductDetailClient({
 
           {/* Right: Details */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
               {product.name}
             </h1>
 
@@ -399,19 +399,19 @@ export default function ProductDetailClient({
             </div>
 
             {/* Price */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-primary">
+            <div className="mb-4 sm:mb-6">
+              <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
                   ৳{currentPrice.toLocaleString("en-US")}
                 </span>
                 {product.comparePrice && (
-                  <span className="text-xl text-gray-500 line-through">
+                  <span className="text-lg sm:text-xl text-gray-500 line-through">
                     ৳{product.comparePrice.toLocaleString("en-US")}
                   </span>
                 )}
               </div>
               {discount > 0 && (
-                <p className="text-sm text-green-600 mt-1">
+                <p className="text-xs sm:text-sm text-green-600 mt-1">
                   {"You Are Saving"}: ৳
                   {(product.comparePrice! - currentPrice).toLocaleString(
                     "en-US",
@@ -488,12 +488,12 @@ export default function ProductDetailClient({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
               <ShopButton
                 onClick={handleBuyNow}
                 disabled={isOutOfStock || (product.variants.length > 0 && !selectedVariant)}
                 variant="primary"
-                className="py-3 font-semibold text-lg"
+                className="py-2.5 sm:py-3 font-semibold text-base sm:text-lg w-full sm:w-auto"
               >
                 {"Buy Now"}
               </ShopButton>
@@ -501,15 +501,15 @@ export default function ProductDetailClient({
                 variant="outline"
                 onClick={handleAddToCart}
                 disabled={isOutOfStock || (product.variants.length > 0 && !selectedVariant)}
-                className="py-3 font-semibold text-lg gap-2 flex items-center justify-center"
+                className="py-2.5 sm:py-3 font-semibold text-base sm:text-lg gap-2 flex items-center justify-center w-full sm:w-auto"
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 {"Add to Cart"}
               </ShopButton>
             </div>
 
             {/* Secondary Actions */}
-            <div className="flex gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
               <Button
                 variant="outline"
                 onClick={handleWishlistToggle}
@@ -613,12 +613,12 @@ export default function ProductDetailClient({
         </div>
 
         {/* Tabbed Section: Description, Reviews, Q&A */}
-        <div className="bg-white rounded-lg shadow-sm mt-8">
+        <div className="bg-white rounded-lg shadow-sm mt-4 sm:mt-6 md:mt-8">
           {/* Tab Headers */}
-          <div className="flex border-b">
+          <div className="flex border-b overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab("description")}
-              className={`px-6 py-4 font-semibold transition-colors relative ${
+              className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 font-semibold transition-colors relative whitespace-nowrap text-xs sm:text-sm md:text-base ${
                 activeTab === "description"
                   ? "text-primary border-b-2 border-primary"
                   : "text-gray-600 hover:text-gray-900"
@@ -628,7 +628,7 @@ export default function ProductDetailClient({
             </button>
             <button
               onClick={() => setActiveTab("reviews")}
-              className={`px-6 py-4 font-semibold transition-colors relative ${
+              className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 font-semibold transition-colors relative whitespace-nowrap text-xs sm:text-sm md:text-base ${
                 activeTab === "reviews"
                   ? "text-primary border-b-2 border-primary"
                   : "text-gray-600 hover:text-gray-900"
@@ -638,7 +638,7 @@ export default function ProductDetailClient({
             </button>
             <button
               onClick={() => setActiveTab("qa")}
-              className={`px-6 py-4 font-semibold transition-colors relative ${
+              className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 font-semibold transition-colors relative whitespace-nowrap text-xs sm:text-sm md:text-base ${
                 activeTab === "qa"
                   ? "text-primary border-b-2 border-primary"
                   : "text-gray-600 hover:text-gray-900"
@@ -649,7 +649,7 @@ export default function ProductDetailClient({
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
+          <div className="p-3 sm:p-4 md:p-6">
             {activeTab === "description" && (
               <div className="prose max-w-none">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">
@@ -668,18 +668,18 @@ export default function ProductDetailClient({
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <div className="mt-12">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
+          <div className="mt-6 sm:mt-8 md:mt-12">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                 {"Related Products"}
               </h2>
               <Link
                 href={`/products?category=${product.category.slug}`}
-                className="text-primary hover:text-primary/90 font-medium text-sm flex items-center gap-1"
+                className="text-primary hover:text-primary/90 font-medium text-xs sm:text-sm flex items-center gap-1"
               >
                 {"View More"}
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 sm:w-4 sm:h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -693,7 +693,7 @@ export default function ProductDetailClient({
                 </svg>
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard key={relatedProduct.id} product={relatedProduct} />
               ))}

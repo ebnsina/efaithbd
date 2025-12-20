@@ -233,11 +233,11 @@ export default function CheckoutPage() {
 
   return (
     <TooltipProvider>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">{'Checkout'}</h1>
-          <Link href="/cart">
-            <Button variant="outline" size="sm" className="gap-2">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold">{'Checkout'}</h1>
+          <Link href="/cart" className="w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto">
               <ArrowLeft className="w-4 h-4" />
               {'Back To Cart'}
             </Button>
@@ -245,33 +245,33 @@ export default function CheckoutPage() {
         </div>
 
         {/* Guest Checkout Banner */}
-        <div className="mb-6 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start justify-between gap-4">
+        <div className="mb-4 sm:mb-6 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
             <div className="flex-1">
-              <h2 className="font-semibold text-blue-900 mb-1">
+              <h2 className="font-semibold text-blue-900 mb-1 text-sm sm:text-base">
                 {'Guest Checkout'}
               </h2>
-              <p className="text-sm text-blue-700">
+              <p className="text-xs sm:text-sm text-blue-700">
                 Order quickly without login. You can track your order with just
                 your phone number.
               </p>
             </div>
-            <Link href="/login">
-              <Button variant="outline" size="sm" className="shrink-0">
+            <Link href="/login" className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="shrink-0 w-full sm:w-auto">
                 {'Login'}
               </Button>
             </Link>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <form
               onSubmit={handleSubmit}
-              className="bg-white rounded-lg shadow p-6"
+              className="bg-white rounded-lg shadow p-4 sm:p-5 md:p-6"
             >
-              <h2 className="text-xl font-bold mb-4">{'Shipping Details'}</h2>
+              <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">{'Shipping Details'}</h2>
 
               <div className="space-y-4">
                 <div>
