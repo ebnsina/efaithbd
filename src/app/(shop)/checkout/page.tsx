@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useCart } from '@/lib/store'
-import { useRouter } from 'next/navigation'
-import { ShopButton } from '@/components/ShopButton'
-import Link from 'next/link'
+import { useState, useEffect } from 'react';
+import { useCart } from '@/lib/store';
+import { useRouter } from 'next/navigation';
+import { ShopButton } from '@/components/ShopButton';
+import Link from 'next/link';
 import {
   Dialog,
   DialogContent,
@@ -12,53 +12,35 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import {
-  ShoppingCart,
-  Package,
-  Tag,
-  CheckCircle2,
-  AlertCircle,
-  ArrowLeft,
-} from 'lucide-react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ShoppingCart, Package, Tag, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function CheckoutPage() {
-  const router = useRouter()
-  const { items, total, clearCart } = useCart()
-  const [loading, setLoading] = useState(false)
-  const [couponLoading, setCouponLoading] = useState(false)
-  const [couponError, setCouponError] = useState<string>('')
-  const [couponSuccess, setCouponSuccess] = useState<string>('')
+  const router = useRouter();
+  const { items, total, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState<string>('');
+  const [couponSuccess, setCouponSuccess] = useState<string>('');
   const [appliedCoupon, setAppliedCoupon] = useState<{
-    code: string
-    discount: number
-    description?: string
-  } | null>(null)
+    code: string;
+    discount: number;
+    description?: string;
+  } | null>(null);
   const [dialogState, setDialogState] = useState<{
-    isOpen: boolean
-    title: string
-    message: string
-  }>({ isOpen: false, title: '', message: '' })
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({ isOpen: false, title: '', message: '' });
   const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
@@ -67,53 +49,78 @@ export default function CheckoutPage() {
     bkashNumber: '',
     bkashTrxId: '',
     couponCode: '',
-  })
+    shippingMethodId: '',
+  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [bkashSettings, setBkashSettings] = useState<{
-    bkashNumber?: string
-    bkashNote?: string
-  }>({})
-  const [bkashSettingsLoaded, setBkashSettingsLoaded] = useState(false)
+    bkashNumber?: string;
+    bkashNote?: string;
+  }>({});
+  const [bkashSettingsLoaded, setBkashSettingsLoaded] = useState(false);
+  const [shippingMethods, setShippingMethods] = useState<any[]>([]);
+  const [shippingMethodsLoading, setShippingMethodsLoading] = useState(false);
 
-  const subtotalAmount = total()
-  const discountAmount = appliedCoupon?.discount || 0
-  const finalTotal = subtotalAmount - discountAmount
+  const subtotalAmount = total();
+  const discountAmount = appliedCoupon?.discount || 0;
+  const selectedShipping = shippingMethods.find((m) => m.id === formData.shippingMethodId);
+  const shippingCost = selectedShipping?.cost || 0;
+  const finalTotal = subtotalAmount - discountAmount + shippingCost;
 
   useEffect(() => {
     if (items.length === 0) {
-      router.push('/cart')
+      router.push('/cart');
     }
 
     // Fetch bKash settings
     fetch('/api/admin/site-settings/basic')
-      .then(res => res.json())
-      .then(data => {
-        console.log('bKash settings loaded:', data)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('bKash settings loaded:', data);
         setBkashSettings({
           bkashNumber: data.bkashNumber,
           bkashNote: data.bkashNote,
-        })
-        setBkashSettingsLoaded(true)
+        });
+        setBkashSettingsLoaded(true);
       })
-      .catch(err => {
-        console.error('Failed to fetch bKash settings:', err)
-        setBkashSettingsLoaded(true)
-      })
-  }, [])
+      .catch((err) => {
+        console.error('Failed to fetch bKash settings:', err);
+        setBkashSettingsLoaded(true);
+      });
+
+    // Fetch shipping methods
+    fetchShippingMethods();
+  }, []);
+
+  const fetchShippingMethods = async () => {
+    setShippingMethodsLoading(true);
+    try {
+      const res = await fetch(`/api/shipping-methods?subtotal=${subtotalAmount}`);
+      const data = await res.json();
+      setShippingMethods(data);
+      // Auto-select first method if available
+      if (data.length > 0 && !formData.shippingMethodId) {
+        setFormData((prev) => ({ ...prev, shippingMethodId: data[0].id }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch shipping methods:', error);
+    } finally {
+      setShippingMethodsLoading(false);
+    }
+  };
 
   if (items.length === 0) {
-    return null
+    return null;
   }
 
   const applyCoupon = async () => {
     if (!formData.couponCode.trim()) {
-      return
+      return;
     }
 
-    setCouponLoading(true)
-    setCouponError('')
-    setCouponSuccess('')
+    setCouponLoading(true);
+    setCouponError('');
+    setCouponSuccess('');
     try {
       const response = await fetch('/api/coupons/validate', {
         method: 'POST',
@@ -122,75 +129,77 @@ export default function CheckoutPage() {
           code: formData.couponCode,
           subtotal: subtotalAmount,
         }),
-      })
+      });
 
       if (!response.ok) {
-        const error = await response.json()
-        setCouponError(error.error || 'Coupon Error')
-        return
+        const error = await response.json();
+        setCouponError(error.error || 'Coupon Error');
+        return;
       }
 
-      const data = await response.json()
+      const data = await response.json();
       setAppliedCoupon({
         code: data.coupon.code,
         discount: data.discount,
         description: data.coupon.description,
-      })
-      setCouponSuccess(
-        `Coupon applied! You saved ৳${data.discount.toLocaleString('en-US')}.`
-      )
+      });
+      setCouponSuccess(`Coupon applied! You saved ৳${data.discount.toLocaleString('en-US')}.`);
     } catch (error) {
-      setCouponError('Failed to apply coupon. Please try again.')
+      setCouponError('Failed to apply coupon. Please try again.');
     } finally {
-      setCouponLoading(false)
+      setCouponLoading(false);
     }
-  }
+  };
 
   const removeCoupon = () => {
-    setAppliedCoupon(null)
-    setCouponError('')
-    setCouponSuccess('')
-    setFormData({ ...formData, couponCode: '' })
-  }
+    setAppliedCoupon(null);
+    setCouponError('');
+    setCouponSuccess('');
+    setFormData({ ...formData, couponCode: '' });
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.customerName.trim()) {
-      newErrors.customerName = 'Name Required'
+      newErrors.customerName = 'Name Required';
     }
 
     if (!formData.customerPhone.trim()) {
-      newErrors.customerPhone = 'Phone Required'
+      newErrors.customerPhone = 'Phone Required';
     } else if (!/^01[0-9]{9}$/.test(formData.customerPhone)) {
-      newErrors.customerPhone = 'Invalid Phone'
+      newErrors.customerPhone = 'Invalid Phone';
     }
 
     if (!formData.customerAddress.trim()) {
-      newErrors.customerAddress = 'Address Required'
+      newErrors.customerAddress = 'Address Required';
+    }
+
+    if (!formData.shippingMethodId) {
+      newErrors.shippingMethod = 'Please select a shipping method';
     }
 
     if (formData.paymentMethod === 'BKASH') {
       if (!formData.bkashNumber.trim()) {
-        newErrors.bkashNumber = 'Bkash Required'
+        newErrors.bkashNumber = 'Bkash Required';
       }
       if (!formData.bkashTrxId.trim()) {
-        newErrors.bkashTrxId = 'Transaction Required'
+        newErrors.bkashTrxId = 'Transaction Required';
       }
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch('/api/orders', {
@@ -200,7 +209,7 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           ...formData,
-          items: items.map(item => ({
+          items: items.map((item) => ({
             productId: item.productId,
             variantId: item.variantId,
             quantity: item.quantity,
@@ -208,28 +217,30 @@ export default function CheckoutPage() {
           })),
           subtotal: subtotalAmount,
           discount: discountAmount,
+          shippingCost: shippingCost,
           total: finalTotal,
           couponCode: appliedCoupon?.code,
+          shippingMethodId: formData.shippingMethodId,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Order Error')
+        throw new Error('Order Error');
       }
 
-      const data = await response.json()
-      clearCart()
-      router.push(`/orders/${data.orderNumber}`)
+      const data = await response.json();
+      clearCart();
+      router.push(`/orders/${data.orderNumber}`);
     } catch (error) {
       setDialogState({
         isOpen: true,
         title: 'Error',
         message: 'Order Error',
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <TooltipProvider>
@@ -252,8 +263,7 @@ export default function CheckoutPage() {
                 {'Guest Checkout'}
               </h2>
               <p className="text-xs sm:text-sm text-blue-700">
-                Order quickly without login. You can track your order with just
-                your phone number.
+                Order quickly without login. You can track your order with just your phone number.
               </p>
             </div>
             <Link href="/login" className="w-full sm:w-auto">
@@ -267,10 +277,7 @@ export default function CheckoutPage() {
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white rounded-lg shadow p-4 sm:p-5 md:p-6"
-            >
+            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-4 sm:p-5 md:p-6">
               <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">{'Shipping Details'}</h2>
 
               <div className="space-y-4">
@@ -281,16 +288,12 @@ export default function CheckoutPage() {
                   <Input
                     type="text"
                     value={formData.customerName}
-                    onChange={e =>
-                      setFormData({ ...formData, customerName: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                     placeholder="Enter your name"
                     className="h-10"
                   />
                   {errors.customerName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.customerName}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.customerName}</p>
                   )}
                 </div>
 
@@ -301,7 +304,7 @@ export default function CheckoutPage() {
                   <Input
                     type="tel"
                     value={formData.customerPhone}
-                    onChange={e =>
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
                         customerPhone: e.target.value,
@@ -311,9 +314,7 @@ export default function CheckoutPage() {
                     className="h-10"
                   />
                   {errors.customerPhone && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.customerPhone}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.customerPhone}</p>
                   )}
                 </div>
 
@@ -323,7 +324,7 @@ export default function CheckoutPage() {
                   </label>
                   <Textarea
                     value={formData.customerAddress}
-                    onChange={e =>
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
                         customerAddress: e.target.value,
@@ -333,19 +334,68 @@ export default function CheckoutPage() {
                     placeholder="Enter your complete address"
                   />
                   {errors.customerAddress && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.customerAddress}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.customerAddress}</p>
+                  )}
+                </div>
+
+                {/* Shipping Method Selection */}
+                <div>
+                  <label className="block font-semibold mb-2">
+                    {'Shipping Method'} <span className="text-red-500">*</span>
+                  </label>
+                  {shippingMethodsLoading ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      Loading shipping methods...
+                    </div>
+                  ) : shippingMethods.length === 0 ? (
+                    <div className="p-4 text-center text-amber-600 bg-amber-50 rounded border border-amber-200">
+                      No shipping methods available. Please contact support.
+                    </div>
+                  ) : (
+                    <RadioGroup
+                      value={formData.shippingMethodId}
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          shippingMethodId: value,
+                        })
+                      }
+                    >
+                      {shippingMethods.map((method) => (
+                        <div
+                          key={method.id}
+                          className="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50"
+                        >
+                          <RadioGroupItem value={method.id} id={method.id} />
+                          <Label htmlFor={method.id} className="cursor-pointer flex-1">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <div className="font-medium">{method.name}</div>
+                                {method.description && (
+                                  <div className="text-xs text-muted-foreground mt-0.5">
+                                    {method.description}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="font-semibold text-right ml-2">
+                                ৳{method.cost.toLocaleString('en-US')}
+                              </div>
+                            </div>
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  )}
+                  {errors.shippingMethod && (
+                    <p className="text-red-500 text-sm mt-1">{errors.shippingMethod}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block font-semibold mb-2">
-                    {'Payment Method'}
-                  </label>
+                  <label className="block font-semibold mb-2">{'Payment Method'}</label>
                   <RadioGroup
                     value={formData.paymentMethod}
-                    onValueChange={value =>
+                    onValueChange={(value) =>
                       setFormData({
                         ...formData,
                         paymentMethod: value as 'COD' | 'BKASH',
@@ -406,7 +456,7 @@ export default function CheckoutPage() {
                       <Input
                         type="tel"
                         value={formData.bkashNumber}
-                        onChange={e =>
+                        onChange={(e) =>
                           setFormData({
                             ...formData,
                             bkashNumber: e.target.value,
@@ -416,21 +466,18 @@ export default function CheckoutPage() {
                         className="h-10"
                       />
                       {errors.bkashNumber && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.bkashNumber}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.bkashNumber}</p>
                       )}
                     </div>
 
                     <div>
                       <label className="block font-semibold mb-1">
-                        {'Transaction Id'}{' '}
-                        <span className="text-red-500">*</span>
+                        {'Transaction Id'} <span className="text-red-500">*</span>
                       </label>
                       <Input
                         type="text"
                         value={formData.bkashTrxId}
-                        onChange={e =>
+                        onChange={(e) =>
                           setFormData({
                             ...formData,
                             bkashTrxId: e.target.value,
@@ -440,9 +487,7 @@ export default function CheckoutPage() {
                         className="h-10"
                       />
                       {errors.bkashTrxId && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.bkashTrxId}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.bkashTrxId}</p>
                       )}
                     </div>
                   </>
@@ -473,8 +518,8 @@ export default function CheckoutPage() {
               <CardContent className="space-y-4 pt-6">
                 {/* Items List */}
                 <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {items.map(item => {
-                    const itemTotal = item.price * item.quantity
+                  {items.map((item) => {
+                    const itemTotal = item.price * item.quantity;
                     return (
                       <div
                         key={`${item.productId}-${item.variantId || ''}`}
@@ -484,24 +529,19 @@ export default function CheckoutPage() {
                           <p className="font-medium truncate">{item.name}</p>
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
                             {item.variantName && (
-                              <Badge
-                                variant="secondary"
-                                className="text-xs h-5"
-                              >
+                              <Badge variant="secondary" className="text-xs h-5">
                                 <Tag className="w-3 h-3 mr-1" />
                                 {item.variantName}
                               </Badge>
                             )}
-                            <span className="text-xs text-muted-foreground">
-                              x {item.quantity}
-                            </span>
+                            <span className="text-xs text-muted-foreground">x {item.quantity}</span>
                           </div>
                         </div>
                         <span className="font-semibold text-nowrap">
                           ৳{itemTotal.toLocaleString('en-US')}
                         </span>
                       </div>
-                    )
+                    );
                   })}
                 </div>
 
@@ -509,18 +549,14 @@ export default function CheckoutPage() {
 
                 {/* Coupon Section */}
                 <div className="space-y-2">
-                  <label className="block font-semibold text-sm">
-                    {'Coupon Code If Any'}
-                  </label>
+                  <label className="block font-semibold text-sm">{'Coupon Code If Any'}</label>
                   {appliedCoupon ? (
                     <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                       <div className="flex justify-between items-start gap-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <CheckCircle2 className="w-4 h-4 text-green-600" />
-                            <p className="font-semibold text-green-800">
-                              {appliedCoupon.code}
-                            </p>
+                            <p className="font-semibold text-green-800">{appliedCoupon.code}</p>
                           </div>
                           {appliedCoupon.description && (
                             <p className="text-xs text-green-600 ml-6">
@@ -545,7 +581,7 @@ export default function CheckoutPage() {
                         <Input
                           type="text"
                           value={formData.couponCode}
-                          onChange={e =>
+                          onChange={(e) =>
                             setFormData({
                               ...formData,
                               couponCode: e.target.value,
@@ -557,12 +593,10 @@ export default function CheckoutPage() {
                         <Button
                           type="button"
                           onClick={applyCoupon}
-                          disabled={
-                            couponLoading || !formData.couponCode.trim()
-                          }
+                          disabled={couponLoading || !formData.couponCode.trim()}
                           variant="secondary"
                         >
-                          {couponLoading ? 'Checking' : 'Apply Text'}
+                          {couponLoading ? 'Checking' : 'Apply'}
                         </Button>
                       </div>
                       {couponError && (
@@ -599,30 +633,22 @@ export default function CheckoutPage() {
                   </div>
                   {appliedCoupon && (
                     <div className="flex justify-between text-sm items-center text-green-600">
-                      <span className="flex items-center gap-1">
-                        {'Discount'}
-                      </span>
+                      <span className="flex items-center gap-1">{'Discount'}</span>
                       <span className="font-semibold">
                         -৳
                         {discountAmount.toLocaleString('en-US')}
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between text-sm items-start gap-2">
-                    <span className="text-muted-foreground flex items-center gap-1">
-                      {'Delivery Charge'}
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <AlertCircle className="w-3 h-3 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>Delivery charge will be determined</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </span>
-                    <span className="font-medium text-muted-foreground text-xs text-right">
-                      {'Calculated At Checkout'}
-                    </span>
+                  <div className="flex justify-between text-sm items-center">
+                    <span className="text-muted-foreground">{'Shipping Cost'}</span>
+                    {selectedShipping ? (
+                      <span className="font-semibold text-base">
+                        ৳{shippingCost.toLocaleString('en-US')}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-amber-600">Select shipping method</span>
+                    )}
                   </div>
                 </div>
 
@@ -648,9 +674,7 @@ export default function CheckoutPage() {
       {/* Alert Dialog */}
       <Dialog
         open={dialogState.isOpen}
-        onOpenChange={open =>
-          !open && setDialogState({ ...dialogState, isOpen: false })
-        }
+        onOpenChange={(open) => !open && setDialogState({ ...dialogState, isOpen: false })}
       >
         <DialogContent>
           <DialogHeader>
@@ -658,14 +682,12 @@ export default function CheckoutPage() {
             <DialogDescription>{dialogState.message}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              onClick={() => setDialogState({ ...dialogState, isOpen: false })}
-            >
+            <Button onClick={() => setDialogState({ ...dialogState, isOpen: false })}>
               {'Ok'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </TooltipProvider>
-  )
+  );
 }

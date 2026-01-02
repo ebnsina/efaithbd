@@ -15,6 +15,7 @@ import {
   Ticket,
   MessageSquare,
   StarIcon,
+  Truck,
 } from 'lucide-react'
 
 interface NavItemProps {
@@ -31,6 +32,7 @@ const iconMap = {
   Layers,
   Package,
   ShoppingBag,
+  Truck,
   Star,
   Footprints,
   Ticket,

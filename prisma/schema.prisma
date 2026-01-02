@@ -122,30 +122,34 @@ enum CouponType {
 }
 
 model Order {
-  id              String        @id @default(cuid())
-  orderNumber     String        @unique
-  userId          String?
-  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  customerName    String
-  customerPhone   String
-  customerAddress String
-  subtotal        Float
-  discount        Float         @default(0)
-  total           Float
-  paymentMethod   PaymentMethod
-  paymentStatus   PaymentStatus @default(PENDING)
-  orderStatus     OrderStatus   @default(PENDING)
-  bkashNumber     String?       // For bKash payment
-  bkashTrxId      String?       // For bKash transaction ID
-  couponId        String?
-  coupon          Coupon?       @relation(fields: [couponId], references: [id], onDelete: SetNull)
-  notes           String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  items           OrderItem[]
+  id                String          @id @default(cuid())
+  orderNumber       String          @unique
+  userId            String?
+  user              User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName      String
+  customerPhone     String
+  customerAddress   String
+  subtotal          Float
+  discount          Float           @default(0)
+  shippingCost      Float           @default(0)
+  total             Float
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus   @default(PENDING)
+  orderStatus       OrderStatus     @default(PENDING)
+  bkashNumber       String?         // For bKash payment
+  bkashTrxId        String?         // For bKash transaction ID
+  couponId          String?
+  coupon            Coupon?         @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  shippingMethodId  String?
+  shippingMethod    ShippingMethod? @relation(fields: [shippingMethodId], references: [id], onDelete: SetNull)
+  notes             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  items             OrderItem[]
 
   @@index([userId])
   @@index([orderNumber])
+  @@index([shippingMethodId])
 }
 
 enum PaymentMethod {
@@ -448,4 +452,22 @@ model Answer {
   @@index([questionId])
   @@index([userId])
   @@index([approved])
+}
+
+// Shipping Methods
+model ShippingMethod {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Standard Delivery", "Express Delivery"
+  description String?  // Additional details
+  cost        Float    // Shipping cost
+  minOrder    Float?   // Minimum order amount for this method
+  maxOrder    Float?   // Maximum order amount for this method
+  active      Boolean  @default(true)
+  order       Int      @default(0) // Display order
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+
+  @@index([active])
+  @@index([order])
 }

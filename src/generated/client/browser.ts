@@ -127,3 +127,8 @@ export type Question = Prisma.QuestionModel
  * 
  */
 export type Answer = Prisma.AnswerModel
+/**
+ * Model ShippingMethod
+ * 
+ */
+export type ShippingMethod = Prisma.ShippingMethodModel

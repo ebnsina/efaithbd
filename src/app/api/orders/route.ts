@@ -16,8 +16,10 @@ export async function POST(request: NextRequest) {
       items,
       subtotal,
       discount,
+      shippingCost,
       total,
       couponCode,
+      shippingMethodId,
     } = body
 
     // Validate required fields
@@ -64,8 +66,10 @@ export async function POST(request: NextRequest) {
       bkashTrxId: bkashTrxId || null,
       subtotal,
       discount: discount || 0,
+      shippingCost: shippingCost || 0,
       total,
       couponId,
+      shippingMethodId: shippingMethodId || null,
     }
 
     // Only add userId if session exists and user exists in database
@@ -100,6 +104,7 @@ export async function POST(request: NextRequest) {
           },
         },
         coupon: true,
+        shippingMethod: true,
       },
     })
 
@@ -125,6 +130,7 @@ export async function GET(request: NextRequest) {
               variant: true,
             },
           },
+          shippingMethod: true,
         },
       })
 
@@ -148,6 +154,7 @@ export async function GET(request: NextRequest) {
           },
         },
         coupon: true,
+        shippingMethod: true,
       },
       orderBy: {
         createdAt: 'desc',

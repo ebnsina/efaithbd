@@ -45,6 +45,11 @@ export function AdminLayoutClient({ children, session, siteName }: AdminLayoutCl
     { href: '/admin/products', label: 'Products', icon: 'Package' },
     { href: '/admin/orders', label: 'Orders', icon: 'ShoppingBag' },
     {
+      href: '/admin/shipping-methods',
+      label: 'Shipping Methods',
+      icon: 'Truck',
+    },
+    {
       href: '/admin/coupons',
       label: 'Coupons',
       icon: 'Ticket',

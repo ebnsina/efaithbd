@@ -72,7 +72,8 @@ export const ModelName = {
   ContactInfo: 'ContactInfo',
   Review: 'Review',
   Question: 'Question',
-  Answer: 'Answer'
+  Answer: 'Answer',
+  ShippingMethod: 'ShippingMethod'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -197,6 +198,7 @@ export const OrderScalarFieldEnum = {
   customerAddress: 'customerAddress',
   subtotal: 'subtotal',
   discount: 'discount',
+  shippingCost: 'shippingCost',
   total: 'total',
   paymentMethod: 'paymentMethod',
   paymentStatus: 'paymentStatus',
@@ -204,6 +206,7 @@ export const OrderScalarFieldEnum = {
   bkashNumber: 'bkashNumber',
   bkashTrxId: 'bkashTrxId',
   couponId: 'couponId',
+  shippingMethodId: 'shippingMethodId',
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -454,6 +457,22 @@ export const AnswerScalarFieldEnum = {
 } as const
 
 export type AnswerScalarFieldEnum = (typeof AnswerScalarFieldEnum)[keyof typeof AnswerScalarFieldEnum]
+
+
+export const ShippingMethodScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  cost: 'cost',
+  minOrder: 'minOrder',
+  maxOrder: 'maxOrder',
+  active: 'active',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingMethodScalarFieldEnum = (typeof ShippingMethodScalarFieldEnum)[keyof typeof ShippingMethodScalarFieldEnum]
 
 
 export const SortOrder = {

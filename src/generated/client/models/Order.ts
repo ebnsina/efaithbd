@@ -29,12 +29,14 @@ export type AggregateOrder = {
 export type OrderAvgAggregateOutputType = {
   subtotal: number | null
   discount: number | null
+  shippingCost: number | null
   total: number | null
 }
 
 export type OrderSumAggregateOutputType = {
   subtotal: number | null
   discount: number | null
+  shippingCost: number | null
   total: number | null
 }
 
@@ -47,6 +49,7 @@ export type OrderMinAggregateOutputType = {
   customerAddress: string | null
   subtotal: number | null
   discount: number | null
+  shippingCost: number | null
   total: number | null
   paymentMethod: $Enums.PaymentMethod | null
   paymentStatus: $Enums.PaymentStatus | null
@@ -54,6 +57,7 @@ export type OrderMinAggregateOutputType = {
   bkashNumber: string | null
   bkashTrxId: string | null
   couponId: string | null
+  shippingMethodId: string | null
   notes: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -68,6 +72,7 @@ export type OrderMaxAggregateOutputType = {
   customerAddress: string | null
   subtotal: number | null
   discount: number | null
+  shippingCost: number | null
   total: number | null
   paymentMethod: $Enums.PaymentMethod | null
   paymentStatus: $Enums.PaymentStatus | null
@@ -75,6 +80,7 @@ export type OrderMaxAggregateOutputType = {
   bkashNumber: string | null
   bkashTrxId: string | null
   couponId: string | null
+  shippingMethodId: string | null
   notes: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -89,6 +95,7 @@ export type OrderCountAggregateOutputType = {
   customerAddress: number
   subtotal: number
   discount: number
+  shippingCost: number
   total: number
   paymentMethod: number
   paymentStatus: number
@@ -96,6 +103,7 @@ export type OrderCountAggregateOutputType = {
   bkashNumber: number
   bkashTrxId: number
   couponId: number
+  shippingMethodId: number
   notes: number
   createdAt: number
   updatedAt: number
@@ -106,12 +114,14 @@ export type OrderCountAggregateOutputType = {
 export type OrderAvgAggregateInputType = {
   subtotal?: true
   discount?: true
+  shippingCost?: true
   total?: true
 }
 
 export type OrderSumAggregateInputType = {
   subtotal?: true
   discount?: true
+  shippingCost?: true
   total?: true
 }
 
@@ -124,6 +134,7 @@ export type OrderMinAggregateInputType = {
   customerAddress?: true
   subtotal?: true
   discount?: true
+  shippingCost?: true
   total?: true
   paymentMethod?: true
   paymentStatus?: true
@@ -131,6 +142,7 @@ export type OrderMinAggregateInputType = {
   bkashNumber?: true
   bkashTrxId?: true
   couponId?: true
+  shippingMethodId?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -145,6 +157,7 @@ export type OrderMaxAggregateInputType = {
   customerAddress?: true
   subtotal?: true
   discount?: true
+  shippingCost?: true
   total?: true
   paymentMethod?: true
   paymentStatus?: true
@@ -152,6 +165,7 @@ export type OrderMaxAggregateInputType = {
   bkashNumber?: true
   bkashTrxId?: true
   couponId?: true
+  shippingMethodId?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -166,6 +180,7 @@ export type OrderCountAggregateInputType = {
   customerAddress?: true
   subtotal?: true
   discount?: true
+  shippingCost?: true
   total?: true
   paymentMethod?: true
   paymentStatus?: true
@@ -173,6 +188,7 @@ export type OrderCountAggregateInputType = {
   bkashNumber?: true
   bkashTrxId?: true
   couponId?: true
+  shippingMethodId?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -274,6 +290,7 @@ export type OrderGroupByOutputType = {
   customerAddress: string
   subtotal: number
   discount: number
+  shippingCost: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus: $Enums.PaymentStatus
@@ -281,6 +298,7 @@ export type OrderGroupByOutputType = {
   bkashNumber: string | null
   bkashTrxId: string | null
   couponId: string | null
+  shippingMethodId: string | null
   notes: string | null
   createdAt: Date
   updatedAt: Date
@@ -318,6 +336,7 @@ export type OrderWhereInput = {
   customerAddress?: Prisma.StringFilter<"Order"> | string
   subtotal?: Prisma.FloatFilter<"Order"> | number
   discount?: Prisma.FloatFilter<"Order"> | number
+  shippingCost?: Prisma.FloatFilter<"Order"> | number
   total?: Prisma.FloatFilter<"Order"> | number
   paymentMethod?: Prisma.EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
@@ -325,11 +344,13 @@ export type OrderWhereInput = {
   bkashNumber?: Prisma.StringNullableFilter<"Order"> | string | null
   bkashTrxId?: Prisma.StringNullableFilter<"Order"> | string | null
   couponId?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingMethodId?: Prisma.StringNullableFilter<"Order"> | string | null
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   coupon?: Prisma.XOR<Prisma.CouponNullableScalarRelationFilter, Prisma.CouponWhereInput> | null
+  shippingMethod?: Prisma.XOR<Prisma.ShippingMethodNullableScalarRelationFilter, Prisma.ShippingMethodWhereInput> | null
   items?: Prisma.OrderItemListRelationFilter
 }
 
@@ -342,6 +363,7 @@ export type OrderOrderByWithRelationInput = {
   customerAddress?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
@@ -349,11 +371,13 @@ export type OrderOrderByWithRelationInput = {
   bkashNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   bkashTrxId?: Prisma.SortOrderInput | Prisma.SortOrder
   couponId?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   coupon?: Prisma.CouponOrderByWithRelationInput
+  shippingMethod?: Prisma.ShippingMethodOrderByWithRelationInput
   items?: Prisma.OrderItemOrderByRelationAggregateInput
 }
 
@@ -369,6 +393,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   customerAddress?: Prisma.StringFilter<"Order"> | string
   subtotal?: Prisma.FloatFilter<"Order"> | number
   discount?: Prisma.FloatFilter<"Order"> | number
+  shippingCost?: Prisma.FloatFilter<"Order"> | number
   total?: Prisma.FloatFilter<"Order"> | number
   paymentMethod?: Prisma.EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
@@ -376,11 +401,13 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   bkashNumber?: Prisma.StringNullableFilter<"Order"> | string | null
   bkashTrxId?: Prisma.StringNullableFilter<"Order"> | string | null
   couponId?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingMethodId?: Prisma.StringNullableFilter<"Order"> | string | null
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   coupon?: Prisma.XOR<Prisma.CouponNullableScalarRelationFilter, Prisma.CouponWhereInput> | null
+  shippingMethod?: Prisma.XOR<Prisma.ShippingMethodNullableScalarRelationFilter, Prisma.ShippingMethodWhereInput> | null
   items?: Prisma.OrderItemListRelationFilter
 }, "id" | "orderNumber">
 
@@ -393,6 +420,7 @@ export type OrderOrderByWithAggregationInput = {
   customerAddress?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
@@ -400,6 +428,7 @@ export type OrderOrderByWithAggregationInput = {
   bkashNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   bkashTrxId?: Prisma.SortOrderInput | Prisma.SortOrder
   couponId?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -422,6 +451,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   customerAddress?: Prisma.StringWithAggregatesFilter<"Order"> | string
   subtotal?: Prisma.FloatWithAggregatesFilter<"Order"> | number
   discount?: Prisma.FloatWithAggregatesFilter<"Order"> | number
+  shippingCost?: Prisma.FloatWithAggregatesFilter<"Order"> | number
   total?: Prisma.FloatWithAggregatesFilter<"Order"> | number
   paymentMethod?: Prisma.EnumPaymentMethodWithAggregatesFilter<"Order"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusWithAggregatesFilter<"Order"> | $Enums.PaymentStatus
@@ -429,6 +459,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   bkashNumber?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   bkashTrxId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   couponId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  shippingMethodId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -442,6 +473,7 @@ export type OrderCreateInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -453,6 +485,7 @@ export type OrderCreateInput = {
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
   coupon?: Prisma.CouponCreateNestedOneWithoutOrdersInput
+  shippingMethod?: Prisma.ShippingMethodCreateNestedOneWithoutOrdersInput
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
 }
 
@@ -465,6 +498,7 @@ export type OrderUncheckedCreateInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -472,6 +506,7 @@ export type OrderUncheckedCreateInput = {
   bkashNumber?: string | null
   bkashTrxId?: string | null
   couponId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -486,6 +521,7 @@ export type OrderUpdateInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -497,6 +533,7 @@ export type OrderUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
   coupon?: Prisma.CouponUpdateOneWithoutOrdersNestedInput
+  shippingMethod?: Prisma.ShippingMethodUpdateOneWithoutOrdersNestedInput
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
 }
 
@@ -509,6 +546,7 @@ export type OrderUncheckedUpdateInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -516,6 +554,7 @@ export type OrderUncheckedUpdateInput = {
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -531,6 +570,7 @@ export type OrderCreateManyInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -538,6 +578,7 @@ export type OrderCreateManyInput = {
   bkashNumber?: string | null
   bkashTrxId?: string | null
   couponId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -551,6 +592,7 @@ export type OrderUpdateManyMutationInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -571,6 +613,7 @@ export type OrderUncheckedUpdateManyInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -578,6 +621,7 @@ export type OrderUncheckedUpdateManyInput = {
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -602,6 +646,7 @@ export type OrderCountOrderByAggregateInput = {
   customerAddress?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
@@ -609,6 +654,7 @@ export type OrderCountOrderByAggregateInput = {
   bkashNumber?: Prisma.SortOrder
   bkashTrxId?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
+  shippingMethodId?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -617,6 +663,7 @@ export type OrderCountOrderByAggregateInput = {
 export type OrderAvgOrderByAggregateInput = {
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
 }
 
@@ -629,6 +676,7 @@ export type OrderMaxOrderByAggregateInput = {
   customerAddress?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
@@ -636,6 +684,7 @@ export type OrderMaxOrderByAggregateInput = {
   bkashNumber?: Prisma.SortOrder
   bkashTrxId?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
+  shippingMethodId?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -650,6 +699,7 @@ export type OrderMinOrderByAggregateInput = {
   customerAddress?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentStatus?: Prisma.SortOrder
@@ -657,6 +707,7 @@ export type OrderMinOrderByAggregateInput = {
   bkashNumber?: Prisma.SortOrder
   bkashTrxId?: Prisma.SortOrder
   couponId?: Prisma.SortOrder
+  shippingMethodId?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -665,6 +716,7 @@ export type OrderMinOrderByAggregateInput = {
 export type OrderSumOrderByAggregateInput = {
   subtotal?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  shippingCost?: Prisma.SortOrder
   total?: Prisma.SortOrder
 }
 
@@ -783,6 +835,48 @@ export type OrderUpdateOneRequiredWithoutItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutItemsInput, Prisma.OrderUpdateWithoutItemsInput>, Prisma.OrderUncheckedUpdateWithoutItemsInput>
 }
 
+export type OrderCreateNestedManyWithoutShippingMethodInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutShippingMethodInput, Prisma.OrderUncheckedCreateWithoutShippingMethodInput> | Prisma.OrderCreateWithoutShippingMethodInput[] | Prisma.OrderUncheckedCreateWithoutShippingMethodInput[]
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutShippingMethodInput | Prisma.OrderCreateOrConnectWithoutShippingMethodInput[]
+  createMany?: Prisma.OrderCreateManyShippingMethodInputEnvelope
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+}
+
+export type OrderUncheckedCreateNestedManyWithoutShippingMethodInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutShippingMethodInput, Prisma.OrderUncheckedCreateWithoutShippingMethodInput> | Prisma.OrderCreateWithoutShippingMethodInput[] | Prisma.OrderUncheckedCreateWithoutShippingMethodInput[]
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutShippingMethodInput | Prisma.OrderCreateOrConnectWithoutShippingMethodInput[]
+  createMany?: Prisma.OrderCreateManyShippingMethodInputEnvelope
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+}
+
+export type OrderUpdateManyWithoutShippingMethodNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutShippingMethodInput, Prisma.OrderUncheckedCreateWithoutShippingMethodInput> | Prisma.OrderCreateWithoutShippingMethodInput[] | Prisma.OrderUncheckedCreateWithoutShippingMethodInput[]
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutShippingMethodInput | Prisma.OrderCreateOrConnectWithoutShippingMethodInput[]
+  upsert?: Prisma.OrderUpsertWithWhereUniqueWithoutShippingMethodInput | Prisma.OrderUpsertWithWhereUniqueWithoutShippingMethodInput[]
+  createMany?: Prisma.OrderCreateManyShippingMethodInputEnvelope
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  update?: Prisma.OrderUpdateWithWhereUniqueWithoutShippingMethodInput | Prisma.OrderUpdateWithWhereUniqueWithoutShippingMethodInput[]
+  updateMany?: Prisma.OrderUpdateManyWithWhereWithoutShippingMethodInput | Prisma.OrderUpdateManyWithWhereWithoutShippingMethodInput[]
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
+}
+
+export type OrderUncheckedUpdateManyWithoutShippingMethodNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutShippingMethodInput, Prisma.OrderUncheckedCreateWithoutShippingMethodInput> | Prisma.OrderCreateWithoutShippingMethodInput[] | Prisma.OrderUncheckedCreateWithoutShippingMethodInput[]
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutShippingMethodInput | Prisma.OrderCreateOrConnectWithoutShippingMethodInput[]
+  upsert?: Prisma.OrderUpsertWithWhereUniqueWithoutShippingMethodInput | Prisma.OrderUpsertWithWhereUniqueWithoutShippingMethodInput[]
+  createMany?: Prisma.OrderCreateManyShippingMethodInputEnvelope
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[]
+  update?: Prisma.OrderUpdateWithWhereUniqueWithoutShippingMethodInput | Prisma.OrderUpdateWithWhereUniqueWithoutShippingMethodInput[]
+  updateMany?: Prisma.OrderUpdateManyWithWhereWithoutShippingMethodInput | Prisma.OrderUpdateManyWithWhereWithoutShippingMethodInput[]
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
+}
+
 export type OrderCreateWithoutUserInput = {
   id?: string
   orderNumber: string
@@ -791,6 +885,7 @@ export type OrderCreateWithoutUserInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -801,6 +896,7 @@ export type OrderCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   coupon?: Prisma.CouponCreateNestedOneWithoutOrdersInput
+  shippingMethod?: Prisma.ShippingMethodCreateNestedOneWithoutOrdersInput
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
 }
 
@@ -812,6 +908,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -819,6 +916,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   bkashNumber?: string | null
   bkashTrxId?: string | null
   couponId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -863,6 +961,7 @@ export type OrderScalarWhereInput = {
   customerAddress?: Prisma.StringFilter<"Order"> | string
   subtotal?: Prisma.FloatFilter<"Order"> | number
   discount?: Prisma.FloatFilter<"Order"> | number
+  shippingCost?: Prisma.FloatFilter<"Order"> | number
   total?: Prisma.FloatFilter<"Order"> | number
   paymentMethod?: Prisma.EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFilter<"Order"> | $Enums.PaymentStatus
@@ -870,6 +969,7 @@ export type OrderScalarWhereInput = {
   bkashNumber?: Prisma.StringNullableFilter<"Order"> | string | null
   bkashTrxId?: Prisma.StringNullableFilter<"Order"> | string | null
   couponId?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingMethodId?: Prisma.StringNullableFilter<"Order"> | string | null
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -883,6 +983,7 @@ export type OrderCreateWithoutCouponInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -893,6 +994,7 @@ export type OrderCreateWithoutCouponInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
+  shippingMethod?: Prisma.ShippingMethodCreateNestedOneWithoutOrdersInput
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
 }
 
@@ -905,12 +1007,14 @@ export type OrderUncheckedCreateWithoutCouponInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   orderStatus?: $Enums.OrderStatus
   bkashNumber?: string | null
   bkashTrxId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -951,6 +1055,7 @@ export type OrderCreateWithoutItemsInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -962,6 +1067,7 @@ export type OrderCreateWithoutItemsInput = {
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
   coupon?: Prisma.CouponCreateNestedOneWithoutOrdersInput
+  shippingMethod?: Prisma.ShippingMethodCreateNestedOneWithoutOrdersInput
 }
 
 export type OrderUncheckedCreateWithoutItemsInput = {
@@ -973,6 +1079,7 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -980,6 +1087,7 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   bkashNumber?: string | null
   bkashTrxId?: string | null
   couponId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1009,6 +1117,7 @@ export type OrderUpdateWithoutItemsInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1020,6 +1129,7 @@ export type OrderUpdateWithoutItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
   coupon?: Prisma.CouponUpdateOneWithoutOrdersNestedInput
+  shippingMethod?: Prisma.ShippingMethodUpdateOneWithoutOrdersNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -1031,6 +1141,7 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1038,9 +1149,82 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrderCreateWithoutShippingMethodInput = {
+  id?: string
+  orderNumber: string
+  customerName: string
+  customerPhone: string
+  customerAddress: string
+  subtotal: number
+  discount?: number
+  shippingCost?: number
+  total: number
+  paymentMethod: $Enums.PaymentMethod
+  paymentStatus?: $Enums.PaymentStatus
+  orderStatus?: $Enums.OrderStatus
+  bkashNumber?: string | null
+  bkashTrxId?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutOrdersInput
+  coupon?: Prisma.CouponCreateNestedOneWithoutOrdersInput
+  items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutShippingMethodInput = {
+  id?: string
+  orderNumber: string
+  userId?: string | null
+  customerName: string
+  customerPhone: string
+  customerAddress: string
+  subtotal: number
+  discount?: number
+  shippingCost?: number
+  total: number
+  paymentMethod: $Enums.PaymentMethod
+  paymentStatus?: $Enums.PaymentStatus
+  orderStatus?: $Enums.OrderStatus
+  bkashNumber?: string | null
+  bkashTrxId?: string | null
+  couponId?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutShippingMethodInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutShippingMethodInput, Prisma.OrderUncheckedCreateWithoutShippingMethodInput>
+}
+
+export type OrderCreateManyShippingMethodInputEnvelope = {
+  data: Prisma.OrderCreateManyShippingMethodInput | Prisma.OrderCreateManyShippingMethodInput[]
+  skipDuplicates?: boolean
+}
+
+export type OrderUpsertWithWhereUniqueWithoutShippingMethodInput = {
+  where: Prisma.OrderWhereUniqueInput
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutShippingMethodInput, Prisma.OrderUncheckedUpdateWithoutShippingMethodInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutShippingMethodInput, Prisma.OrderUncheckedCreateWithoutShippingMethodInput>
+}
+
+export type OrderUpdateWithWhereUniqueWithoutShippingMethodInput = {
+  where: Prisma.OrderWhereUniqueInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutShippingMethodInput, Prisma.OrderUncheckedUpdateWithoutShippingMethodInput>
+}
+
+export type OrderUpdateManyWithWhereWithoutShippingMethodInput = {
+  where: Prisma.OrderScalarWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateManyMutationInput, Prisma.OrderUncheckedUpdateManyWithoutShippingMethodInput>
 }
 
 export type OrderCreateManyUserInput = {
@@ -1051,6 +1235,7 @@ export type OrderCreateManyUserInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
@@ -1058,6 +1243,7 @@ export type OrderCreateManyUserInput = {
   bkashNumber?: string | null
   bkashTrxId?: string | null
   couponId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1071,6 +1257,7 @@ export type OrderUpdateWithoutUserInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1081,6 +1268,7 @@ export type OrderUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coupon?: Prisma.CouponUpdateOneWithoutOrdersNestedInput
+  shippingMethod?: Prisma.ShippingMethodUpdateOneWithoutOrdersNestedInput
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
 }
 
@@ -1092,6 +1280,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1099,6 +1288,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1113,6 +1303,7 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1120,6 +1311,7 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1134,12 +1326,14 @@ export type OrderCreateManyCouponInput = {
   customerAddress: string
   subtotal: number
   discount?: number
+  shippingCost?: number
   total: number
   paymentMethod: $Enums.PaymentMethod
   paymentStatus?: $Enums.PaymentStatus
   orderStatus?: $Enums.OrderStatus
   bkashNumber?: string | null
   bkashTrxId?: string | null
+  shippingMethodId?: string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1153,6 +1347,7 @@ export type OrderUpdateWithoutCouponInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1163,6 +1358,7 @@ export type OrderUpdateWithoutCouponInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
+  shippingMethod?: Prisma.ShippingMethodUpdateOneWithoutOrdersNestedInput
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
 }
 
@@ -1175,12 +1371,14 @@ export type OrderUncheckedUpdateWithoutCouponInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   orderStatus?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1196,12 +1394,104 @@ export type OrderUncheckedUpdateManyWithoutCouponInput = {
   customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
   paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
   paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   orderStatus?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
   bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrderCreateManyShippingMethodInput = {
+  id?: string
+  orderNumber: string
+  userId?: string | null
+  customerName: string
+  customerPhone: string
+  customerAddress: string
+  subtotal: number
+  discount?: number
+  shippingCost?: number
+  total: number
+  paymentMethod: $Enums.PaymentMethod
+  paymentStatus?: $Enums.PaymentStatus
+  orderStatus?: $Enums.OrderStatus
+  bkashNumber?: string | null
+  bkashTrxId?: string | null
+  couponId?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OrderUpdateWithoutShippingMethodInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  orderStatus?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
+  coupon?: Prisma.CouponUpdateOneWithoutOrdersNestedInput
+  items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutShippingMethodInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  orderStatus?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateManyWithoutShippingMethodInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  customerAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  shippingCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  paymentStatus?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  orderStatus?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  bkashNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bkashTrxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1247,6 +1537,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   customerAddress?: boolean
   subtotal?: boolean
   discount?: boolean
+  shippingCost?: boolean
   total?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
@@ -1254,11 +1545,13 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   bkashNumber?: boolean
   bkashTrxId?: boolean
   couponId?: boolean
+  shippingMethodId?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   coupon?: boolean | Prisma.Order$couponArgs<ExtArgs>
+  shippingMethod?: boolean | Prisma.Order$shippingMethodArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
@@ -1272,6 +1565,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   customerAddress?: boolean
   subtotal?: boolean
   discount?: boolean
+  shippingCost?: boolean
   total?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
@@ -1279,11 +1573,13 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   bkashNumber?: boolean
   bkashTrxId?: boolean
   couponId?: boolean
+  shippingMethodId?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   coupon?: boolean | Prisma.Order$couponArgs<ExtArgs>
+  shippingMethod?: boolean | Prisma.Order$shippingMethodArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1295,6 +1591,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   customerAddress?: boolean
   subtotal?: boolean
   discount?: boolean
+  shippingCost?: boolean
   total?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
@@ -1302,11 +1599,13 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   bkashNumber?: boolean
   bkashTrxId?: boolean
   couponId?: boolean
+  shippingMethodId?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   coupon?: boolean | Prisma.Order$couponArgs<ExtArgs>
+  shippingMethod?: boolean | Prisma.Order$shippingMethodArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectScalar = {
@@ -1318,6 +1617,7 @@ export type OrderSelectScalar = {
   customerAddress?: boolean
   subtotal?: boolean
   discount?: boolean
+  shippingCost?: boolean
   total?: boolean
   paymentMethod?: boolean
   paymentStatus?: boolean
@@ -1325,25 +1625,29 @@ export type OrderSelectScalar = {
   bkashNumber?: boolean
   bkashTrxId?: boolean
   couponId?: boolean
+  shippingMethodId?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "userId" | "customerName" | "customerPhone" | "customerAddress" | "subtotal" | "discount" | "total" | "paymentMethod" | "paymentStatus" | "orderStatus" | "bkashNumber" | "bkashTrxId" | "couponId" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "userId" | "customerName" | "customerPhone" | "customerAddress" | "subtotal" | "discount" | "shippingCost" | "total" | "paymentMethod" | "paymentStatus" | "orderStatus" | "bkashNumber" | "bkashTrxId" | "couponId" | "shippingMethodId" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   coupon?: boolean | Prisma.Order$couponArgs<ExtArgs>
+  shippingMethod?: boolean | Prisma.Order$shippingMethodArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   coupon?: boolean | Prisma.Order$couponArgs<ExtArgs>
+  shippingMethod?: boolean | Prisma.Order$shippingMethodArgs<ExtArgs>
 }
 export type OrderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   coupon?: boolean | Prisma.Order$couponArgs<ExtArgs>
+  shippingMethod?: boolean | Prisma.Order$shippingMethodArgs<ExtArgs>
 }
 
 export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1351,6 +1655,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     user: Prisma.$UserPayload<ExtArgs> | null
     coupon: Prisma.$CouponPayload<ExtArgs> | null
+    shippingMethod: Prisma.$ShippingMethodPayload<ExtArgs> | null
     items: Prisma.$OrderItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1362,6 +1667,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     customerAddress: string
     subtotal: number
     discount: number
+    shippingCost: number
     total: number
     paymentMethod: $Enums.PaymentMethod
     paymentStatus: $Enums.PaymentStatus
@@ -1369,6 +1675,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     bkashNumber: string | null
     bkashTrxId: string | null
     couponId: string | null
+    shippingMethodId: string | null
     notes: string | null
     createdAt: Date
     updatedAt: Date
@@ -1768,6 +2075,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.Order$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   coupon<T extends Prisma.Order$couponArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$couponArgs<ExtArgs>>): Prisma.Prisma__CouponClient<runtime.Types.Result.GetResult<Prisma.$CouponPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  shippingMethod<T extends Prisma.Order$shippingMethodArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$shippingMethodArgs<ExtArgs>>): Prisma.Prisma__ShippingMethodClient<runtime.Types.Result.GetResult<Prisma.$ShippingMethodPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.Order$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1806,6 +2114,7 @@ export interface OrderFieldRefs {
   readonly customerAddress: Prisma.FieldRef<"Order", 'String'>
   readonly subtotal: Prisma.FieldRef<"Order", 'Float'>
   readonly discount: Prisma.FieldRef<"Order", 'Float'>
+  readonly shippingCost: Prisma.FieldRef<"Order", 'Float'>
   readonly total: Prisma.FieldRef<"Order", 'Float'>
   readonly paymentMethod: Prisma.FieldRef<"Order", 'PaymentMethod'>
   readonly paymentStatus: Prisma.FieldRef<"Order", 'PaymentStatus'>
@@ -1813,6 +2122,7 @@ export interface OrderFieldRefs {
   readonly bkashNumber: Prisma.FieldRef<"Order", 'String'>
   readonly bkashTrxId: Prisma.FieldRef<"Order", 'String'>
   readonly couponId: Prisma.FieldRef<"Order", 'String'>
+  readonly shippingMethodId: Prisma.FieldRef<"Order", 'String'>
   readonly notes: Prisma.FieldRef<"Order", 'String'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
@@ -2247,6 +2557,25 @@ export type Order$couponArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   include?: Prisma.CouponInclude<ExtArgs> | null
   where?: Prisma.CouponWhereInput
+}
+
+/**
+ * Order.shippingMethod
+ */
+export type Order$shippingMethodArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShippingMethod
+   */
+  select?: Prisma.ShippingMethodSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShippingMethod
+   */
+  omit?: Prisma.ShippingMethodOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingMethodInclude<ExtArgs> | null
+  where?: Prisma.ShippingMethodWhereInput
 }
 
 /**
