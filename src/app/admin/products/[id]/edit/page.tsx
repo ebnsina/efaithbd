@@ -344,6 +344,13 @@ export default function ProductFormPage() {
     }
 
     const data = form.getValues()
+    
+    // For variant products, calculate total stock from variants
+    if (data.productType === 'variant' && data.variants && data.variants.length > 0) {
+      const totalVariantStock = data.variants.reduce((sum, variant) => sum + (variant.stock || 0), 0)
+      data.stock = totalVariantStock
+    }
+    
     if (isEdit && productId) {
       updateMutation.mutate({ id: productId, data })
     } else {

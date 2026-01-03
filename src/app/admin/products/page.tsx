@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   AlertDialog,
@@ -9,17 +9,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -27,46 +27,46 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Edit, Loader2, MoreVertical, Plus, Search, Trash2 } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useState } from 'react'
-import { toast } from 'sonner'
+} from '@/components/ui/table';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Edit, Loader2, MoreVertical, Plus, Search, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface Product {
-  id: string
-  name: string
-  slug: string
-  price: number
-  stock: number
-  images: string[]
-  featured: boolean
-  active: boolean
-  category: { id: string; name: string }
-  variants: Array<{ id: string }>
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  stock: number;
+  images: string[];
+  featured: boolean;
+  active: boolean;
+  category: { id: string; name: string };
+  variants: Array<{ id: string }>;
 }
 
 // API functions
 const fetchProducts = async (): Promise<Product[]> => {
-  const res = await fetch('/api/admin/products')
-  if (!res.ok) throw new Error('Failed to fetch products')
-  return res.json()
-}
+  const res = await fetch('/api/admin/products');
+  if (!res.ok) throw new Error('Failed to fetch products');
+  return res.json();
+};
 
 const deleteProduct = async (id: string): Promise<void> => {
   const res = await fetch(`/api/admin/products/${id}`, {
     method: 'DELETE',
-  })
-  if (!res.ok) throw new Error('Failed to delete product')
-}
+  });
+  if (!res.ok) throw new Error('Failed to delete product');
+};
 
 export default function ProductsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   // Fetch products query
   const {
@@ -76,49 +76,45 @@ export default function ProductsPage() {
   } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
-  })
+  });
 
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: deleteProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] })
-      toast.success('Delete Success')
-      setDeleteId(null)
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success('Delete Success');
+      setDeleteId(null);
     },
     onError: () => {
-      toast.error('Delete Error')
-      setDeleteId(null)
+      toast.error('Delete Error');
+      setDeleteId(null);
     },
-  })
+  });
 
   const handleDelete = async (id: string) => {
-    setDeleteId(id)
-  }
+    setDeleteId(id);
+  };
 
   const confirmDelete = async () => {
-    if (!deleteId) return
-    deleteMutation.mutate(deleteId)
-  }
+    if (!deleteId) return;
+    deleteMutation.mutate(deleteId);
+  };
 
   const filteredProducts = products.filter(
-    product =>
+    (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Product Management
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Create and manage products
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">Product Management</h1>
+          <p className="text-muted-foreground mt-2">Create and manage products</p>
         </div>
         <Button asChild>
           <Link href="/admin/products/new">
@@ -135,7 +131,7 @@ export default function ProductsPage() {
           type="search"
           placeholder={'Search Placeholder'}
           value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9"
         />
       </div>
@@ -171,15 +167,15 @@ export default function ProductsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map(product => (
+                  {filteredProducts.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
                         <div className="relative h-16 w-16 overflow-hidden rounded-md">
                           {product.images[0] ? (
-                            <Image
+                            <img
                               src={product.images[0]}
                               alt={product.name}
-                              fill
+                              // fill
                               className="object-cover"
                             />
                           ) : (
@@ -192,18 +188,14 @@ export default function ProductsPage() {
                       <TableCell>
                         <div className="space-y-1">
                           <div className="font-medium">{product.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {product.slug}
-                          </div>
+                          <div className="text-sm text-muted-foreground">{product.slug}</div>
                         </div>
                       </TableCell>
                       <TableCell>{product.category.name}</TableCell>
                       <TableCell>৳{product.price.toLocaleString()}</TableCell>
                       <TableCell>
                         {product.variants.length > 0 ? (
-                          <span className="text-sm text-muted-foreground">
-                            With variants
-                          </span>
+                          <span className="text-sm text-muted-foreground">With variants</span>
                         ) : (
                           product.stock
                         )}
@@ -214,9 +206,7 @@ export default function ProductsPage() {
                             Variant ({product.variants.length})
                           </span>
                         ) : (
-                          <span className="text-xs text-muted-foreground">
-                            Single
-                          </span>
+                          <span className="text-xs text-muted-foreground">Single</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -277,18 +267,15 @@ export default function ProductsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this product? This action cannot
-              be undone.
+              Are you sure you want to delete this product? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>
-              Delete
-            </AlertDialogAction>
+            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

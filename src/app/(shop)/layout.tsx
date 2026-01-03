@@ -26,6 +26,15 @@ export default async function ShopLayout({
     orderBy: { order: 'asc' },
   })
 
+  const categories = await prisma.category.findMany({
+    include: {
+      subcategories: {
+        orderBy: { name: 'asc' },
+      },
+    },
+    orderBy: { name: 'asc' },
+  })
+
   return (
     <QueryProvider>
       <Navbar
@@ -34,6 +43,7 @@ export default async function ShopLayout({
         promoText={settings?.promoText}
         promoActive={settings?.promoActive}
         menuItems={menuItems}
+        categories={categories}
       />
       <main className="min-h-screen">{children}</main>
       <Footer />

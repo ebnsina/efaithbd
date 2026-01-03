@@ -9,12 +9,26 @@ interface MenuItem {
   children?: MenuItem[]
 }
 
+interface SubCategory {
+  id: string
+  name: string
+  slug: string
+}
+
+interface Category {
+  id: string
+  name: string
+  slug: string
+  subcategories: SubCategory[]
+}
+
 interface NavbarProps {
   siteName?: string
   logo?: string | null
   promoText?: string | null
   promoActive?: boolean
   menuItems?: MenuItem[]
+  categories?: Category[]
 }
 
 export default async function Navbar({
@@ -23,6 +37,7 @@ export default async function Navbar({
   promoText,
   promoActive = false,
   menuItems = [],
+  categories = [],
 }: NavbarProps) {
   const session = await auth()
 
@@ -34,13 +49,14 @@ export default async function Navbar({
         </div>
       )}
 
-      <nav className="bg-white backdrop-blur-lg sticky top-0 z-50">
+      <nav className="bg-white backdrop-blur-lg sticky top-0 z-[100]">
         <NavbarClient
           siteName={siteName || 'Online Store'}
           logo={logo}
           isLoggedIn={!!session}
           userName={session?.user?.name}
           menuItems={menuItems}
+          categories={categories}
         />
       </nav>
     </>

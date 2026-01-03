@@ -54,7 +54,7 @@ export async function PUT(
         description: body.description,
         price: parseFloat(body.price),
         comparePrice: body.comparePrice ? parseFloat(body.comparePrice) : null,
-        stock: parseInt(body.stock),
+        stock: parseInt(body.stock) || 0,
         images: body.images || [],
         categoryId: body.categoryId,
         subcategoryId: body.subcategoryId || null,
@@ -63,12 +63,12 @@ export async function PUT(
         variants:
           body.variants?.length > 0
             ? {
-                create: body.variants.map((v: any) => ({
+                create: body.variants.map((v: any, index: number) => ({
                   name: v.name,
                   value: v.value,
                   price: v.price ? parseFloat(v.price) : null,
-                  stock: parseInt(v.stock),
-                  sku: v.sku || null,
+                  stock: parseInt(v.stock) || 0,
+                  sku: v.sku && v.sku.trim() !== '' ? v.sku : null,
                 })),
               }
             : undefined,
