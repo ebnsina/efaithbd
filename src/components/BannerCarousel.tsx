@@ -49,7 +49,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
   const currentBanner = banners[currentIndex]
   const content = (
-    <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden rounded bg-gray-50">
+    <div className="relative w-full h-[220px] sm:h-[320px] md:h-[500px] overflow-hidden rounded bg-gray-50">
       <Image
         src={currentBanner.image}
         alt={currentBanner.title || 'Banner'}
@@ -64,15 +64,15 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
       {/* Text Overlay */}
       <div className="absolute inset-0 flex items-center">
-        <div className="container mx-auto px-8 md:px-12">
-          <div className="max-w-xl text-white">
+        <div className="container mx-auto px-12 sm:px-16 md:px-24">
+          <div className="max-w-md md:max-w-xl text-white">
             {currentBanner.title && (
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg leading-tight">
+              <h1 className="text-xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-4 drop-shadow-lg leading-tight">
                 {currentBanner.title}
               </h1>
             )}
             {currentBanner.subtitle && (
-              <p className="text-lg md:text-xl mb-8 drop-shadow-md font-light opacity-95">
+              <p className="text-sm sm:text-lg md:text-xl mb-4 sm:mb-8 drop-shadow-md font-light opacity-95">
                 {currentBanner.subtitle}
               </p>
             )}
@@ -87,7 +87,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
             onClick={goToPrevious}
             variant="secondary"
             size="icon-sm"
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white backdrop-blur-sm border-0 shadow-lg hover:shadow-xl"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white backdrop-blur-sm border-0 shadow-lg hover:shadow-xl"
           >
             <ChevronLeft className="size-6" />
           </Button>
@@ -95,7 +95,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
             onClick={goToNext}
             variant="secondary"
             size="icon-sm"
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white backdrop-blur-sm border-0 shadow-lg hover:shadow-xl"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white backdrop-blur-sm border-0 shadow-lg hover:shadow-xl"
           >
             <ChevronRight className="size-6" />
           </Button>
@@ -104,7 +104,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
       {/* Dots Indicator */}
       {banners.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {banners.map((_, index) => (
             <Button
               key={index}

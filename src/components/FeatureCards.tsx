@@ -27,7 +27,7 @@ export default function FeatureCards({ cards }: FeatureCardsProps) {
 
   return (
     <section className="bg-slate-100 py-10">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {cards.map(card => {
             const IconComponent = iconMap[card.icon] || Shield

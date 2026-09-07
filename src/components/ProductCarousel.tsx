@@ -44,7 +44,7 @@ export default function ProductCarousel({
 
   return (
     <section className="py-8">
-      <div className="container mx-auto px-2 md:px-0">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl md:text-2xl font-semibold">{title}</h2>

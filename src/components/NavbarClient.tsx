@@ -86,14 +86,14 @@ export default function NavbarClient({
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-primary text-white">
       <div className="container mx-auto px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between gap-2 sm:gap-4 py-3 sm:py-4 md:py-5">
           <Link href="/" className="flex items-center shrink-0">
             {logo ? (
               <img src={logo} alt={siteName} className="h-8 sm:h-10 w-auto" />
             ) : (
-              <span className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold text-white">
                 {siteName}
               </span>
             )}
@@ -107,7 +107,7 @@ export default function NavbarClient({
                 placeholder="Search here..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 md:h-12 pl-12 pr-4 text-sm border border-gray-300 focus:rounded-none! focus:outline-none focus:border-primary! transition-colors"
+                className="w-full h-11 md:h-12 pl-12 pr-4 text-sm bg-white text-gray-900 placeholder:text-gray-500 border border-gray-300 focus:rounded-none! focus:outline-none focus:border-primary! transition-colors"
               />
             </div>
           </form>
@@ -118,7 +118,7 @@ export default function NavbarClient({
               <div className="hidden lg:flex items-center gap-2">
                 <Link
                   href="/orders"
-                  className="flex flex-col items-start px-2 py-1 text-gray-700 hover:bg-gray-100 rounded transition-all"
+                  className="flex flex-col items-start px-2 py-1 text-white hover:bg-white/15 rounded transition-all"
                 >
                   <span className="text-xs">Hello, {userName?.length ? userName : 'User'}</span>
                   <span className="text-sm font-bold">Account & Orders</span>
@@ -128,7 +128,7 @@ export default function NavbarClient({
                     type="submit"
                     variant="ghost"
                     size="sm"
-                    className="text-gray-700 hover:bg-gray-100 gap-1"
+                    className="text-white hover:bg-white/15 gap-1"
                     title="Logout"
                   >
                     <LogOut className="w-4 h-4" />
@@ -139,7 +139,7 @@ export default function NavbarClient({
             ) : (
               <Link
                 href="/login"
-                className="hidden lg:flex flex-col items-start px-2 py-1 text-gray-700 hover:bg-gray-100 rounded transition-all"
+                className="hidden lg:flex flex-col items-start px-2 py-1 text-white hover:bg-white/15 rounded transition-all"
               >
                 <span className="text-xs">Sign in</span>
               </Link>
@@ -148,26 +148,29 @@ export default function NavbarClient({
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="relative text-gray-700 hover:bg-gray-100 p-1.5 sm:p-2 rounded transition-all hidden md:flex items-center"
+              className="text-white hover:bg-white/15 p-1.5 sm:p-2 rounded transition-all hidden md:flex items-center gap-1 sm:gap-2"
               title="Wishlist"
             >
-              <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">
-                  {wishlistCount}
-                </span>
-              )}
+              <div className="relative">
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-white text-primary rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">
+                    {wishlistCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden lg:block text-sm font-bold">Wishlist</span>
             </Link>
 
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative text-gray-700 hover:bg-gray-100 p-1.5 sm:p-2 rounded transition-all flex items-center gap-1 sm:gap-2"
+              className="relative text-white hover:bg-white/15 p-1.5 sm:p-2 rounded transition-all flex items-center gap-1 sm:gap-2"
             >
               <div className="relative">
                 <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">
+                  <span className="absolute -top-1 -right-1 bg-white text-primary rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs font-bold">
                     {cartCount}
                   </span>
                 )}
@@ -179,7 +182,7 @@ export default function NavbarClient({
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-gray-700 hover:bg-gray-100"
+              className="md:hidden text-white hover:bg-white/15"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -188,7 +191,7 @@ export default function NavbarClient({
         </div>
       </div>
 
-      <div className="bg-white border-t border-slate-200">
+      <div className="hidden bg-primary-foreground/10 border-t border-primary-foreground/20">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 relative">
           <div className="hidden md:flex items-center gap-1 sm:gap-2 py-2 sm:py-3 overflow-x-auto scrollbar-hide">
             {/* All Categories Mega Menu Button */}
@@ -196,7 +199,7 @@ export default function NavbarClient({
               <div>
                 <button
                   onMouseEnter={() => setShowCategoriesMega(true)}
-                  className="text-gray-700 hover:text-gray-900 text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 hover:bg-gray-50 rounded-lg transition-all whitespace-nowrap"
+                  className="text-primary-foreground hover:text-primary-foreground text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 hover:bg-primary-foreground/15 rounded-lg transition-all whitespace-nowrap"
                 >
                   <SquareMenu className="size-4" />
                   All Categories
@@ -217,7 +220,7 @@ export default function NavbarClient({
                 >
                   <Link
                     href={item.url}
-                    className="text-gray-700 hover:text-gray-900 text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 hover:bg-gray-50 rounded-lg transition-all whitespace-nowrap"
+                    className="text-primary-foreground hover:text-primary-foreground text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 hover:bg-primary-foreground/15 rounded-lg transition-all whitespace-nowrap"
                   >
                     {item.label}
                     {item.children && item.children.length > 0 && (
@@ -260,25 +263,25 @@ export default function NavbarClient({
               <>
                 <Link
                   href="/"
-                  className="text-gray-700 hover:text-gray-900 text-sm font-semibold px-4 py-2 hover:bg-gray-50 rounded-lg transition-all"
+                  className="text-primary-foreground hover:text-primary-foreground text-sm font-semibold px-4 py-2 hover:bg-primary-foreground/15 rounded-lg transition-all"
                 >
                   Home
                 </Link>
                 <Link
                   href="/products"
-                  className="text-gray-700 hover:text-gray-900 text-sm font-semibold px-4 py-2 hover:bg-gray-50 rounded-lg transition-all"
+                  className="text-primary-foreground hover:text-primary-foreground text-sm font-semibold px-4 py-2 hover:bg-primary-foreground/15 rounded-lg transition-all"
                 >
                   Products
                 </Link>
                 <Link
                   href="/categories"
-                  className="text-gray-700 hover:text-gray-900 text-sm font-semibold px-4 py-2 hover:bg-gray-50 rounded-lg transition-all"
+                  className="text-primary-foreground hover:text-primary-foreground text-sm font-semibold px-4 py-2 hover:bg-primary-foreground/15 rounded-lg transition-all"
                 >
                   Categories
                 </Link>
                 <Link
                   href="/orders/track"
-                  className="text-gray-700 hover:text-gray-900 text-sm font-semibold px-4 py-2 hover:bg-gray-50 rounded-lg transition-all"
+                  className="text-primary-foreground hover:text-primary-foreground text-sm font-semibold px-4 py-2 hover:bg-primary-foreground/15 rounded-lg transition-all"
                 >
                   Track Order
                 </Link>
@@ -295,23 +298,23 @@ export default function NavbarClient({
             onMouseLeave={() => setShowCategoriesMega(false)}
           >
             <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 max-h-[70vh] overflow-y-auto">
+              <div className="flex flex-col gap-2 max-h-[70vh] overflow-y-auto">
                 {categories.map((category) => (
                   <div key={category.id} className="space-y-2">
                     <Link
                       href={`/categories/${category.slug}`}
-                      className="font-bold text-gray-900 hover:text-primary hover:bg-emerald-50 transition-all block py-2 px-3 text-sm rounded-md"
+                      className="font-bold text-gray-900 hover:text-primary hover:bg-primary/10 transition-all block py-2 px-3 text-sm rounded-md"
                       onClick={() => setShowCategoriesMega(false)}
                     >
                       {category.name}
                     </Link>
                     {category.subcategories.length > 0 && (
-                      <ul className="space-y-1">
+                      <ul className="flex flex-wrap gap-x-2">
                         {category.subcategories.map((subcategory) => (
                           <li key={subcategory.id}>
                             <Link
                               href={`/categories/${category.slug}/${subcategory.slug}`}
-                              className="text-xs text-gray-600 hover:text-primary hover:bg-emerald-50 transition-all block py-1.5 px-3 rounded-md"
+                              className="text-xs text-gray-600 hover:text-primary hover:bg-primary/10 transition-all block py-1.5 px-3 rounded-md"
                               onClick={() => setShowCategoriesMega(false)}
                             >
                               {subcategory.name}
@@ -341,7 +344,7 @@ export default function NavbarClient({
                   placeholder="Search here..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-11 sm:h-12 pl-10 sm:pl-12 pr-4 text-sm border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary transition-colors"
+                  className="w-full h-11 sm:h-12 pl-10 sm:pl-12 pr-4 text-sm bg-white text-gray-900 placeholder:text-gray-500 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-primary transition-colors"
                 />
               </div>
             </form>
@@ -353,7 +356,7 @@ export default function NavbarClient({
                 <div>
                   <button
                     onClick={() => toggleMobileCategory('all-categories')}
-                    className="w-full flex items-center justify-between py-2.5 px-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-semibold rounded-lg transition-all"
+                    className="w-full flex items-center justify-between py-2.5 px-3 text-gray-700 hover:text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all"
                   >
                     <span>All Categories</span>
                     <ChevronDown
@@ -368,7 +371,7 @@ export default function NavbarClient({
                         <div key={category.id}>
                           <button
                             onClick={() => toggleMobileCategory(category.id)}
-                            className="w-full flex items-center justify-between py-2 px-3 text-sm text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium rounded-lg transition-all"
+                            className="w-full flex items-center justify-between py-2 px-3 text-sm text-gray-700 hover:text-primary hover:bg-primary/10 font-medium rounded-lg transition-all"
                           >
                             <Link
                               href={`/categories/${category.slug}`}
@@ -392,7 +395,7 @@ export default function NavbarClient({
                                   <Link
                                     key={subcategory.id}
                                     href={`/categories/${category.slug}/${subcategory.slug}`}
-                                    className="block py-1.5 px-3 text-xs text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                                    className="block py-1.5 px-3 text-xs text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
                                     onClick={() => setMobileMenuOpen(false)}
                                   >
                                     {subcategory.name}
@@ -412,7 +415,7 @@ export default function NavbarClient({
                   <div key={item.id}>
                     <Link
                       href={item.url}
-                      className="block py-2.5 px-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-semibold rounded-lg transition-all"
+                      className="block py-2.5 px-3 text-gray-700 hover:text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {item.label}
@@ -423,7 +426,7 @@ export default function NavbarClient({
                           <Link
                             key={child.id}
                             href={child.url}
-                            className="block py-2 px-3 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 font-medium rounded-lg transition-all"
+                            className="block py-2 px-3 text-sm text-gray-600 hover:text-primary hover:bg-primary/10 font-medium rounded-lg transition-all"
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             {child.label}
@@ -437,28 +440,28 @@ export default function NavbarClient({
                 <>
                   <Link
                     href="/"
-                    className="block py-2.5 px-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-semibold rounded-lg transition-all"
+                    className="block py-2.5 px-3 text-gray-700 hover:text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Home
                   </Link>
                   <Link
                     href="/products"
-                    className="block py-2.5 px-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-semibold rounded-lg transition-all"
+                    className="block py-2.5 px-3 text-gray-700 hover:text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Products
                   </Link>
                   <Link
                     href="/categories"
-                    className="block py-2.5 px-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-semibold rounded-lg transition-all"
+                    className="block py-2.5 px-3 text-gray-700 hover:text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Categories
                   </Link>
                   <Link
                     href="/orders/track"
-                    className="block py-2.5 px-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-semibold rounded-lg transition-all"
+                    className="block py-2.5 px-3 text-gray-700 hover:text-primary hover:bg-primary/10 font-semibold rounded-lg transition-all"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Track Order

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
-const fontSans = Geist({
+const fontSans = Montserrat({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-sans',

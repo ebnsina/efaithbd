@@ -90,7 +90,7 @@ export default function Footer() {
     <footer className="bg-gray-50 border-t">
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr] gap-8 sm:gap-10">
           {/* Company Info Column */}
           <div className="sm:col-span-2 lg:col-span-1">
             {contactInfo?.logo ? (
@@ -103,14 +103,19 @@ export default function Footer() {
               <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed">{contactInfo.description}</p>
             )}
 
-            {contactInfo?.workingHours && (
-              <p className="text-gray-700 text-xs sm:text-sm mb-2">
-                <span className="font-semibold">Working Hours:</span> {contactInfo.workingHours}
+            {contactInfo?.phone && (
+              <p className="text-gray-700 text-xs sm:text-sm mb-1">
+                Got Question? Call us{contactInfo.workingHours ? ` ${contactInfo.workingHours}` : ''}
               </p>
             )}
 
             {contactInfo?.phone && (
-              <p className="text-gray-900 text-base sm:text-lg font-bold mb-3 sm:mb-4">{contactInfo.phone}</p>
+              <a
+                href={`tel:${contactInfo.phone}`}
+                className="block text-gray-900 text-lg sm:text-xl font-bold mb-4 hover:text-primary"
+              >
+                {contactInfo.phone}
+              </a>
             )}
 
             {/* Social Links */}
@@ -171,7 +176,7 @@ export default function Footer() {
             {/* Payment Methods */}
             {contactInfo?.paymentMethods && contactInfo.paymentMethods.length > 0 && (
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2">
-                <span className="text-xs sm:text-sm text-gray-600">Secure Payment:</span>
+                <span className="text-xs sm:text-sm text-gray-600">We&apos;re using safe payment for</span>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   {contactInfo.paymentMethods.map((method, index) => (
                     <img

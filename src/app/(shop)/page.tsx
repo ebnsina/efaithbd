@@ -5,6 +5,7 @@ import CategoryGrid from '@/components/CategoryGrid';
 import ProductCarousel from '@/components/ProductCarousel';
 import MidBanner from '@/components/MidBanner';
 import FeatureCards from '@/components/FeatureCards';
+import PolicyStrip from '@/components/PolicyStrip';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -154,20 +155,25 @@ export default async function Home() {
     <div className="min-h-screen bg-slate-50">
       {/* Categories Grid */}
       {categories.length > 0 && (
-        <div className="py-12s">
+        <div>
           <CategoryGrid categories={categories} />
         </div>
       )}
 
       {/* Banner Carousel */}
       {banners.length > 0 && (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-0 pt-6 pb-8">
+        <div className="container mx-auto px-4 sm:px-6 pt-6 pb-8">
           <BannerCarousel banners={banners} />
         </div>
       )}
 
+      {/* Policy / service strip */}
+      <div className="container mx-auto px-4 sm:px-6 pb-8">
+        <PolicyStrip supportPhone={settings?.supportPhone} />
+      </div>
+
       {/* Product Sections with Mid Banners */}
-      <div className="space-y-16 pb-16">
+      <div className="space-y-4 pb-8">
         {sectionsWithProducts.map((section, index) => (
           <div key={section.id}>
             <ProductCarousel title={section.title} products={section.products} />

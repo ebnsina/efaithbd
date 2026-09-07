@@ -44,7 +44,7 @@ export default function WishlistPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mx-auto text-center">
             <div className="bg-white rounded-lg shadow-sm p-12">
               <Heart className="w-24 h-24 mx-auto text-gray-300 mb-6" />
@@ -68,7 +68,7 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {'Wishlist'}
