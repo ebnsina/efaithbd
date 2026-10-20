@@ -17,6 +17,7 @@ import {
   SparklesIcon,
   StarIcon,
   UnfoldMoreIcon,
+  UserMultipleIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, useRouter } from '@tanstack/react-router'
@@ -52,6 +53,7 @@ const groups = [
     label: 'Sales',
     items: [
       { to: '/admin/orders', label: 'Orders', icon: ShoppingBag01Icon },
+      { to: '/admin/customers', label: 'Customers', icon: UserMultipleIcon },
       { to: '/admin/coupons', label: 'Coupons', icon: CouponPercentIcon },
       { to: '/admin/shipping-methods', label: 'Shipping Methods', icon: DeliveryTruck01Icon },
     ],
