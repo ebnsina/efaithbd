@@ -1,12 +1,23 @@
+import { Add01Icon, Delete02Icon, MoreVerticalIcon, ViewIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
+import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'
+import { useState } from 'react'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { type DataColumn, DataTable } from '@/components/data-table'
 import { PageHeader } from '@/components/page-header'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import type { listAdminOrders } from '@/features/admin-orders/admin-orders.functions'
-import { OrderSheet } from '@/features/admin-orders/order-sheet'
-import { adminOrderListQuery } from '@/features/admin-orders/queries'
+import { deleteOrderText, OrderSheet } from '@/features/admin-orders/order-sheet'
+import { adminOrderListQuery, useDeleteOrder } from '@/features/admin-orders/queries'
 import { adminOrderRouteSchema } from '@/features/admin-orders/schemas'
 import {
   orderStatusBadge,
@@ -36,6 +47,8 @@ function OrdersPage() {
   const money = useMoney()
   const orders = useQuery(adminOrderListQuery(search))
   const openOrder = (order?: string) => navigate({ search: (prev) => ({ ...prev, order }) })
+  const [deleting, setDeleting] = useState<Order | null>(null)
+  const deleteOrder = useDeleteOrder()
 
   const columns: DataColumn<Order>[] = [
     {
@@ -101,16 +114,40 @@ function OrdersPage() {
       header: '',
       enableSorting: false,
       cell: ({ row }) => (
-        <Button variant="outline" size="sm" onClick={() => openOrder(row.original.id)}>
-          View
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={<Button variant="ghost" size="icon-sm" aria-label={`Actions for ${row.original.orderNumber}`} />}
+          >
+            <HugeiconsIcon icon={MoreVerticalIcon} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => openOrder(row.original.id)}>
+              <HugeiconsIcon icon={ViewIcon} />
+              View
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={() => setDeleting(row.original)}>
+              <HugeiconsIcon icon={Delete02Icon} />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
     },
   ]
 
   return (
     <>
-      <PageHeader title="Orders" description="See every order and keep its status up to date" />
+      <PageHeader
+        title="Orders"
+        description="See every order and keep its status up to date"
+        action={
+          <Link to="/admin/orders/new" className={buttonVariants()}>
+            <HugeiconsIcon icon={Add01Icon} />
+            New order
+          </Link>
+        }
+      />
       <DataTable
         columns={columns}
         data={orders.data}
@@ -150,6 +187,20 @@ function OrdersPage() {
         ]}
       />
       <OrderSheet orderId={openOrderId} onClose={() => openOrder(undefined)} />
+      <ConfirmDialog
+        open={!!deleting}
+        onOpenChange={(open) => !open && setDeleting(null)}
+        title="Delete this order?"
+        description={deleting ? deleteOrderText(deleting) : ''}
+        pending={deleteOrder.isPending}
+        onConfirm={() =>
+          deleting &&
+          deleteOrder.mutate(deleting.id, {
+            onSuccess: (result) => result.ok && deleting.id === openOrderId && openOrder(undefined),
+            onSettled: () => setDeleting(null),
+          })
+        }
+      />
     </>
   )
 }
