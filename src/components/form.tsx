@@ -169,12 +169,12 @@ function ImageField({ label, multiple, maxImages }: BaseProps & { multiple?: boo
   )
 }
 
-function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel?: string }) {
+function SubmitButton({ label, pendingLabel, className = 'w-full' }: { label: string; pendingLabel?: string; className?: string }) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <Button type="submit" disabled={isSubmitting} className="w-full">
+        <Button type="submit" disabled={isSubmitting} className={className}>
           {isSubmitting && <Spinner />}
           {isSubmitting ? (pendingLabel ?? label) : label}
         </Button>

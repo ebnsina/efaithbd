@@ -119,7 +119,7 @@ export function DataTable<T extends RowData>({
             value={(search[filter.name] as string) || ALL}
             onValueChange={(value) => onSearchChange({ [filter.name]: value === ALL ? undefined : value, page: 1 })}
           >
-            <SelectTrigger className="sm:w-48" aria-label={filter.label}>
+            <SelectTrigger className="w-full sm:w-48" aria-label={filter.label}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
