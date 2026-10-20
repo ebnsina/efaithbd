@@ -1,12 +1,10 @@
-'use client'
-
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form'
-import { Loader2 } from 'lucide-react'
-import ImageUpload from '@/components/ImageUpload'
+import { ImageUpload } from '@/components/image-upload'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Spinner } from '@/components/ui/spinner'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -126,13 +124,14 @@ function SelectField({
     <Field data-invalid={invalid}>
       <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
       <Select
-        value={(field.state.value as string) || undefined}
+        items={options}
+        value={(field.state.value as string) || null}
         onValueChange={(value) => {
-          field.handleChange(value)
+          field.handleChange(value ?? '')
           field.handleBlur()
         }}
       >
-        <SelectTrigger id={field.name} aria-invalid={invalid}>
+        <SelectTrigger id={field.name} aria-invalid={invalid} className="w-full">
           <SelectValue placeholder={placeholder ?? `Select ${label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent>
@@ -143,6 +142,37 @@ function SelectField({
           ))}
         </SelectContent>
       </Select>
+      {description && <FieldDescription>{description}</FieldDescription>}
+      <FieldError errors={errors} />
+    </Field>
+  )
+}
+
+function ColorField({ label, description }: BaseProps) {
+  const { field, invalid, errors } = useFieldErrors()
+  const value = (field.state.value as string) ?? ''
+  return (
+    <Field data-invalid={invalid}>
+      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <div className="flex gap-2">
+        <input
+          type="color"
+          value={/^#[0-9a-f]{6}$/i.test(value) ? value : '#000000'}
+          onChange={(e) => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+          aria-label={`${label} picker`}
+          className="h-9 w-12 shrink-0 cursor-pointer rounded-md border bg-transparent p-1"
+        />
+        <Input
+          id={field.name}
+          name={field.name}
+          value={value}
+          onChange={(e) => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+          aria-invalid={invalid}
+          className="font-mono"
+        />
+      </div>
       {description && <FieldDescription>{description}</FieldDescription>}
       <FieldError errors={errors} />
     </Field>
@@ -170,13 +200,21 @@ function ImageField({ label, multiple, maxImages }: BaseProps & { multiple?: boo
   )
 }
 
-function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel?: string }) {
+function SubmitButton({
+  label,
+  pendingLabel,
+  className = 'w-full',
+}: {
+  label: string
+  pendingLabel?: string
+  className?: string
+}) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        <Button type="submit" disabled={isSubmitting} className={className}>
+          {isSubmitting && <Spinner />}
           {isSubmitting ? (pendingLabel ?? label) : label}
         </Button>
       )}
@@ -184,9 +222,9 @@ function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel?: s
   )
 }
 
-export const { useAppForm, withForm } = createFormHook({
+export const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
-  fieldComponents: { TextField, NumberField, TextareaField, SwitchField, SelectField, ImageField },
+  fieldComponents: { TextField, NumberField, TextareaField, SwitchField, SelectField, ImageField, ColorField },
   formComponents: { SubmitButton },
 })

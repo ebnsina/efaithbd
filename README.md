@@ -1,253 +1,31 @@
-# সুপারমার্ট - বাংলাদেশের ই-কমার্স প্ল্যাটফর্ম
+# efaithbd
 
-বাংলা ভাষায় সম্পূর্ণ ই-কমার্স সাইট যেখানে রয়েছে:
+Online store with a full admin: catalog, orders, coupons, shipping, reviews and Q&A, and every piece of storefront content (pages, FAQs, menus, footer, banners) editable from the admin.
 
-- 🛍️ পণ্য ব্রাউজিং এবং কেনাকাটা
-- 🛒 শপিং কার্ট
-- 💳 ক্যাশ অন ডেলিভারি (COD) এবং বিকাশ পেমেন্ট
-- 📦 অর্ডার ম্যানেজমেন্ট
-- 👨‍💼 সম্পূর্ণ অ্যাডমিন প্যানেল
-- 🏷️ ক্যাটাগরি, সাবক্যাটাগরি ম্যানেজমেন্ট
-- 🎁 পণ্য ভেরিয়েন্ট সাপোর্ট
-- 🎟️ কুপন সিস্টেম
+## Stack
 
-## 🚀 টেকনোলজি স্ট্যাক
+TanStack Start (Vite, Nitro) · TanStack Router, Query, Form and Table · Valibot · PostgreSQL with Prisma 7 · shadcn (base-vega, Base UI) · Hugeicons · deployed on Vercel in `sin1`, next to the Neon database.
 
-- **Frontend**: Next.js 14+ (App Router), React, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Database**: PostgreSQL with Prisma ORM 7
-- **State Management**: Zustand
-- **Authentication**: NextAuth.js
-- **Icons**: Lucide React
-- **Database Adapter**: @prisma/adapter-pg
+## Setup
 
-## 📋 প্রয়োজনীয়তা
+```sh
+pnpm install            # also generates the Prisma client
+cp .env.example .env    # fill in every value; the app refuses to start without them
+pnpm db:deploy          # apply migrations
+pnpm create-admin       # create or reset the admin from ADMIN_EMAIL / ADMIN_PASSWORD
+pnpm dev                # http://localhost:3000, admin at /auth/admin-login
+```
 
-- Node.js 20.19.0+
-- PostgreSQL
-- npm বা yarn
+## Commands
 
-**গুরুত্বপূর্ণ:** এই প্রজেক্ট Prisma ORM 7 ব্যবহার করে যার জন্য Node.js 20.19.0+ প্রয়োজন।
+- `pnpm build` / `pnpm start` — production build and server
+- `pnpm typecheck`, `pnpm lint`, `pnpm format`
+- `pnpm db:migrate` — create a migration in development
+- `npx tsx src/**/<name>.check.ts` — small runnable checks next to the logic they cover
 
-## 🛠️ সেটআপ নির্দেশনা
+## Layout
 
-### 1. রিপোজিটরি ক্লোন করুন
-
-\`\`\`bash
-git clone <repository-url>
-cd supermart
-\`\`\`
-
-### 2. ডিপেন্ডেন্সি ইনস্টল করুন
-
-\`\`\`bash
-npm install
-\`\`\`
-
-### 3. এনভায়রনমেন্ট ভেরিয়েবল সেটআপ
-
-\`.env\` ফাইলে আপনার ডাটাবেস URL এবং অন্যান্য কনফিগারেশন আপডেট করুন:
-
-\`\`\`env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/supermart?schema=public"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
-\`\`\`
-
-### 4. ডাটাবেস সেটআপ
-
-\`\`\`bash
-
-# Prisma schema push to database
-
-npm run db:push
-
-# Seed initial data (admin user, categories, sample products)
-
-npm run db:seed
-\`\`\`
-
-### 5. ডেভেলপমেন্ট সার্ভার চালু করুন
-
-\`\`\`bash
-npm run dev
-\`\`\`
-
-এখন ব্রাউজারে [http://localhost:3000](http://localhost:3000) ওপেন করুন।
-
-## 👤 ডিফল্ট অ্যাডমিন ক্রেডেনশিয়াল
-
-Seed চালানোর পর অ্যাডমিন প্যানেলে লগিন করতে:
-
-- **Email**: admin@supermart.com
-- **Password**: admin123
-
-অ্যাডমিন প্যানেল: [http://localhost:3000/admin](http://localhost:3000/admin)
-
-## 📁 প্রজেক্ট স্ট্রাকচার
-
-\`\`\`
-supermart/
-├── prisma/
-│ ├── schema.prisma # Database schema
-│ ├── prisma.config.ts # Prisma configuration
-│ └── seed.ts # Seed script
-├── src/
-│ ├── app/
-│ │ ├── admin/ # Admin panel pages
-│ │ │ ├── categories/ # Category management
-│ │ │ ├── products/ # Product management
-│ │ │ ├── orders/ # Order management
-│ │ │ └── coupons/ # Coupon management
-│ │ ├── api/ # API routes
-│ │ │ ├── auth/ # Authentication
-│ │ │ ├── orders/ # Order APIs
-│ │ │ └── admin/ # Admin APIs
-│ │ ├── cart/ # Shopping cart
-│ │ ├── checkout/ # Checkout page
-│ │ ├── products/ # Product listing
-│ │ └── page.tsx # Homepage
-│ ├── components/
-│ │ ├── Navbar.tsx # Navigation bar
-│ │ └── ProductCard.tsx # Product card component
-│ └── lib/
-│ ├── prisma.ts # Prisma client
-│ ├── auth.ts # Auth configuration
-│ ├── store.ts # Zustand store (cart)
-│ └── translations.ts # Bangla translations
-└── package.json
-\`\`\`
-
-## 🎯 ফিচার
-
-### কাস্টমার সাইড
-
-- ✅ বাংলা ভাষায় সম্পূর্ণ UI
-- ✅ পণ্য ব্রাউজিং ও সার্চ
-- ✅ ক্যাটাগরি ফিল্টার
-- ✅ শপিং কার্ট ম্যানেজমেন্ট
-- ✅ চেকআউট ফর্ম (নাম, ফোন, ঠিকানা)
-- ✅ ক্যাশ অন ডেলিভারি (COD)
-- ✅ বিকাশ পেমেন্ট (নম্বর ও ট্রানজেকশন ID)
-- ✅ অর্ডার ট্র্যাকিং
-
-### অ্যাডমিন প্যানেল
-
-- ✅ Dashboard with statistics
-- ✅ Category management (CRUD)
-- ✅ Subcategory management (CRUD)
-- ✅ Product management with variants (CRUD)
-- ✅ Order management & status updates
-- ✅ Coupon management (CRUD)
-- ✅ Payment status tracking
-
-## 🗃️ ডাটাবেস স্কিমা
-
-প্রধান মডেলসমূহ:
-
-- **User**: ইউজার অ্যাকাউন্ট (অ্যাডমিন/কাস্টমার)
-- **Category**: পণ্যের ক্যাটাগরি
-- **SubCategory**: সাব-ক্যাটাগরি
-- **Product**: পণ্য তথ্য
-- **ProductVariant**: পণ্য ভেরিয়েন্ট (সাইজ, কালার ইত্যাদি)
-- **Order**: অর্ডার তথ্য
-- **OrderItem**: অর্ডারের পণ্য আইটেম
-- **Coupon**: ডিসকাউন্ট কুপন
-
-## 🔧 ডেভেলপমেন্ট কমান্ডস
-
-\`\`\`bash
-
-# Development server
-
-npm run dev
-
-# Build for production
-
-npm run build
-
-# Start production server
-
-npm start
-
-# Database commands
-
-npm run db:push # Push schema to database
-npm run db:seed # Seed initial data
-npm run db:studio # Open Prisma Studio
-
-# Code quality
-
-npm run lint # Run linter
-npm run format # Format code
-\`\`\`
-
-## 🌐 API এন্ডপয়েন্ট
-
-### Public APIs
-
-- \`GET /api/orders?orderNumber=xxx\` - Get order details
-- \`POST /api/orders\` - Create new order
-
-### Admin APIs
-
-- \`GET /api/admin/categories\` - List all categories
-- \`POST /api/admin/categories\` - Create category
-- \`PUT /api/admin/categories/:id\` - Update category
-- \`DELETE /api/admin/categories/:id\` - Delete category
-
-- \`GET /api/admin/products\` - List all products
-- \`POST /api/admin/products\` - Create product
-- \`PUT /api/admin/products/:id\` - Update product
-- \`DELETE /api/admin/products/:id\` - Delete product
-
-- \`PATCH /api/admin/orders/:id\` - Update order status
-
-## 📝 চেকআউট ফ্লো
-
-1. গ্রাহক পণ্য কার্টে যোগ করেন
-2. কার্ট পেজে যান এবং পণ্য রিভিউ করেন
-3. চেকআউট পেজে ডেলিভারি তথ্য দেন:
-   - নাম (আবশ্যক)
-   - ফোন নম্বর (আবশ্যক, ১১ ডিজিট)
-   - ঠিকানা (আবশ্যক)
-4. পেমেন্ট পদ্ধতি নির্বাচন করেন:
-   - **COD**: কোন অতিরিক্ত তথ্য লাগে না
-   - **বিকাশ**: বিকাশ নম্বর ও ট্রানজেকশন ID দিতে হয়
-5. অর্ডার সাবমিট করেন
-6. অর্ডার কনফার্মেশন পান
-
-## 🎨 কাস্টমাইজেশন
-
-### থিম কালার পরিবর্তন
-
-\`tailwind.config.js\` ফাইলে কালার কাস্টমাইজ করতে পারেন।
-
-### ভাষা/অনুবাদ
-
-\`src/lib/translations.ts\` ফাইলে সব বাংলা টেক্সট আছে। প্রয়োজনে পরিবর্তন করুন।
-
-## 🚀 প্রোডাকশন ডিপ্লয়মেন্ট
-
-### Vercel-এ ডিপ্লয়
-
-1. GitHub-এ পুশ করুন
-2. Vercel-এ ইমপোর্ট করুন
-3. এনভায়রনমেন্ট ভেরিয়েবল যোগ করুন
-4. ডিপ্লয় করুন
-
-### অন্যান্য প্ল্যাটফর্ম
-
-যেকোনো Node.js হোস্টিং এ ডিপ্লয় করা যাবে যা Next.js সাপোর্ট করে।
-
-## 📄 লাইসেন্স
-
-MIT License
-
-## 🤝 কন্ট্রিবিউশন
-
-পুল রিকোয়েস্ট স্বাগতম!
-
-## 📧 সাপোর্ট
-
-কোন সমস্যা হলে GitHub Issues ব্যবহার করুন।
+- `src/routes` — file routes; `_shop` is the storefront layout, `admin` the guarded admin
+- `src/features/<area>` — server functions (`*.functions.ts`), Valibot schemas, query options and components per area
+- `src/server` — server-only code (database, session cookie, uploads)
+- `src/components` — shared form kit, data table and shadcn UI

@@ -471,3 +471,38 @@ model ShippingMethod {
   @@index([active])
   @@index([order])
 }
+
+// Editable content pages (About, Terms, Privacy...); content is a small Markdown subset
+model Page {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  content         String
+  metaDescription String?
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Homepage service strip (delivery, returns, support...)
+model Highlight {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  icon      String
+  link      String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

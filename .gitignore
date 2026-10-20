@@ -63,3 +63,12 @@ Thumbs.db
 *.tmp
 tmp/
 temp/
+
+# TanStack Start / Nitro
+.output/
+.nitro/
+.tanstack/
+.vercel/
+
+# Prisma client, rebuilt by postinstall
+src/generated/
