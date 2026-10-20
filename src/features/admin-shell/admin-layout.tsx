@@ -16,10 +16,18 @@ import {
   ShoppingBag01Icon,
   SparklesIcon,
   StarIcon,
+  UnfoldMoreIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, useRouter } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
@@ -90,10 +98,6 @@ export function AdminLayout({ user, siteName, children }: { user: SessionUser; s
               <div className="truncate text-muted-foreground text-xs">{siteName}</div>
             </div>
           </div>
-          <div className="rounded-lg border bg-muted/50 p-2.5">
-            <div className="truncate font-medium text-sm">{user.name}</div>
-            <div className="truncate text-muted-foreground text-xs">{user.email}</div>
-          </div>
         </SidebarHeader>
         <SidebarContent>
           {groups.map((group) => (
@@ -121,17 +125,30 @@ export function AdminLayout({ user, siteName, children }: { user: SessionUser; s
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              {/* biome-ignore lint/a11y/useAnchorContent: the button's children become the link content via render */}
-              <SidebarMenuButton render={<a href="/" target="_blank" rel="noreferrer" />}>
-                <HugeiconsIcon icon={ArrowUpRight01Icon} />
-                <span>Visit site</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={signOut} className="text-destructive">
-                <HugeiconsIcon icon={Logout01Icon} />
-                <span>Log out</span>
-              </SidebarMenuButton>
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<SidebarMenuButton size="lg" aria-label="Account menu" />}>
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-sm">
+                    {user.name.trim().charAt(0).toUpperCase()}
+                  </span>
+                  <span className="grid min-w-0 flex-1 text-left leading-tight">
+                    <span className="truncate font-medium text-sm">{user.name}</span>
+                    <span className="truncate text-muted-foreground text-xs">{user.email}</span>
+                  </span>
+                  <HugeiconsIcon icon={UnfoldMoreIcon} className="ml-auto size-4 text-muted-foreground" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" align="start" className="w-(--anchor-width) min-w-56">
+                  {/* biome-ignore lint/a11y/useAnchorContent: the item's children become the link content via render */}
+                  <DropdownMenuItem render={<a href="/" target="_blank" rel="noreferrer" />}>
+                    <HugeiconsIcon icon={ArrowUpRight01Icon} />
+                    Visit site
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem variant="destructive" onClick={signOut}>
+                    <HugeiconsIcon icon={Logout01Icon} />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

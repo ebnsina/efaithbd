@@ -3,10 +3,10 @@ import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query
 import { toast } from 'sonner'
 import { useAppForm } from '@/components/form'
 import { Field, FieldLabel } from '@/components/ui/field'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { EditDialog, EditDialogFooter } from '@/features/site-settings/edit-dialog'
 import { listHighlights, saveHighlight } from './highlights.functions'
-import { type HighlightIconKey, highlightIconKeys, highlightIcons } from './icons'
+import { IconSelect } from './icon-select'
+import { type HighlightIconKey, highlightIcons } from './icons'
 import { type HighlightInput, highlightSchema } from './schemas'
 
 export type Highlight = Awaited<ReturnType<typeof listHighlights>>[number]
@@ -80,26 +80,7 @@ function HighlightForm({ highlight, onDone }: { highlight?: Highlight; onDone: (
         {(field) => (
           <Field>
             <FieldLabel htmlFor="icon">Icon</FieldLabel>
-            <Select value={field.state.value} onValueChange={(value) => value && field.handleChange(value)}>
-              <SelectTrigger id="icon" className="w-full">
-                <SelectValue>
-                  {(value: HighlightIconKey) => (
-                    <>
-                      <HighlightIcon name={value} />
-                      {highlightIcons[value]?.label}
-                    </>
-                  )}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {highlightIconKeys.map((key) => (
-                  <SelectItem key={key} value={key}>
-                    <HighlightIcon name={key} />
-                    {highlightIcons[key].label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <IconSelect id="icon" value={field.state.value} onChange={field.handleChange} />
           </Field>
         )}
       </form.Field>

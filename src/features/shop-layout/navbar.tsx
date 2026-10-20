@@ -1,10 +1,14 @@
 import {
   ArrowDown01Icon,
+  ContactIcon,
+  DeliveryTruck01Icon,
   FavouriteIcon,
   GridViewIcon,
+  HelpCircleIcon,
   Login01Icon,
   Logout01Icon,
   Menu01Icon,
+  PackageIcon,
   Search01Icon,
   ShoppingCart01Icon,
   type UserIcon,
@@ -31,9 +35,9 @@ function SearchForm({ className, onDone }: { className?: string; onDone?: () => 
   const navigate = useNavigate()
   const [q, setQ] = useState('')
   return (
-    <search>
+    <search className={className}>
       <form
-        className={cn('relative', className)}
+        className="relative"
         onSubmit={(e) => {
           e.preventDefault()
           navigate({ to: '/products', search: { q: q.trim() } })
@@ -212,6 +216,18 @@ export function Navbar({ user }: { user: ShopUser }) {
                   </div>
                 ))}
                 <div className="space-y-0.5 border-t pt-4">
+                  <Link to="/products" className={menuLink} onClick={close}>
+                    All products
+                  </Link>
+                  <Link to="/orders/track" className={menuLink} onClick={close}>
+                    Track order
+                  </Link>
+                  <Link to="/faq" className={menuLink} onClick={close}>
+                    Help
+                  </Link>
+                  <Link to="/contact" className={menuLink} onClick={close}>
+                    Contact
+                  </Link>
                   {showWishlist && (
                     <Link to="/wishlist" className={menuLink} onClick={close}>
                       Wishlist
@@ -251,7 +267,7 @@ export function Navbar({ user }: { user: ShopUser }) {
             )}
           </Link>
 
-          <SearchForm className="mx-auto hidden max-w-2xl flex-1 md:block" />
+          <SearchForm className="mx-auto hidden max-w-3xl flex-1 md:block" />
 
           <div className="ml-auto flex items-center gap-1 md:ml-0">
             {user ? (
@@ -284,7 +300,11 @@ export function Navbar({ user }: { user: ShopUser }) {
           </div>
         </div>
 
-        {(categories.length > 0 || menuItems.length > 0) && (
+        <div className="container mx-auto px-4 pb-3 md:hidden">
+          <SearchForm />
+        </div>
+
+        {
           <nav className="hidden border-primary-foreground/20 border-t md:block" aria-label="Main">
             <div className="container mx-auto flex items-center gap-1 px-4 py-1">
               {categories.length > 0 && (
@@ -329,6 +349,14 @@ export function Navbar({ user }: { user: ShopUser }) {
                   </ul>
                 </HoverMenu>
               )}
+              <Link to="/products" className={barLink}>
+                <HugeiconsIcon icon={PackageIcon} className="size-4" />
+                All products
+              </Link>
+              <Link to="/orders/track" className={barLink}>
+                <HugeiconsIcon icon={DeliveryTruck01Icon} className="size-4" />
+                Track order
+              </Link>
               {menuItems.map((item) =>
                 item.children.length > 0 ? (
                   <HoverMenu
@@ -355,9 +383,19 @@ export function Navbar({ user }: { user: ShopUser }) {
                   </DbLink>
                 ),
               )}
+              <div className="ml-auto flex items-center gap-1">
+                <Link to="/faq" className={barLink}>
+                  <HugeiconsIcon icon={HelpCircleIcon} className="size-4" />
+                  Help
+                </Link>
+                <Link to="/contact" className={barLink}>
+                  <HugeiconsIcon icon={ContactIcon} className="size-4" />
+                  Contact
+                </Link>
+              </div>
             </div>
           </nav>
-        )}
+        }
       </div>
     </header>
   )
