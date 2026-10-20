@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
+import { Mona_Sans, Montserrat } from 'next/font/google';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
@@ -7,6 +7,11 @@ const fontSans = Montserrat({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-sans',
+});
+
+const fontHeading = Mona_Sans({
+  subsets: ['latin'],
+  variable: '--font-heading',
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -40,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${fontSans.variable} antialiased font-sans`}>{children}</body>
+      <body className={`${fontSans.variable} ${fontHeading.variable} antialiased font-sans`}>{children}</body>
     </html>
   );
 }

@@ -41,10 +41,10 @@ const iconMap = {
 } as const
 
 export function AdminNav({
-  items,
+  groups,
   onItemClick,
 }: {
-  items: NavItemProps[]
+  groups: { label: string; items: NavItemProps[] }[]
   onItemClick?: () => void
 }) {
   const pathname = usePathname()
@@ -57,27 +57,36 @@ export function AdminNav({
   }
 
   return (
-    <div className="space-y-1">
-      {items.map(item => {
-        const active = isActive(item.href, item.exact)
-        const Icon = iconMap[item.icon as keyof typeof iconMap]
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onItemClick}
-            className={cn(
-              'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group font-medium',
-              active
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            )}
-          >
-            <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-            <span>{item.label}</span>
-          </Link>
-        )
-      })}
+    <div className="space-y-6 pb-4">
+      {groups.map(group => (
+        <div key={group.label}>
+          <p className="px-4 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+            {group.label}
+          </p>
+          <div className="space-y-1">
+            {group.items.map(item => {
+              const active = isActive(item.href, item.exact)
+              const Icon = iconMap[item.icon as keyof typeof iconMap]
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onItemClick}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors group font-medium',
+                    active
+                      ? 'bg-accent text-accent-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  )}
+                >
+                  <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
