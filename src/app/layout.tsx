@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Mona_Sans } from 'next/font/google';
+import { Inter_Tight } from 'next/font/google';
 import { getSiteSettings } from '@/lib/site-settings';
 import './globals.css';
 
-const fontSans = Mona_Sans({
+const fontSans = Inter_Tight({
   subsets: ['latin'],
   variable: '--font-sans',
 });
