@@ -34,17 +34,13 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Plus, Edit, Trash2, Truck } from 'lucide-react'
-
-interface ShippingMethod {
-  id: string
-  name: string
-  description: string | null
-  cost: number
-  minOrder: number | null
-  maxOrder: number | null
-  active: boolean
-  order: number
-}
+import {
+  type ShippingMethod,
+  useDeleteShippingMethod,
+  useReorderShippingMethods,
+  useSaveShippingMethod,
+  useShippingMethods,
+} from './queries'
 
 function SortableShippingMethod({
   method,
@@ -136,8 +132,10 @@ function SortableShippingMethod({
 }
 
 export default function ShippingMethodsPage() {
-  const [loading, setLoading] = useState(true)
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([])
+  const { data: shippingMethods = [], isLoading: loading, isError } = useShippingMethods()
+  const saveMethod = useSaveShippingMethod()
+  const deleteMethod = useDeleteShippingMethod()
+  const reorderMethods = useReorderShippingMethods()
   const [showForm, setShowForm] = useState(false)
   const [editingMethod, setEditingMethod] = useState<ShippingMethod | null>(null)
   const [formState, setFormState] = useState<FormState>('idle')
@@ -159,10 +157,6 @@ export default function ShippingMethodsPage() {
   )
 
   useEffect(() => {
-    fetchShippingMethods()
-  }, [])
-
-  useEffect(() => {
     if (showForm && savedForm) {
       const hasChanges = JSON.stringify(form) !== JSON.stringify(savedForm)
       setFormState(hasChanges ? 'dirty' : 'idle')
@@ -171,48 +165,17 @@ export default function ShippingMethodsPage() {
     }
   }, [form, savedForm, showForm])
 
-  const fetchShippingMethods = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/admin/shipping-methods')
-      const data = await res.json()
-      setShippingMethods(data)
-    } catch (error) {
-      console.error('Error fetching shipping methods:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      setShippingMethods(items => {
-        const oldIndex = items.findIndex(item => item.id === active.id)
-        const newIndex = items.findIndex(item => item.id === over.id)
-
-        const newItems = arrayMove(items, oldIndex, newIndex)
-        const updatedItems = newItems.map((item, index) => ({
-          ...item,
-          order: index,
-        }))
-
-        saveOrder(updatedItems)
-        return updatedItems
-      })
-    }
-  }
-
-  const saveOrder = async (items: ShippingMethod[]) => {
-    try {
-      await fetch('/api/admin/shipping-methods', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      })
-    } catch (error) {
-      console.error('Error saving order:', error)
+      const oldIndex = shippingMethods.findIndex(item => item.id === active.id)
+      const newIndex = shippingMethods.findIndex(item => item.id === over.id)
+      const updatedItems = arrayMove(shippingMethods, oldIndex, newIndex).map((item, index) => ({
+        ...item,
+        order: index,
+      }))
+      reorderMethods.mutate(updatedItems)
     }
   }
 
@@ -221,65 +184,42 @@ export default function ShippingMethodsPage() {
     setFormState('loading')
 
     try {
-      const url = editingMethod
-        ? `/api/admin/shipping-methods/${editingMethod.id}`
-        : '/api/admin/shipping-methods'
-      const method = editingMethod ? 'PUT' : 'POST'
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await saveMethod.mutateAsync({
+        id: editingMethod?.id,
+        data: {
           name: form.name,
           description: form.description || null,
           cost: parseFloat(form.cost),
           minOrder: form.minOrder ? parseFloat(form.minOrder) : null,
           maxOrder: form.maxOrder ? parseFloat(form.maxOrder) : null,
           active: form.active,
-          order: shippingMethods.length,
-        }),
+          order: editingMethod?.order ?? shippingMethods.length,
+        },
       })
-
-      if (res.ok) {
-        setFormState('success')
-        setTimeout(() => {
-          setShowForm(false)
-          setEditingMethod(null)
-          setForm({
-            name: '',
-            description: '',
-            cost: '',
-            minOrder: '',
-            maxOrder: '',
-            active: true,
-          })
-          setSavedForm(null)
-          setFormState('idle')
-          fetchShippingMethods()
-        }, 1000)
-      } else {
-        setFormState('error')
-      }
+      setFormState('success')
+      setTimeout(() => {
+        setShowForm(false)
+        setEditingMethod(null)
+        setForm({
+          name: '',
+          description: '',
+          cost: '',
+          minOrder: '',
+          maxOrder: '',
+          active: true,
+        })
+        setSavedForm(null)
+        setFormState('idle')
+      }, 1000)
     } catch (error) {
       console.error('Error saving shipping method:', error)
       setFormState('error')
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Are you sure you want to delete this shipping method?')) return
-
-    try {
-      const res = await fetch(`/api/admin/shipping-methods/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (res.ok) {
-        fetchShippingMethods()
-      }
-    } catch (error) {
-      console.error('Error deleting shipping method:', error)
-    }
+    deleteMethod.mutate(id)
   }
 
   const openEditForm = (method: ShippingMethod) => {
@@ -336,6 +276,8 @@ export default function ShippingMethodsPage() {
 
       {loading ? (
         <div className="p-8">Loading...</div>
+      ) : isError ? (
+        <div className="p-8 text-destructive">Could not load shipping methods. Please refresh the page.</div>
       ) : (
         <>
           {showForm && (
