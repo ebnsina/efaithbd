@@ -128,6 +128,19 @@ body {
   }
 }
 
+/* Admin uses every Tailwind text size one step smaller */
+.admin-compact {
+  font-size: 0.875rem;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.125rem;
+  --text-2xl: 1.25rem;
+  --text-3xl: 1.5rem;
+  --text-4xl: 1.875rem;
+}
+
 /* Admin Panel Consistent Typography */
 @layer components {
   .admin-heading {

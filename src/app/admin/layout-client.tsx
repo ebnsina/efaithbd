@@ -106,7 +106,7 @@ export function AdminLayoutClient({ children, session, siteName }: AdminLayoutCl
 
   return (
     <QueryProvider>
-      <div className="flex min-h-screen bg-background">
+      <div className="admin-compact flex min-h-screen bg-background">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex lg:flex-col w-72 bg-card shadow-sm fixed h-full border-r z-40">
           <SidebarContent />
