@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { Mail, Lock, AlertCircle, ShoppingBag } from 'lucide-react'
@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
 
@@ -35,8 +34,7 @@ function LoginForm() {
       if (result?.error) {
         setError('Invalid email or password')
       } else if (result?.ok) {
-        router.push(callbackUrl)
-        router.refresh()
+        window.location.href = callbackUrl
       }
     } catch (err) {
       setError('Login failed. Please try again.')

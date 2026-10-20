@@ -1,4 +1,3 @@
-import { auth } from '@/lib/auth'
 import NavbarClient from './NavbarClient'
 
 interface MenuItem {
@@ -31,7 +30,7 @@ interface NavbarProps {
   categories?: Category[]
 }
 
-export default async function Navbar({
+export default function Navbar({
   siteName,
   logo,
   promoText,
@@ -39,8 +38,6 @@ export default async function Navbar({
   menuItems = [],
   categories = [],
 }: NavbarProps) {
-  const session = await auth()
-
   return (
     <>
       {promoActive && promoText && (
@@ -53,8 +50,6 @@ export default async function Navbar({
         <NavbarClient
           siteName={siteName || 'Online Store'}
           logo={logo}
-          isLoggedIn={!!session}
-          userName={session?.user?.name}
           menuItems={menuItems}
           categories={categories}
         />

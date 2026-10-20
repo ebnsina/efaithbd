@@ -1,49 +1,30 @@
-import { prisma } from '../src/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { prisma } from '../src/lib/prisma'
 
-async function createAdmin() {
-  const email = 'admin@supermart.com'
-  const password = 'admin123' // Change this to a secure password
-  const name = 'Super Admin'
+const email = process.env.ADMIN_EMAIL
+const password = process.env.ADMIN_PASSWORD
+if (!email || !password) throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env')
+if (password.length < 12) throw new Error('ADMIN_PASSWORD must be at least 12 characters')
 
-  try {
-    // Check if admin already exists
-    const existingAdmin = await prisma.user.findUnique({
-      where: { email },
-    })
-
-    if (existingAdmin) {
-      console.log('❌ Admin user already exists with email:', email)
-      console.log('   Use this email to login at /admin/login')
-      return
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    // Create admin user
-    const admin = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        role: 'ADMIN',
-      },
-    })
-
-    console.log('✅ Admin user created successfully!')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    console.log('Email:', admin.email)
-    console.log('Password:', password)
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    console.log('🔐 Login at: http://localhost:3000/admin/login')
-    console.log('')
-    console.log('⚠️  IMPORTANT: Change the password after first login!')
-  } catch (error) {
-    console.error('❌ Error creating admin user:', error)
-  } finally {
-    await prisma.$disconnect()
-  }
+async function main() {
+  const hashed = await bcrypt.hash(password!, 10)
+  // .env is the source of truth: re-running resets the password and keeps the role ADMIN
+  const admin = await prisma.user.upsert({
+    where: { email },
+    update: { password: hashed, role: 'ADMIN' },
+    create: { email: email!, password: hashed, name: process.env.ADMIN_NAME || 'Admin', role: 'ADMIN' },
+  })
+  const others = await prisma.user.findMany({
+    where: { role: 'ADMIN', NOT: { id: admin.id } },
+    select: { email: true },
+  })
+  console.log(`Admin ready: ${admin.email}`)
+  if (others.length) console.log(`Other admins still exist: ${others.map((u) => u.email).join(', ')}`)
 }
 
-createAdmin()
+main()
+  .catch((e) => {
+    console.error(e)
+    process.exitCode = 1
+  })
+  .finally(() => prisma.$disconnect())
