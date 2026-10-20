@@ -1,5 +1,10 @@
+import { Delete02Icon, PencilEdit02Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { revalidateLogic } from '@tanstack/react-form'
 import { useQuery } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useAppForm } from '@/components/form'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -8,7 +13,9 @@ import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMoney } from '@/lib/format'
-import { adminOrderQuery, useUpdateOrder } from './queries'
+import type { getAdminOrder } from './admin-orders.functions'
+import { adminOrderQuery, useDeleteOrder, useUpdateOrder, useUpdateOrderDetails } from './queries'
+import { type OrderDetailsValues, orderDetailsSchema } from './schemas'
 import {
   type OrderStatus,
   orderStatusLabels,
@@ -29,16 +36,24 @@ export function OrderSheet({ orderId, onClose }: { orderId?: string; onClose: ()
   return (
     <Sheet open={!!orderId} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="gap-0 overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-lg">
-        {orderId && <OrderDetails id={orderId} />}
+        {orderId && <OrderDetails key={orderId} id={orderId} onDeleted={onClose} />}
       </SheetContent>
     </Sheet>
   )
 }
 
-function OrderDetails({ id }: { id: string }) {
+export const deleteOrderText = (order: { orderNumber: string; orderStatus: OrderStatus }) =>
+  order.orderStatus === 'CANCELLED'
+    ? `Order ${order.orderNumber} will be removed for good. Its items already went back into stock when it was cancelled. If it used a coupon, that use is given back. This can't be undone.`
+    : `Order ${order.orderNumber} will be removed for good and its items will go back into stock. If it used a coupon, that use is given back. This can't be undone.`
+
+function OrderDetails({ id, onDeleted }: { id: string; onDeleted: () => void }) {
   const money = useMoney()
   const order = useQuery(adminOrderQuery(id))
   const update = useUpdateOrder()
+  const remove = useDeleteOrder()
+  const [editing, setEditing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   if (order.isPending) {
     return (
@@ -117,24 +132,48 @@ function OrderDetails({ id }: { id: string }) {
           </div>
         </div>
 
-        <Section title="Customer">
-          <Row label="Name">{o.customerName}</Row>
-          <Row label="Phone">
-            <a href={`tel:${o.customerPhone}`} className="underline-offset-4 hover:underline">
-              {o.customerPhone}
-            </a>
-          </Row>
-          <Row label="Address">
-            <span className="whitespace-pre-line">{o.customerAddress}</span>
-          </Row>
-          {o.notes && (
-            <Row label="Note">
-              <span className="whitespace-pre-line">{o.notes}</span>
-            </Row>
+        <p className="-mt-3 text-muted-foreground text-xs">
+          Cancelling an order puts its items back into stock. Reopening it takes them out again.
+        </p>
+
+        <Section
+          title="Customer"
+          action={
+            !editing && (
+              <Button variant="ghost" size="xs" onClick={() => setEditing(true)}>
+                <HugeiconsIcon icon={PencilEdit02Icon} />
+                Edit details
+              </Button>
+            )
+          }
+        >
+          {editing ? (
+            <DetailsForm order={o} onDone={() => setEditing(false)} />
+          ) : (
+            <>
+              <Row label="Name">{o.customerName}</Row>
+              <Row label="Phone">
+                <a href={`tel:${o.customerPhone}`} className="underline-offset-4 hover:underline">
+                  {o.customerPhone}
+                </a>
+              </Row>
+              <Row label="Address">
+                <span className="whitespace-pre-line">{o.customerAddress}</span>
+              </Row>
+              {o.user && <Row label="Account">{o.user.email}</Row>}
+              {o.notes && (
+                <Row label="Note">
+                  <span className="whitespace-pre-line">{o.notes}</span>
+                </Row>
+              )}
+            </>
           )}
         </Section>
 
-        <Section title={`Items (${o.items.length})`}>
+        <Section
+          title={`Items (${o.items.length})`}
+          footer="Items can't be changed after an order is placed. To change them, delete this order and create a new one."
+        >
           {o.items.length === 0 ? (
             <p className="text-muted-foreground">No items on this order.</p>
           ) : (
@@ -188,16 +227,95 @@ function OrderDetails({ id }: { id: string }) {
             </Row>
           )}
         </Section>
+
+        <Button variant="destructive" className="w-full" onClick={() => setDeleting(true)}>
+          <HugeiconsIcon icon={Delete02Icon} />
+          Delete order
+        </Button>
       </div>
+      <ConfirmDialog
+        open={deleting}
+        onOpenChange={setDeleting}
+        title="Delete this order?"
+        description={deleteOrderText(o)}
+        pending={remove.isPending}
+        onConfirm={() =>
+          remove.mutate(id, {
+            onSuccess: (result) => result.ok && onDeleted(),
+            onSettled: () => setDeleting(false),
+          })
+        }
+      />
     </>
   )
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+type OrderDetail = NonNullable<Awaited<ReturnType<typeof getAdminOrder>>>
+
+function DetailsForm({ order, onDone }: { order: OrderDetail; onDone: () => void }) {
+  const save = useUpdateOrderDetails()
+  const form = useAppForm({
+    defaultValues: {
+      customerName: order.customerName,
+      customerPhone: order.customerPhone,
+      customerAddress: order.customerAddress,
+      notes: order.notes ?? '',
+    } as OrderDetailsValues,
+    validationLogic: revalidateLogic(),
+    validators: { onDynamic: orderDetailsSchema },
+    onSubmit: async ({ value }) => {
+      const result = await save.mutateAsync({ data: { id: order.id, ...value } }).catch(() => null)
+      if (result?.ok) onDone()
+    },
+  })
+  return (
+    <form
+      noValidate
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault()
+        form.handleSubmit()
+      }}
+    >
+      <form.AppField name="customerName">{(field) => <field.TextField label="Name" />}</form.AppField>
+      <form.AppField name="customerPhone">
+        {(field) => <field.TextField label="Phone" type="tel" inputMode="numeric" maxLength={11} />}
+      </form.AppField>
+      <form.AppField name="customerAddress">{(field) => <field.TextareaField label="Address" rows={3} />}</form.AppField>
+      <form.AppField name="notes">
+        {(field) => <field.TextareaField label="Note" rows={2} description="Optional. Only your team sees this." />}
+      </form.AppField>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outline" onClick={onDone}>
+          Cancel
+        </Button>
+        <form.AppForm>
+          <form.SubmitButton className="min-w-28" label="Save" pendingLabel="Saving…" />
+        </form.AppForm>
+      </div>
+    </form>
+  )
+}
+
+function Section({
+  title,
+  action,
+  footer,
+  children,
+}: {
+  title: string
+  action?: ReactNode
+  footer?: string
+  children: ReactNode
+}) {
   return (
     <section className="space-y-2">
-      <h3 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">{title}</h3>
+      <div className="flex min-h-6 items-center justify-between gap-2">
+        <h3 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">{title}</h3>
+        {action}
+      </div>
       <div className="space-y-2 rounded-lg border p-3">{children}</div>
+      {footer && <p className="text-muted-foreground text-xs">{footer}</p>}
     </section>
   )
 }
