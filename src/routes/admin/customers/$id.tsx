@@ -223,7 +223,7 @@ function Activity({ customer }: { customer: AdminCustomerDetail }) {
           {stats.map((stat) => (
             <div key={stat.label} className="rounded-lg border p-3">
               <dt className="text-muted-foreground text-sm">{stat.label}</dt>
-              <dd className="font-mono font-semibold text-xl">{formatNumber(stat.value)}</dd>
+              <dd className="font-semibold text-xl tabular-nums">{formatNumber(stat.value)}</dd>
             </div>
           ))}
         </dl>

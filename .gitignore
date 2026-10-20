@@ -72,3 +72,6 @@ temp/
 
 # Prisma client, rebuilt by postinstall
 src/generated/
+
+# Claude Code agent worktrees
+.claude/worktrees/
