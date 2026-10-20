@@ -73,10 +73,9 @@ export default function CheckoutPage() {
     }
 
     // Fetch bKash settings
-    fetch('/api/admin/site-settings/basic')
+    fetch('/api/payment-settings')
       .then((res) => res.json())
       .then((data) => {
-        console.log('bKash settings loaded:', data);
         setBkashSettings({
           bkashNumber: data.bkashNumber,
           bkashNote: data.bkashNote,

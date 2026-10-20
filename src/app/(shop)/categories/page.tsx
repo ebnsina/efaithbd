@@ -1,27 +1,12 @@
-'use client'
-
-import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Loader2 } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
 
-export default function CategoriesPage() {
-  const { data: categories = [], isLoading } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/categories')
-      if (!res.ok) throw new Error('Failed to fetch')
-      return res.json()
-    },
+export default async function CategoriesPage() {
+  const categories = await prisma.category.findMany({
+    select: { id: true, name: true, slug: true, image: true, _count: { select: { products: true } } },
+    orderBy: { createdAt: 'desc' },
   })
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -41,7 +26,7 @@ export default function CategoriesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-            {categories.map((category: any) => (
+            {categories.map((category) => (
               <Link
                 key={category.id}
                 href={`/categories/${category.slug}`}
@@ -73,8 +58,8 @@ export default function CategoriesPage() {
                     {category.name}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    {`${category._count?.products || 0} ${
-                      category._count?.products === 1 ? 'product' : 'products'
+                    {`${category._count.products || 0} ${
+                      category._count.products === 1 ? 'product' : 'products'
                     }`}
                   </p>
                 </div>
