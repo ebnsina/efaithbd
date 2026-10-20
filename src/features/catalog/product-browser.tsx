@@ -256,7 +256,7 @@ export function ProductBrowser({
             : `${money(search.minPrice ?? 0)} – ${money(search.maxPrice)}`,
         patch: { minPrice: undefined, maxPrice: undefined },
       },
-      search.rating && { key: 'rating', label: `${search.rating}★ & up`, patch: { rating: undefined } },
+      search.rating && { key: 'rating', label: `${search.rating} stars & up`, patch: { rating: undefined } },
     ] as (Chip | false | '' | 0 | undefined)[]
   ).filter((chip): chip is Chip => !!chip)
   const clearAll = () =>

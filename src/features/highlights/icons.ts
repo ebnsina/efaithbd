@@ -9,7 +9,7 @@ import {
   Shield01Icon,
 } from '@hugeicons/core-free-icons'
 
-// Stored keys → icons; the storefront strip can import this same map
+// Stored keys map to icons; the storefront strip can import this same map
 export const highlightIcons = {
   delivery: { icon: DeliveryTruck01Icon, label: 'Delivery' },
   returns: { icon: ReturnRequestIcon, label: 'Returns' },

@@ -1,4 +1,4 @@
-import { LockPasswordIcon } from '@hugeicons/core-free-icons'
+import { ArrowLeft01Icon, LockPasswordIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { revalidateLogic } from '@tanstack/react-form'
 import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
@@ -67,8 +67,12 @@ function AdminLogin() {
               <form.SubmitButton label="Sign in" pendingLabel="Signing in…" />
             </form.AppForm>
           </form>
-          <Link to="/" className="mt-6 block text-center text-muted-foreground text-sm hover:text-foreground">
-            ← Back to the store
+          <Link
+            to="/"
+            className="mt-6 flex items-center justify-center gap-1.5 text-muted-foreground text-sm hover:text-foreground"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+            Back to the store
           </Link>
         </CardContent>
       </Card>
