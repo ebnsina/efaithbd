@@ -2,6 +2,7 @@ import { LockPasswordIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
+import { revalidateLogic } from '@tanstack/react-form'
 import { useAppForm } from '@/components/form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FieldError } from '@/components/ui/field'
@@ -21,7 +22,8 @@ function AdminLogin() {
   const [error, setError] = useState('')
   const form = useAppForm({
     defaultValues: { email: '', password: '' },
-    validators: { onSubmit: loginSchema },
+    validationLogic: revalidateLogic(),
+    validators: { onDynamic: loginSchema },
     onSubmit: async ({ value }) => {
       setError('')
       const result = await login({ data: value })
