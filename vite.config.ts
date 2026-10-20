@@ -15,7 +15,8 @@ export default defineConfig({
         client: { specifiers: ['pg', '@prisma/adapter-pg', 'bcryptjs', 'cloudinary'] },
       },
     }),
-    nitro(),
+    // Same region as the Neon database; every uncached query would otherwise cross the world
+    nitro({ vercel: { functions: { regions: ['sin1'] } } }),
     viteReact(),
   ],
 })
