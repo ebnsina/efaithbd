@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { refreshStorefront } from '@/lib/revalidate'
 
 export async function GET(
   request: NextRequest,
@@ -34,6 +35,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await params
     const body = await request.json()
@@ -94,6 +96,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await params
     await prisma.product.delete({

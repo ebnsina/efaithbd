@@ -1,8 +1,10 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
+  refreshStorefront()
   try {
     const session = await auth()
     const body = await request.json()

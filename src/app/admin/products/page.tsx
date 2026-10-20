@@ -11,7 +11,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,18 +18,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Edit, Loader2, MoreVertical, Plus, Search, Trash2 } from 'lucide-react';
-import Image from 'next/image';
+import { DataTable, type DataColumn, type ListResponse, useListParams } from '@/components/data-table';
+import { fetchJson } from '@/lib/api';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Edit, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -44,73 +35,137 @@ interface Product {
   images: string[];
   featured: boolean;
   active: boolean;
-  category: { id: string; name: string };
-  variants: Array<{ id: string }>;
+  category: { name: string };
+  _count: { variants: number };
 }
 
-// API functions
-const fetchProducts = async (): Promise<Product[]> => {
-  const res = await fetch('/api/admin/products');
-  if (!res.ok) throw new Error('Failed to fetch products');
-  return res.json();
+const productKeys = {
+  all: ['admin', 'products'] as const,
+  list: (query: string) => [...productKeys.all, 'list', query] as const,
 };
 
-const deleteProduct = async (id: string): Promise<void> => {
-  const res = await fetch(`/api/admin/products/${id}`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error('Failed to delete product');
-};
+const money = new Intl.NumberFormat('en-US');
+
+const badge = 'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset';
+
+function columns(onDelete: (id: string) => void): DataColumn<Product>[] {
+  return [
+    {
+      id: 'image',
+      header: 'Image',
+      enableSorting: false,
+      cell: ({ row }) =>
+        row.original.images[0] ? (
+          <img
+            src={row.original.images[0]}
+            alt=""
+            loading="lazy"
+            className="h-12 w-12 rounded-md object-cover"
+          />
+        ) : (
+          <div className="flex h-12 w-12 items-center justify-center rounded-md bg-muted text-muted-foreground text-xs">
+            None
+          </div>
+        ),
+    },
+    {
+      id: 'name',
+      accessorKey: 'name',
+      header: 'Name',
+      cell: ({ row }) => (
+        <div className="space-y-0.5">
+          <div className="font-medium">{row.original.name}</div>
+          <div className="text-muted-foreground text-xs">{row.original.slug}</div>
+        </div>
+      ),
+    },
+    { id: 'category', header: 'Category', enableSorting: false, cell: ({ row }) => row.original.category.name },
+    { id: 'price', accessorKey: 'price', header: 'Price', cell: ({ row }) => `৳${money.format(row.original.price)}` },
+    {
+      id: 'stock',
+      accessorKey: 'stock',
+      header: 'Stock',
+      cell: ({ row }) =>
+        row.original._count.variants > 0 ? (
+          <span className="text-muted-foreground text-xs">{row.original._count.variants} variants</span>
+        ) : (
+          row.original.stock
+        ),
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="flex flex-col items-start gap-1">
+          {row.original.active ? (
+            <span className={`${badge} bg-green-50 text-green-700 ring-green-600/20`}>Active</span>
+          ) : (
+            <span className={`${badge} bg-gray-50 text-gray-600 ring-gray-500/10`}>Inactive</span>
+          )}
+          {row.original.featured && (
+            <span className={`${badge} bg-blue-50 text-blue-700 ring-blue-600/20`}>Featured</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: 'actions',
+      header: '',
+      enableSorting: false,
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label={`Actions for ${row.original.name}`}>
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/products/${row.original.id}/edit`}>
+                <Edit className="h-4 w-4" />
+                Edit
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onDelete(row.original.id)} className="text-destructive">
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
+}
 
 export default function ProductsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
-
+  const list = useListParams(['status']);
   const queryClient = useQueryClient();
 
-  // Fetch products query
-  const {
-    data: products = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts,
+  const products = useQuery({
+    queryKey: productKeys.list(list.apiQuery),
+    queryFn: () => fetchJson<ListResponse<Product>>(`/api/admin/products?${list.apiQuery}`),
+    placeholderData: keepPreviousData,
   });
 
-  // Delete mutation
   const deleteMutation = useMutation({
-    mutationFn: deleteProduct,
+    mutationFn: (id: string) => fetchJson(`/api/admin/products/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success('Delete Success');
-      setDeleteId(null);
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      toast.success('Product deleted');
     },
-    onError: () => {
-      toast.error('Delete Error');
-      setDeleteId(null);
-    },
+    onError: () => toast.error('Could not delete this product. Please try again.'),
+    onSettled: () => setDeleteId(null),
   });
 
-  const handleDelete = async (id: string) => {
-    setDeleteId(id);
+  const confirmDelete = () => {
+    if (deleteId) deleteMutation.mutate(deleteId);
   };
-
-  const confirmDelete = async () => {
-    if (!deleteId) return;
-    deleteMutation.mutate(deleteId);
-  };
-
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Product Management</h1>
@@ -124,142 +179,28 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder={'Search Placeholder'}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
-        />
-      </div>
-
-      {/* Products Table */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            {isLoading ? (
-              <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : isError ? (
-              <div className="flex items-center justify-center h-64 text-muted-foreground">
-                Failed to load products
-              </div>
-            ) : filteredProducts.length === 0 ? (
-              <div className="flex items-center justify-center h-64 text-muted-foreground">
-                No products found
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Image</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Stock</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        <div className="relative h-16 w-16 overflow-hidden rounded-md">
-                          {product.images[0] ? (
-                            <img
-                              src={product.images[0]}
-                              alt={product.name}
-                              // fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-muted flex items-center justify-center text-xs text-muted-foreground">
-                              No Image
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="font-medium">{product.name}</div>
-                          <div className="text-sm text-muted-foreground">{product.slug}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.category.name}</TableCell>
-                      <TableCell>৳{product.price.toLocaleString()}</TableCell>
-                      <TableCell>
-                        {product.variants.length > 0 ? (
-                          <span className="text-sm text-muted-foreground">With variants</span>
-                        ) : (
-                          product.stock
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {product.variants.length > 0 ? (
-                          <span className="text-xs text-muted-foreground">
-                            Variant ({product.variants.length})
-                          </span>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">Single</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          {product.active ? (
-                            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                              Inactive
-                            </span>
-                          )}
-                          {product.featured && (
-                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-                              Featured
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link href={`/admin/products/${product.id}/edit`}>
-                                <Edit className="h-4 w-4" />
-                                Edit
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(product.id)}
-                              className="text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <DataTable
+        columns={columns(setDeleteId)}
+        data={products.data}
+        list={list}
+        isLoading={products.isLoading}
+        isError={products.isError}
+        isFetching={products.isFetching}
+        getRowId={(product) => product.id}
+        searchPlaceholder="Search by name, slug or category"
+        emptyMessage="No products found"
+        filters={[
+          {
+            name: 'status',
+            label: 'Status',
+            options: [
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'featured', label: 'Featured' },
+            ],
+          },
+        ]}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>

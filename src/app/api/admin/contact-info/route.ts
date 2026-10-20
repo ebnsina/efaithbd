@@ -1,3 +1,4 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
@@ -23,6 +24,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  refreshStorefront()
   try {
     const body = await request.json()
     const { phone, email, address, workingHours, description } = body

@@ -1,3 +1,4 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
@@ -5,6 +6,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await params
     const body = await request.json()

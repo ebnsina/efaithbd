@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { refreshStorefront } from '@/lib/revalidate'
 
 export async function GET() {
   try {
@@ -26,6 +27,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  refreshStorefront()
   try {
     const body = await request.json()
     const { logo, siteName, promoText, promoActive } = body

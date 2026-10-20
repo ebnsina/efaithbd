@@ -1,3 +1,4 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
@@ -22,6 +23,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  refreshStorefront()
   try {
     const body = await request.json()
     const category = await prisma.category.create({

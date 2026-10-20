@@ -1,3 +1,4 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
@@ -6,6 +7,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const session = await auth()
     if (!session || session.user.role !== 'ADMIN') {
@@ -42,6 +44,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const session = await auth()
     if (!session || session.user.role !== 'ADMIN') {

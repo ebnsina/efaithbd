@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { refreshStorefront } from '@/lib/revalidate'
 
 // GET all social links
 export async function GET() {
@@ -19,6 +20,7 @@ export async function GET() {
 
 // POST create new social link
 export async function POST(request: Request) {
+  refreshStorefront()
   try {
     const body = await request.json()
     const { platform, url, icon, order, active } = body
