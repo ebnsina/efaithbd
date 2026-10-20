@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { refreshStorefront } from '@/lib/revalidate'
 import { auth } from '@/lib/auth'
 
 // GET /api/admin/coupons - Get all coupons (admin only)
@@ -29,6 +30,7 @@ export async function GET() {
 
 // POST /api/admin/coupons - Create a new coupon (admin only)
 export async function POST(request: NextRequest) {
+  refreshStorefront()
   try {
     const session = await auth()
 

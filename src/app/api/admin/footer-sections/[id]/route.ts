@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { refreshStorefront } from '@/lib/revalidate'
 
 // PUT update footer section
 export async function PUT(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await context.params
     const body = await request.json()
@@ -31,6 +33,7 @@ export async function DELETE(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await context.params
     await prisma.footerSection.delete({

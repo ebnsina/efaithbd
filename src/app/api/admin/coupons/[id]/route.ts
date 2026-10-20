@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { refreshStorefront } from '@/lib/revalidate'
 import { auth } from '@/lib/auth'
 
 // GET /api/admin/coupons/[id] - Get a specific coupon
@@ -38,6 +39,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await params
     const session = await auth()
@@ -108,6 +110,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  refreshStorefront()
   try {
     const { id } = await params
     const session = await auth()

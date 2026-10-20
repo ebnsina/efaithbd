@@ -1,3 +1,4 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -7,6 +8,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  refreshStorefront()
   try {
     const body = await request.json()
     const { theme } = body

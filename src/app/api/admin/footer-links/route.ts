@@ -1,3 +1,4 @@
+import { refreshStorefront } from '@/lib/revalidate'
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -28,6 +29,7 @@ export async function GET(request: Request) {
 
 // POST create new footer link
 export async function POST(request: Request) {
+  refreshStorefront()
   try {
     const body = await request.json();
     const { sectionId, label, url, order, active } = body;
