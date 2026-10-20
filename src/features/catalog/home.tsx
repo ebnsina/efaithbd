@@ -159,7 +159,7 @@ export function HighlightStrip({ highlights }: { highlights: Homepage['highlight
         {highlights.map((highlight) => (
           <li key={highlight.id}>
             <MaybeLink url={highlight.link} className="flex items-center gap-3 hover:text-primary">
-              <StoreIcon value={highlight.icon} className="size-8 shrink-0 text-2xl text-muted-foreground" />
+              <StoreIcon value={highlight.icon} className="size-8 shrink-0 text-primary" />
               <span className="min-w-0">
                 <span className="block font-semibold text-sm">{highlight.title}</span>
                 {highlight.subtitle && <span className="block text-muted-foreground text-xs">{highlight.subtitle}</span>}
@@ -227,7 +227,7 @@ export function FeatureCards({ cards }: { cards: Homepage['featureCards'] }) {
       <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {cards.map((card) => (
           <li key={card.id} className="flex flex-col items-center gap-2 rounded-xl border bg-card p-5 text-center">
-            <span className="flex size-12 items-center justify-center rounded-full bg-muted text-2xl">
+            <span className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <StoreIcon value={card.icon} className="size-6" />
             </span>
             <h3 className="font-semibold">{card.title}</h3>

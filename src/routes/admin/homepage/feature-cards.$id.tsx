@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useAppForm } from '@/components/form'
-import { Button } from '@/components/ui/button'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { IconSelect } from '@/features/highlights/icon-select'
+import type { HighlightIconKey } from '@/features/highlights/icons'
 import { type getFeatureCard, saveFeatureCard } from '@/features/homepage/homepage.functions'
 import { featureCardQuery, useSaveHomepageItem } from '@/features/homepage/queries'
 import { type FeatureCardInput, featureCardSchema } from '@/features/homepage/schemas'
@@ -15,8 +17,6 @@ export const Route = createFileRoute('/admin/homepage/feature-cards/$id')({
   }),
   component: FeatureCardPage,
 })
-
-const suggestedIcons = ['🚚', '💳', '🔒', '↩️', '⏰', '🎁', '📞', '✨']
 
 function FeatureCardPage() {
   const { id } = Route.useParams()
@@ -33,7 +33,7 @@ function FeatureCardForm({ card }: { card?: Awaited<ReturnType<typeof getFeature
   const save = useSaveHomepageItem<FeatureCardInput>(saveFeatureCard, card?.id, 'Feature card')
   const form = useAppForm({
     defaultValues: {
-      icon: card?.icon ?? '🚚',
+      icon: (card?.icon ?? 'delivery') as HighlightIconKey,
       title: card?.title ?? '',
       description: card?.description ?? '',
       active: card?.active ?? true,
@@ -59,26 +59,14 @@ function FeatureCardForm({ card }: { card?: Awaited<ReturnType<typeof getFeature
           form.handleSubmit()
         }}
       >
-        <div className="space-y-2">
-          <form.AppField name="icon">
-            {(field) => <field.TextField label="Icon" description="Type any emoji, or pick one below." />}
-          </form.AppField>
-          <div className="flex flex-wrap gap-2">
-            {suggestedIcons.map((icon) => (
-              <Button
-                key={icon}
-                type="button"
-                variant="outline"
-                size="icon"
-                className="text-lg"
-                aria-label={`Use ${icon}`}
-                onClick={() => form.setFieldValue('icon', icon)}
-              >
-                {icon}
-              </Button>
-            ))}
-          </div>
-        </div>
+        <form.Field name="icon">
+          {(field) => (
+            <Field>
+              <FieldLabel htmlFor="icon">Icon</FieldLabel>
+              <IconSelect id="icon" value={field.state.value} onChange={field.handleChange} />
+            </Field>
+          )}
+        </form.Field>
         <form.AppField name="title">
           {(field) => <field.TextField label="Title" placeholder="Free delivery" />}
         </form.AppField>

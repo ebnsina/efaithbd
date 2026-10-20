@@ -1,4 +1,5 @@
 import * as v from 'valibot'
+import { highlightIconKeys } from '@/features/highlights/icons'
 import { optionalLink, optionalText, requiredImage, requiredText } from '@/features/site-settings/fields'
 
 export const sectionTypes = [
@@ -26,7 +27,7 @@ export const sectionSchema = v.object({
 export type SectionInput = v.InferInput<typeof sectionSchema>
 
 export const featureCardSchema = v.object({
-  icon: requiredText('Pick or type an icon', 40),
+  icon: v.picklist(highlightIconKeys, 'Choose an icon'),
   title: requiredText('Enter a title', 60),
   description: optionalText(200),
   active: v.boolean(),
