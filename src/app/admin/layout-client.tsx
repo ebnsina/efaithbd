@@ -29,45 +29,35 @@ export function AdminLayoutClient({ children, session, siteName }: AdminLayoutCl
     setMounted(true);
   }, []);
 
-  const menuItems = [
-    { href: '/admin', label: 'Dashboard', icon: 'LayoutGrid', exact: true },
+  const menuGroups = [
     {
-      href: '/admin/site-settings',
-      label: 'Site Settings',
-      icon: 'Settings',
+      label: 'Overview',
+      items: [{ href: '/admin', label: 'Dashboard', icon: 'LayoutGrid', exact: true }],
     },
     {
-      href: '/admin/banners',
-      label: 'Banners',
-      icon: 'Image',
-    },
-    { href: '/admin/categories', label: 'Categories', icon: 'Layers' },
-    { href: '/admin/products', label: 'Products', icon: 'Package' },
-    { href: '/admin/orders', label: 'Orders', icon: 'ShoppingBag' },
-    {
-      href: '/admin/shipping-methods',
-      label: 'Shipping Methods',
-      icon: 'Truck',
+      label: 'Sales',
+      items: [
+        { href: '/admin/orders', label: 'Orders', icon: 'ShoppingBag' },
+        { href: '/admin/coupons', label: 'Coupons', icon: 'Ticket' },
+        { href: '/admin/shipping-methods', label: 'Shipping Methods', icon: 'Truck' },
+      ],
     },
     {
-      href: '/admin/coupons',
-      label: 'Coupons',
-      icon: 'Ticket',
+      label: 'Catalog',
+      items: [
+        { href: '/admin/products', label: 'Products', icon: 'Package' },
+        { href: '/admin/categories', label: 'Categories', icon: 'Layers' },
+        { href: '/admin/reviews', label: 'Reviews', icon: 'StarIcon' },
+        { href: '/admin/questions', label: 'Q&A', icon: 'MessageSquare' },
+      ],
     },
     {
-      href: '/admin/reviews',
-      label: 'Reviews',
-      icon: 'StarIcon',
-    },
-    {
-      href: '/admin/questions',
-      label: 'Q&A',
-      icon: 'MessageSquare',
-    },
-    {
-      href: '/admin/homepage',
-      label: 'Manage Homepage',
-      icon: 'Star',
+      label: 'Storefront',
+      items: [
+        { href: '/admin/homepage', label: 'Manage Homepage', icon: 'Star' },
+        { href: '/admin/banners', label: 'Banners', icon: 'Image' },
+        { href: '/admin/site-settings', label: 'Site Settings', icon: 'Settings' },
+      ],
     },
   ];
 
@@ -90,7 +80,7 @@ export function AdminLayoutClient({ children, session, siteName }: AdminLayoutCl
       </div>
 
       <nav className="mt-4 px-3 overflow-y-auto flex-1">
-        <AdminNav items={menuItems} onItemClick={() => setMobileMenuOpen(false)} />
+        <AdminNav groups={menuGroups} onItemClick={() => setMobileMenuOpen(false)} />
       </nav>
 
       <div className="p-4 border-t bg-card mt-auto space-y-2">

@@ -1,63 +1,47 @@
-'use client';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
+import type { OrderStatus } from '@/generated/client/enums';
 import { Clock, Package, ShoppingBag, TrendingUp } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
-type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  customerPhone: string;
-  total: number;
-  orderStatus: OrderStatus;
-  createdAt: string;
-  items: Array<{
-    product: {
-      name: string;
-    };
-  }>;
-}
-
-interface DashboardData {
-  totalProducts: number;
-  totalOrders: number;
-  pendingOrders: number;
-  totalRevenue: number;
-  todayOrders: number;
-  activeProducts: number;
-  recentOrders: Order[];
-}
-
-export default function AdminDashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/admin/dashboard')
-      .then((res) => res.json())
-      .then(setData)
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading || !data) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">{'Loading...'}</p>
-        </div>
-      </div>
-    );
-  }
+export default async function AdminDashboard() {
+  const [totalProducts, totalOrders, pendingOrders, revenue, todayOrders, activeProducts, recentOrders] =
+    await Promise.all([
+      prisma.product.count(),
+      prisma.order.count(),
+      prisma.order.count({ where: { orderStatus: 'PENDING' } }),
+      prisma.order.aggregate({ _sum: { total: true }, where: { paymentStatus: 'PAID' } }),
+      prisma.order.count({ where: { createdAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } } }),
+      prisma.product.count({ where: { active: true } }),
+      prisma.order.findMany({
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          orderNumber: true,
+          customerName: true,
+          customerPhone: true,
+          total: true,
+          orderStatus: true,
+          createdAt: true,
+          _count: { select: { items: true } },
+        },
+      }),
+    ]);
+  const data = {
+    totalProducts,
+    totalOrders,
+    pendingOrders,
+    totalRevenue: revenue._sum.total || 0,
+    todayOrders,
+    activeProducts,
+  };
 
   const stats = [
     {
       title: 'Total Products',
       value: data.totalProducts.toLocaleString('en-US'),
-      subtitle: `${data.activeProducts} ${'Active'}`,
+      subtitle: `${data.activeProducts} active`,
       icon: Package,
       gradient: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
@@ -66,7 +50,7 @@ export default function AdminDashboard() {
     {
       title: 'Total Orders',
       value: data.totalOrders.toLocaleString('en-US'),
-      subtitle: `${'Today'} ${data.todayOrders}`,
+      subtitle: `${data.todayOrders} today`,
       icon: ShoppingBag,
       gradient: 'from-green-500 to-green-600',
       bgColor: 'bg-green-50',
@@ -84,7 +68,7 @@ export default function AdminDashboard() {
     {
       title: 'Total Revenue',
       value: `৳${data.totalRevenue.toLocaleString('en-US')}`,
-      subtitle: 'Paid_status',
+      subtitle: 'Paid orders',
       icon: TrendingUp,
       gradient: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50',
@@ -180,14 +164,14 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>{'Recent Orders'}</CardTitle>
-              <p className="text-sm text-gray-600 mt-1">{'Last10 Orders'}</p>
+              <p className="text-sm text-gray-600 mt-1">{'Last 10 orders'}</p>
             </div>
-            <a
+            <Link
               href="/admin/orders"
               className="text-sm font-medium text-primary hover:text-primary/90"
             >
               {'View All'} →
-            </a>
+            </Link>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -216,7 +200,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {data.recentOrders.map((order) => {
+                {recentOrders.map((order) => {
                   const statusConfig = getStatusConfig(order.orderStatus);
                   return (
                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
@@ -232,7 +216,7 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">{order.items.length} items</span>
+                        <span className="text-sm text-gray-600">{order._count.items} items</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm font-semibold text-gray-900">
