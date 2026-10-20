@@ -146,24 +146,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(order)
     }
 
-    // Get all orders (admin)
-    const orders = await prisma.order.findMany({
-      include: {
-        items: {
-          include: {
-            product: true,
-            variant: true,
-          },
-        },
-        coupon: true,
-        shippingMethod: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    return NextResponse.json(orders)
+    return NextResponse.json({ error: 'orderNumber is required' }, { status: 400 })
   } catch (error) {
     console.error('Order fetch error:', error)
     return NextResponse.json({ error: 'সমস্যা হয়েছে' }, { status: 500 })
