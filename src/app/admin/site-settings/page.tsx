@@ -19,6 +19,20 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import {
+  type MenuItem,
+  useBasicSettings,
+  useDeleteMenuItem,
+  useFooterSettings,
+  useMenuItems,
+  useReorderMenuItems,
+  useSaveBasicSettings,
+  useSaveFooterSettings,
+  useSaveMenuItem,
+} from './queries'
+
+const withEmptyStrings = (data: Record<string, unknown>) =>
+  Object.fromEntries(Object.entries(data).map(([key, value]) => [key, value ?? '']))
+import {
   DndContext,
   closestCenter,
   KeyboardSensor,
@@ -38,22 +52,6 @@ import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Plus, Edit, Trash2 } from 'lucide-react'
 
 type Tab = 'basic' | 'menu' | 'footer'
-
-interface MenuItem {
-  id: string
-  label: string
-  url: string
-  parentId: string | null
-  type: 'CUSTOM' | 'CATEGORY' | 'PRODUCT' | 'PAGE'
-  targetId: string | null
-  icon: string | null
-  order: number
-  active: boolean
-  openInNewTab: boolean
-  megaMenu: boolean
-  featured: boolean
-  children?: MenuItem[]
-}
 
 function SortableMenuItem({
   item,
@@ -137,8 +135,6 @@ function SortableMenuItem({
 
 export default function SiteSettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('basic')
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
 
   // Form state management
   const [formState, setFormState] = useState<FormState>('idle')
@@ -149,7 +145,17 @@ export default function SiteSettingsPage() {
   const [isFooterDataInitialized, setIsFooterDataInitialized] = useState(false)
 
   // Menu Management State
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const basicQuery = useBasicSettings(activeTab === 'basic')
+  const footerQuery = useFooterSettings(activeTab === 'footer')
+  const menuQuery = useMenuItems(activeTab === 'menu')
+  const menuItems = menuQuery.data ?? []
+  const activeQuery = { basic: basicQuery, footer: footerQuery, menu: menuQuery }[activeTab]
+  const loading = activeQuery.isLoading
+  const saveBasic = useSaveBasicSettings()
+  const saveFooter = useSaveFooterSettings()
+  const saveMenuItem = useSaveMenuItem()
+  const deleteMenuItem = useDeleteMenuItem()
+  const reorderMenu = useReorderMenuItems()
   const [showMenuForm, setShowMenuForm] = useState(false)
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null)
   const [menuForm, setMenuForm] = useState({
@@ -219,12 +225,25 @@ export default function SiteSettingsPage() {
   })
 
   useEffect(() => {
-    // Reset initialization flags and form state when switching tabs
-    setIsBasicDataInitialized(false)
-    setIsFooterDataInitialized(false)
     setFormState('idle')
-    fetchSettings()
   }, [activeTab])
+
+  // Seed the editable forms whenever fresh server data arrives
+  useEffect(() => {
+    if (!basicQuery.data?.id) return
+    const data = withEmptyStrings(basicQuery.data)
+    setBasicSettings(prev => ({ ...prev, ...data }))
+    setSavedBasicData((prev: object | null) => ({ ...(prev ?? basicSettings), ...data }))
+    setIsBasicDataInitialized(true)
+  }, [basicQuery.data])
+
+  useEffect(() => {
+    if (!footerQuery.data?.id) return
+    const data = withEmptyStrings(footerQuery.data)
+    setFooterSettings(prev => ({ ...prev, ...data }))
+    setSavedFooterData((prev: object | null) => ({ ...(prev ?? footerSettings), ...data }))
+    setIsFooterDataInitialized(true)
+  }, [footerQuery.data])
 
   // Track form changes for basic settings
   useEffect(() => {
@@ -277,82 +296,14 @@ export default function SiteSettingsPage() {
     }
   }, [menuForm, savedMenuForm, showMenuForm])
 
-  const fetchSettings = async () => {
-    setLoading(true)
-    try {
-      if (activeTab === 'basic') {
-        const res = await fetch('/api/admin/site-settings/basic')
-        const data = await res.json()
-        if (data.id) {
-          // Convert null values to empty strings and ensure all fields exist
-          const sanitizedData = Object.fromEntries(
-            Object.entries(data).map(([key, value]) => [
-              key,
-              value === null || value === undefined ? '' : value,
-            ])
-          )
-          // Merge with existing state to ensure all fields are present
-          setBasicSettings(prev => ({ ...prev, ...sanitizedData }))
-          setSavedBasicData({ ...basicSettings, ...sanitizedData })
-          // Set initialization flag after a brief delay to allow state to settle
-          setTimeout(() => setIsBasicDataInitialized(true), 100)
-        }
-      } else if (activeTab === 'menu') {
-        const res = await fetch('/api/admin/menu')
-        const data = await res.json()
-        setMenuItems(data)
-      } else if (activeTab === 'footer') {
-        const res = await fetch('/api/admin/site-settings/footer')
-        const data = await res.json()
-        if (data.id) {
-          // Convert null values to empty strings and ensure all fields exist
-          const sanitizedData = Object.fromEntries(
-            Object.entries(data).map(([key, value]) => [
-              key,
-              value === null || value === undefined ? '' : value,
-            ])
-          )
-          // Merge with existing state to ensure all fields are present
-          setFooterSettings(prev => ({ ...prev, ...sanitizedData }))
-          setSavedFooterData({ ...footerSettings, ...sanitizedData })
-          // Set initialization flag after a brief delay to allow state to settle
-          setTimeout(() => setIsFooterDataInitialized(true), 100)
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching settings:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleBasicSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormState('loading')
     setStatusMessage('Saving Settings')
-
     try {
-      const res = await fetch('/api/admin/site-settings/basic', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(basicSettings),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        const sanitizedData = Object.fromEntries(
-          Object.entries(data).map(([key, value]) => [
-            key,
-            value === null || value === undefined ? '' : value,
-          ])
-        )
-        setSavedBasicData({ ...basicSettings, ...sanitizedData })
-        setStatusMessage('Settings Saved')
-        setFormState('success')
-      } else {
-        setStatusMessage('Settings Save Error')
-        setFormState('error')
-      }
+      await saveBasic.mutateAsync(basicSettings)
+      setStatusMessage('Settings Saved')
+      setFormState('success')
     } catch (error) {
       console.error('Error saving settings:', error)
       setStatusMessage('Settings Save Error')
@@ -364,29 +315,10 @@ export default function SiteSettingsPage() {
     e.preventDefault()
     setFormState('loading')
     setStatusMessage('Footer Saving')
-
     try {
-      const res = await fetch('/api/admin/site-settings/footer', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(footerSettings),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        const sanitizedData = Object.fromEntries(
-          Object.entries(data).map(([key, value]) => [
-            key,
-            value === null || value === undefined ? '' : value,
-          ])
-        )
-        setSavedFooterData({ ...footerSettings, ...sanitizedData })
-        setStatusMessage('Footer Saved')
-        setFormState('success')
-      } else {
-        setStatusMessage('Settings Save Error')
-        setFormState('error')
-      }
+      await saveFooter.mutateAsync(footerSettings)
+      setStatusMessage('Footer Saved')
+      setFormState('success')
     } catch (error) {
       console.error('Error saving footer settings:', error)
       setStatusMessage('Settings Save Error')
@@ -399,35 +331,13 @@ export default function SiteSettingsPage() {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      setMenuItems(items => {
-        const oldIndex = items.findIndex(item => item.id === active.id)
-        const newIndex = items.findIndex(item => item.id === over.id)
-
-        const newItems = arrayMove(items, oldIndex, newIndex)
-
-        // Update orders
-        const updatedItems = newItems.map((item, index) => ({
-          ...item,
-          order: index,
-        }))
-
-        // Save to server
-        saveMenuOrder(updatedItems)
-
-        return updatedItems
-      })
-    }
-  }
-
-  const saveMenuOrder = async (items: MenuItem[]) => {
-    try {
-      await fetch('/api/admin/menu', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      })
-    } catch (error) {
-      console.error('Error saving menu order:', error)
+      const oldIndex = menuItems.findIndex(item => item.id === active.id)
+      const newIndex = menuItems.findIndex(item => item.id === over.id)
+      const updatedItems = arrayMove(menuItems, oldIndex, newIndex).map((item, index) => ({
+        ...item,
+        order: index,
+      }))
+      reorderMenu.mutate(updatedItems)
     }
   }
 
@@ -436,35 +346,24 @@ export default function SiteSettingsPage() {
     setMenuFormState('loading')
 
     try {
-      const order = menuItems.length
-      const res = await fetch('/api/admin/menu', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...menuForm, order }),
-      })
-
-      if (res.ok) {
-        setMenuFormState('success')
-        setTimeout(() => {
-          setShowMenuForm(false)
-          setMenuForm({
-            label: '',
-            url: '',
-            type: 'CUSTOM',
-            targetId: '',
-            icon: '',
-            active: true,
-            openInNewTab: false,
-            megaMenu: false,
-            featured: false,
-          })
-          setSavedMenuForm(null)
-          setMenuFormState('idle')
-        }, 1000)
-        fetchSettings()
-      } else {
-        setMenuFormState('error')
-      }
+      await saveMenuItem.mutateAsync({ data: { ...menuForm, order: menuItems.length } })
+      setMenuFormState('success')
+      setTimeout(() => {
+        setShowMenuForm(false)
+        setMenuForm({
+          label: '',
+          url: '',
+          type: 'CUSTOM',
+          targetId: '',
+          icon: '',
+          active: true,
+          openInNewTab: false,
+          megaMenu: false,
+          featured: false,
+        })
+        setSavedMenuForm(null)
+        setMenuFormState('idle')
+      }, 1000)
     } catch (error) {
       console.error('Error adding menu item:', error)
       setMenuFormState('error')
@@ -477,44 +376,23 @@ export default function SiteSettingsPage() {
     setMenuFormState('loading')
 
     try {
-      const res = await fetch(`/api/admin/menu/${editingMenuItem.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(menuForm),
-      })
-
-      if (res.ok) {
-        setMenuFormState('success')
-        setTimeout(() => {
-          setEditingMenuItem(null)
-          setShowMenuForm(false)
-          setSavedMenuForm(null)
-          setMenuFormState('idle')
-        }, 1000)
-        fetchSettings()
-      } else {
-        setMenuFormState('error')
-      }
+      await saveMenuItem.mutateAsync({ id: editingMenuItem.id, data: menuForm })
+      setMenuFormState('success')
+      setTimeout(() => {
+        setEditingMenuItem(null)
+        setShowMenuForm(false)
+        setSavedMenuForm(null)
+        setMenuFormState('idle')
+      }, 1000)
     } catch (error) {
       console.error('Error updating menu item:', error)
       setMenuFormState('error')
     }
   }
 
-  const handleDeleteMenuItem = async (id: string) => {
+  const handleDeleteMenuItem = (id: string) => {
     if (!confirm('Confirm Delete Menu Item')) return
-
-    try {
-      const res = await fetch(`/api/admin/menu/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (res.ok) {
-        fetchSettings()
-      }
-    } catch (error) {
-      console.error('Error deleting menu item:', error)
-    }
+    deleteMenuItem.mutate(id)
   }
 
   const openEditForm = (item: MenuItem) => {
@@ -572,6 +450,8 @@ export default function SiteSettingsPage() {
 
       {loading ? (
         <div className="p-8">{'Loading...'}</div>
+      ) : activeQuery.isError ? (
+        <div className="p-8 text-destructive">Could not load these settings. Please refresh the page.</div>
       ) : (
         <>
           {/* Basic Settings Tab */}

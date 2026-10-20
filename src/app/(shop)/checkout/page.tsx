@@ -23,14 +23,11 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ShoppingCart, Package, Tag, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { usePaymentSettings, usePlaceOrder, useShippingOptions, useValidateCoupon } from './queries';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, total, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [couponError, setCouponError] = useState<string>('');
-  const [couponSuccess, setCouponSuccess] = useState<string>('');
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
     discount: number;
@@ -53,17 +50,28 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [bkashSettings, setBkashSettings] = useState<{
-    bkashNumber?: string;
-    bkashNote?: string;
-  }>({});
-  const [bkashSettingsLoaded, setBkashSettingsLoaded] = useState(false);
-  const [shippingMethods, setShippingMethods] = useState<any[]>([]);
-  const [shippingMethodsLoading, setShippingMethodsLoading] = useState(false);
 
   const subtotalAmount = total();
+  const { data: bkashSettings } = usePaymentSettings();
+  const {
+    data: shippingMethods = [],
+    isLoading: shippingMethodsLoading,
+    isError: shippingMethodsError,
+  } = useShippingOptions(subtotalAmount);
+  const validateCoupon = useValidateCoupon();
+  const placeOrder = usePlaceOrder();
+  const couponLoading = validateCoupon.isPending;
+  const couponError = validateCoupon.error?.message;
+  const couponSuccess = appliedCoupon
+    ? `Coupon applied! You saved ৳${appliedCoupon.discount.toLocaleString('en-US')}.`
+    : '';
+  const loading = placeOrder.isPending;
+
   const discountAmount = appliedCoupon?.discount || 0;
-  const selectedShipping = shippingMethods.find((m) => m.id === formData.shippingMethodId);
+  // Default to the first option the cart qualifies for, without copying server data into form state
+  const selectedShipping =
+    shippingMethods.find((m) => m.id === formData.shippingMethodId) ?? shippingMethods[0];
+  const shippingMethodId = selectedShipping?.id ?? '';
   const shippingCost = selectedShipping?.cost || 0;
   const finalTotal = subtotalAmount - discountAmount + shippingCost;
 
@@ -71,89 +79,33 @@ export default function CheckoutPage() {
     if (items.length === 0) {
       router.push('/cart');
     }
-
-    // Fetch bKash settings
-    fetch('/api/payment-settings')
-      .then((res) => res.json())
-      .then((data) => {
-        setBkashSettings({
-          bkashNumber: data.bkashNumber,
-          bkashNote: data.bkashNote,
-        });
-        setBkashSettingsLoaded(true);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch bKash settings:', err);
-        setBkashSettingsLoaded(true);
-      });
-
-    // Fetch shipping methods
-    fetchShippingMethods();
+    // Mount only: placing an order empties the cart, which must not bounce to /cart
   }, []);
-
-  const fetchShippingMethods = async () => {
-    setShippingMethodsLoading(true);
-    try {
-      const res = await fetch(`/api/shipping-methods?subtotal=${subtotalAmount}`);
-      const data = await res.json();
-      setShippingMethods(data);
-      // Auto-select first method if available
-      if (data.length > 0 && !formData.shippingMethodId) {
-        setFormData((prev) => ({ ...prev, shippingMethodId: data[0].id }));
-      }
-    } catch (error) {
-      console.error('Failed to fetch shipping methods:', error);
-    } finally {
-      setShippingMethodsLoading(false);
-    }
-  };
 
   if (items.length === 0) {
     return null;
   }
 
-  const applyCoupon = async () => {
+  const applyCoupon = () => {
     if (!formData.couponCode.trim()) {
       return;
     }
-
-    setCouponLoading(true);
-    setCouponError('');
-    setCouponSuccess('');
-    try {
-      const response = await fetch('/api/coupons/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: formData.couponCode,
-          subtotal: subtotalAmount,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        setCouponError(error.error || 'Coupon Error');
-        return;
+    validateCoupon.mutate(
+      { code: formData.couponCode, subtotal: subtotalAmount },
+      {
+        onSuccess: (data) =>
+          setAppliedCoupon({
+            code: data.coupon.code,
+            discount: data.discount,
+            description: data.coupon.description,
+          }),
       }
-
-      const data = await response.json();
-      setAppliedCoupon({
-        code: data.coupon.code,
-        discount: data.discount,
-        description: data.coupon.description,
-      });
-      setCouponSuccess(`Coupon applied! You saved ৳${data.discount.toLocaleString('en-US')}.`);
-    } catch (error) {
-      setCouponError('Failed to apply coupon. Please try again.');
-    } finally {
-      setCouponLoading(false);
-    }
+    );
   };
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
-    setCouponError('');
-    setCouponSuccess('');
+    validateCoupon.reset();
     setFormData({ ...formData, couponCode: '' });
   };
 
@@ -174,7 +126,7 @@ export default function CheckoutPage() {
       newErrors.customerAddress = 'Address Required';
     }
 
-    if (!formData.shippingMethodId) {
+    if (!shippingMethodId) {
       newErrors.shippingMethod = 'Please select a shipping method';
     }
 
@@ -191,54 +143,42 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    setLoading(true);
-
-    try {
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    placeOrder.mutate(
+      {
+        ...formData,
+        items: items.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        subtotal: subtotalAmount,
+        discount: discountAmount,
+        shippingCost: shippingCost,
+        total: finalTotal,
+        couponCode: appliedCoupon?.code,
+        shippingMethodId,
+      },
+      {
+        onSuccess: (data) => {
+          clearCart();
+          router.push(`/orders/${data.orderNumber}`);
         },
-        body: JSON.stringify({
-          ...formData,
-          items: items.map((item) => ({
-            productId: item.productId,
-            variantId: item.variantId,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          subtotal: subtotalAmount,
-          discount: discountAmount,
-          shippingCost: shippingCost,
-          total: finalTotal,
-          couponCode: appliedCoupon?.code,
-          shippingMethodId: formData.shippingMethodId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Order Error');
+        onError: () =>
+          setDialogState({
+            isOpen: true,
+            title: 'Error',
+            message: 'Order Error',
+          }),
       }
-
-      const data = await response.json();
-      clearCart();
-      router.push(`/orders/${data.orderNumber}`);
-    } catch (error) {
-      setDialogState({
-        isOpen: true,
-        title: 'Error',
-        message: 'Order Error',
-      });
-    } finally {
-      setLoading(false);
-    }
+    );
   };
 
   return (
@@ -346,13 +286,17 @@ export default function CheckoutPage() {
                     <div className="p-4 text-center text-muted-foreground">
                       Loading shipping methods...
                     </div>
+                  ) : shippingMethodsError ? (
+                    <div className="p-4 text-center text-destructive">
+                      Could not load delivery options. Please refresh the page.
+                    </div>
                   ) : shippingMethods.length === 0 ? (
                     <div className="p-4 text-center text-amber-600 bg-amber-50 rounded border border-amber-200">
                       No shipping methods available. Please contact support.
                     </div>
                   ) : (
                     <RadioGroup
-                      value={formData.shippingMethodId}
+                      value={shippingMethodId}
                       onValueChange={(value) =>
                         setFormData({
                           ...formData,
@@ -419,11 +363,11 @@ export default function CheckoutPage() {
                 {formData.paymentMethod === 'BKASH' && (
                   <>
                     {/* Show bKash Payment Instructions */}
-                    {(bkashSettings.bkashNumber || bkashSettings.bkashNote) && (
+                    {(bkashSettings?.bkashNumber || bkashSettings?.bkashNote) && (
                       <Card className="bg-orange-50 border-orange-200">
                         <CardContent className="pt-6">
                           <div className="space-y-3">
-                            {bkashSettings.bkashNumber && (
+                            {bkashSettings?.bkashNumber && (
                               <div>
                                 <p className="text-sm font-semibold text-orange-900 mb-1">
                                   {'Send Money To'}:
@@ -433,14 +377,14 @@ export default function CheckoutPage() {
                                     variant="secondary"
                                     className="text-lg font-bold py-1.5 px-3 bg-orange-100 text-orange-900"
                                   >
-                                    {bkashSettings.bkashNumber}
+                                    {bkashSettings?.bkashNumber}
                                   </Badge>
                                 </div>
                               </div>
                             )}
-                            {bkashSettings.bkashNote && (
+                            {bkashSettings?.bkashNote && (
                               <div className="text-sm text-orange-800 bg-white/50 p-3 rounded-md border border-orange-200">
-                                {bkashSettings.bkashNote}
+                                {bkashSettings?.bkashNote}
                               </div>
                             )}
                           </div>
