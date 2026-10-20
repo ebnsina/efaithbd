@@ -97,8 +97,8 @@ export function DataTable<T extends RowData>({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="relative min-w-56 flex-1">
           <HugeiconsIcon
             icon={Search01Icon}
             className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground"
@@ -143,7 +143,10 @@ export function DataTable<T extends RowData>({
                 {group.headers.map((header) => {
                   const sorted = header.column.getIsSorted()
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={header.column.id === 'actions' ? 'sticky right-0 bg-card' : undefined}
+                    >
                       {header.isPlaceholder ? null : header.column.getCanSort() ? (
                         <button
                           type="button"
@@ -179,7 +182,7 @@ export function DataTable<T extends RowData>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className={cell.column.id === 'actions' ? 'sticky right-0 bg-card' : undefined}>
                       <table.FlexRender cell={cell} />
                     </TableCell>
                   ))}

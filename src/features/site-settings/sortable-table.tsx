@@ -91,7 +91,12 @@ export function SortableTable<T extends { id: string }>({
                   </TableHead>
                 )}
                 {group.headers.map((header) => (
-                  <TableHead key={header.id}>{header.isPlaceholder ? null : <table.FlexRender header={header} />}</TableHead>
+                  <TableHead
+                    key={header.id}
+                    className={header.column.id === 'actions' ? 'sticky right-0 bg-card' : undefined}
+                  >
+                    {header.isPlaceholder ? null : <table.FlexRender header={header} />}
+                  </TableHead>
                 ))}
               </TableRow>
             ))}
@@ -108,7 +113,10 @@ export function SortableTable<T extends { id: string }>({
                 {table.getRowModel().rows.map((row) => (
                   <SortableRow key={row.id} id={row.id} label={rowLabel(row.original)} sortable={!!onReorder}>
                     {row.getAllCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        className={cell.column.id === 'actions' ? 'sticky right-0 bg-card' : undefined}
+                      >
                         <table.FlexRender cell={cell} />
                       </TableCell>
                     ))}
