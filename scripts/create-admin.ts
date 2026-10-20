@@ -1,5 +1,6 @@
+import 'dotenv/config'
 import bcrypt from 'bcryptjs'
-import { prisma } from '../src/lib/prisma'
+import { prisma } from '../src/server/db.server'
 
 const email = process.env.ADMIN_EMAIL
 const password = process.env.ADMIN_PASSWORD

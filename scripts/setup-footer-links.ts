@@ -1,4 +1,5 @@
-import { prisma } from '../src/lib/prisma'
+import 'dotenv/config'
+import { prisma } from '../src/server/db.server'
 
 async function setupFooterLinks() {
   try {

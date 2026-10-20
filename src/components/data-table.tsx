@@ -1,5 +1,5 @@
-'use client'
-
+import { ArrowDown01Icon, ArrowLeft01Icon, ArrowRight01Icon, ArrowUp01Icon, Search01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
   type ColumnDef,
   type RowData,
@@ -8,77 +8,44 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table'
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Loader2, Search } from 'lucide-react'
-import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Spinner } from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PAGE_SIZE } from '@/lib/list-params'
+import { type ListResult, type ListSearch, PAGE_SIZE } from '@/lib/list-search'
 
-export const tableFeaturesSet = tableFeatures({ rowSortingFeature, rowPaginationFeature })
-export type DataColumn<T extends RowData> = ColumnDef<typeof tableFeaturesSet, T>
-export type ListResponse<T> = { rows: T[]; rowCount: number }
+export const dataTableFeatures = tableFeatures({ rowSortingFeature, rowPaginationFeature })
+export type DataColumn<T extends RowData> = ColumnDef<typeof dataTableFeatures, T>
+
+export type TableFilter = { name: string; label: string; options: { value: string; label: string }[] }
 
 const ALL = '__all'
-
-// Table state lives in the URL so search, filters and page survive reloads and can be shared
-export function useListParams(filterNames: readonly string[] = []) {
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
-
-  const params = {
-    q: searchParams.get('q') ?? '',
-    page: Math.max(1, Number(searchParams.get('page')) || 1),
-    sort: searchParams.get('sort') ?? '',
-    dir: searchParams.get('dir') === 'asc' ? ('asc' as const) : ('desc' as const),
-    filters: Object.fromEntries(filterNames.map((name) => [name, searchParams.get(name) ?? ''])),
-  }
-
-  const set = (changes: Record<string, string | number | null>) => {
-    const next = new URLSearchParams(searchParams)
-    for (const [key, value] of Object.entries(changes)) {
-      if (value === null || value === '' || (key === 'page' && value === 1)) next.delete(key)
-      else next.set(key, String(value))
-    }
-    const query = next.toString()
-    // Native history update: Next syncs useSearchParams without a server round trip
-    window.history.replaceState(null, '', query ? `${pathname}?${query}` : pathname)
-  }
-
-  // The string form is what goes to the API and into the query key
-  const apiQuery = new URLSearchParams(
-    Object.entries({ q: params.q, page: String(params.page), sort: params.sort, dir: params.dir, ...params.filters }).filter(
-      ([, value]) => value !== ''
-    )
-  ).toString()
-
-  return { ...params, set, apiQuery }
-}
-
-type Filter = { name: string; label: string; options: { value: string; label: string }[] }
+const emptyRows: never[] = []
+const count = new Intl.NumberFormat()
 
 interface DataTableProps<T extends RowData> {
   columns: DataColumn<T>[]
-  data: ListResponse<T> | undefined
-  list: ReturnType<typeof useListParams>
-  isLoading: boolean
+  data: ListResult<T> | undefined
+  search: ListSearch & Record<string, unknown>
+  onSearchChange: (changes: Record<string, unknown>) => void
+  isPending: boolean
   isError: boolean
   isFetching?: boolean
   searchPlaceholder?: string
-  filters?: Filter[]
+  filters?: TableFilter[]
   emptyMessage?: string
   getRowId?: (row: T) => string
 }
 
-const emptyRows: never[] = []
-
+// Search, filters, sort and page all live in the route's URL search; the server returns one page at a time
 export function DataTable<T extends RowData>({
   columns,
   data,
-  list,
-  isLoading,
+  search,
+  onSearchChange,
+  isPending,
   isError,
   isFetching,
   searchPlaceholder = 'Search…',
@@ -86,17 +53,17 @@ export function DataTable<T extends RowData>({
   emptyMessage = 'Nothing found',
   getRowId,
 }: DataTableProps<T>) {
-  const [search, setSearch] = useState(list.q)
+  const [query, setQuery] = useState(search.q)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: the debounce reacts to typing only
   useEffect(() => {
-    if (search === list.q) return
-    const timer = setTimeout(() => list.set({ q: search, page: 1 }), 300)
+    if (query === search.q) return
+    const timer = setTimeout(() => onSearchChange({ q: query, page: 1 }), 300)
     return () => clearTimeout(timer)
-  }, [search])
+  }, [query])
 
   const table = useTable({
-    features: tableFeaturesSet,
+    features: dataTableFeatures,
     columns,
     data: data?.rows ?? emptyRows,
     getRowId,
@@ -104,32 +71,42 @@ export function DataTable<T extends RowData>({
     manualPagination: true,
     manualSorting: true,
     state: {
-      pagination: { pageIndex: list.page - 1, pageSize: PAGE_SIZE },
-      sorting: list.sort ? [{ id: list.sort, desc: list.dir === 'desc' }] : [],
+      pagination: { pageIndex: search.page - 1, pageSize: PAGE_SIZE },
+      sorting: search.sort ? [{ id: search.sort, desc: search.dir === 'desc' }] : [],
     },
     onPaginationChange: (updater) => {
       const next = typeof updater === 'function' ? updater(table.state.pagination) : updater
-      list.set({ page: next.pageIndex + 1 })
+      onSearchChange({ page: next.pageIndex + 1 })
     },
     onSortingChange: (updater) => {
       const next = typeof updater === 'function' ? updater(table.state.sorting) : updater
-      list.set({ sort: next[0]?.id ?? null, dir: next[0] ? (next[0].desc ? 'desc' : 'asc') : null, page: 1 })
+      onSearchChange({ sort: next[0]?.id ?? '', dir: next[0]?.desc === false ? 'asc' : 'desc', page: 1 })
     },
   })
 
   const rowCount = data?.rowCount ?? 0
-  const from = rowCount === 0 ? 0 : (list.page - 1) * PAGE_SIZE + 1
-  const to = Math.min(list.page * PAGE_SIZE, rowCount)
+  const from = rowCount === 0 ? 0 : (search.page - 1) * PAGE_SIZE + 1
+  const to = Math.min(search.page * PAGE_SIZE, rowCount)
+  const message = (text: string, className = 'text-muted-foreground') => (
+    <TableRow>
+      <TableCell colSpan={columns.length} className={`h-48 text-center ${className}`}>
+        {text}
+      </TableCell>
+    </TableRow>
+  )
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <HugeiconsIcon
+            icon={Search01Icon}
+            className="-translate-y-1/2 absolute top-1/2 left-3 size-4 text-muted-foreground"
+          />
           <Input
             type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
             aria-label={searchPlaceholder}
             className="pl-9"
@@ -138,11 +115,12 @@ export function DataTable<T extends RowData>({
         {filters.map((filter) => (
           <Select
             key={filter.name}
-            value={list.filters[filter.name] || ALL}
-            onValueChange={(value) => list.set({ [filter.name]: value === ALL ? null : value, page: 1 })}
+            items={[{ value: ALL, label: `All ${filter.label.toLowerCase()}` }, ...filter.options]}
+            value={(search[filter.name] as string) || ALL}
+            onValueChange={(value) => onSearchChange({ [filter.name]: value === ALL ? undefined : value, page: 1 })}
           >
             <SelectTrigger className="sm:w-48" aria-label={filter.label}>
-              <SelectValue placeholder={filter.label} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL}>All {filter.label.toLowerCase()}</SelectItem>
@@ -157,9 +135,7 @@ export function DataTable<T extends RowData>({
       </div>
 
       <div className="relative overflow-x-auto rounded-lg border bg-card">
-        {isFetching && !isLoading && (
-          <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
-        )}
+        {isFetching && !isPending && <Spinner className="absolute top-3 right-3 size-4 text-muted-foreground" />}
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((group) => (
@@ -175,11 +151,9 @@ export function DataTable<T extends RowData>({
                           className="inline-flex items-center gap-1 hover:text-foreground"
                         >
                           <table.FlexRender header={header} />
-                          {sorted === 'asc' ? (
-                            <ArrowUp className="h-3 w-3" />
-                          ) : sorted === 'desc' ? (
-                            <ArrowDown className="h-3 w-3" />
-                          ) : null}
+                          {sorted && (
+                            <HugeiconsIcon icon={sorted === 'asc' ? ArrowUp01Icon : ArrowDown01Icon} className="size-3" />
+                          )}
                         </button>
                       ) : (
                         <table.FlexRender header={header} />
@@ -191,24 +165,16 @@ export function DataTable<T extends RowData>({
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
+            {isPending ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-48 text-center">
-                  <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
+                <TableCell colSpan={columns.length} className="h-48">
+                  <Spinner className="mx-auto size-6 text-muted-foreground" />
                 </TableCell>
               </TableRow>
             ) : isError ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-48 text-center text-destructive">
-                  Could not load this list. Please refresh the page.
-                </TableCell>
-              </TableRow>
+              message('Could not load this list. Please refresh the page.', 'text-destructive')
             ) : table.getRowModel().rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-48 text-center text-muted-foreground">
-                  {emptyMessage}
-                </TableCell>
-              </TableRow>
+              message(emptyMessage)
             ) : (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
@@ -226,30 +192,29 @@ export function DataTable<T extends RowData>({
 
       <div className="flex items-center justify-between gap-4 text-muted-foreground text-sm">
         <span>
-          {new Intl.NumberFormat().format(from)}–{new Intl.NumberFormat().format(to)} of{' '}
-          {new Intl.NumberFormat().format(rowCount)}
+          {count.format(from)}–{count.format(to)} of {count.format(rowCount)}
         </span>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            size="sm"
+            size="icon-sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             aria-label="Previous page"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} />
           </Button>
           <span>
-            Page {list.page} of {Math.max(1, table.getPageCount())}
+            Page {search.page} of {Math.max(1, table.getPageCount())}
           </span>
           <Button
             variant="outline"
-            size="sm"
+            size="icon-sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             aria-label="Next page"
           >
-            <ChevronRight className="h-4 w-4" />
+            <HugeiconsIcon icon={ArrowRight01Icon} />
           </Button>
         </div>
       </div>

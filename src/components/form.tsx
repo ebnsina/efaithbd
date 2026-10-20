@@ -1,12 +1,10 @@
-'use client'
-
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form'
-import { Loader2 } from 'lucide-react'
-import ImageUpload from '@/components/ImageUpload'
+import { ImageUpload } from '@/components/image-upload'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Spinner } from '@/components/ui/spinner'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -126,13 +124,14 @@ function SelectField({
     <Field data-invalid={invalid}>
       <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
       <Select
-        value={(field.state.value as string) || undefined}
+        items={options}
+        value={(field.state.value as string) || null}
         onValueChange={(value) => {
-          field.handleChange(value)
+          field.handleChange(value ?? '')
           field.handleBlur()
         }}
       >
-        <SelectTrigger id={field.name} aria-invalid={invalid}>
+        <SelectTrigger id={field.name} aria-invalid={invalid} className="w-full">
           <SelectValue placeholder={placeholder ?? `Select ${label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent>
@@ -175,8 +174,8 @@ function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel?: s
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {isSubmitting && <Spinner />}
           {isSubmitting ? (pendingLabel ?? label) : label}
         </Button>
       )}
