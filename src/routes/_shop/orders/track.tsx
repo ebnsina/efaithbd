@@ -35,7 +35,7 @@ function TrackPage() {
   })
 
   return (
-    <main className="container mx-auto max-w-2xl px-4 py-10">
+    <div className="container mx-auto max-w-2xl px-4 py-10">
       <h1 className="font-semibold text-2xl tracking-tight">Track your order</h1>
       <p className="mt-1 mb-6 text-muted-foreground">Enter the phone number you used when ordering.</p>
 
@@ -134,6 +134,6 @@ function TrackPage() {
           </>
         )}
       </section>
-    </main>
+    </div>
   )
 }

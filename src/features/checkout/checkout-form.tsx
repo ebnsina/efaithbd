@@ -1,6 +1,6 @@
 import { Alert02Icon, CheckmarkCircle02Icon, ShoppingCart01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useSelector } from '@tanstack/react-form'
+import { revalidateLogic, useSelector } from '@tanstack/react-form'
 import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
@@ -55,7 +55,9 @@ export function CheckoutForm({ items, user, onPlaced }: { items: CartItem[]; use
       bkashTrxId: '',
       couponCode: '',
     } as CheckoutValues,
-    validators: { onSubmit: checkoutFormSchema, onBlur: checkoutFormSchema },
+    // Checked on submit, then again on every change so fixed fields clear their errors
+    validationLogic: revalidateLogic(),
+    validators: { onDynamic: checkoutFormSchema },
     onSubmit: async ({ value }) => {
       setSubmitError('')
       try {

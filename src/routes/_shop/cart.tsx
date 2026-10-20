@@ -27,7 +27,7 @@ function CartPage() {
 
   if (items.length === 0) {
     return (
-      <main className="container mx-auto max-w-2xl px-4 py-12">
+      <div className="container mx-auto max-w-2xl px-4 py-12">
         <EmptyState
           icon={ShoppingCart01Icon}
           title="Your cart is empty"
@@ -38,7 +38,7 @@ function CartPage() {
             </Link>
           }
         />
-      </main>
+      </div>
     )
   }
 
@@ -46,7 +46,7 @@ function CartPage() {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <h1 className="font-semibold text-2xl tracking-tight">Your cart</h1>
@@ -168,6 +168,6 @@ function CartPage() {
           setConfirmClear(false)
         }}
       />
-    </main>
+    </div>
   )
 }

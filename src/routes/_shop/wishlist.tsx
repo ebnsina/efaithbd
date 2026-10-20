@@ -24,7 +24,7 @@ function WishlistPage() {
 
   if (items.length === 0) {
     return (
-      <main className="container mx-auto max-w-2xl px-4 py-12">
+      <div className="container mx-auto max-w-2xl px-4 py-12">
         <EmptyState
           icon={FavouriteIcon}
           title="Your wishlist is empty"
@@ -35,7 +35,7 @@ function WishlistPage() {
             </Link>
           }
         />
-      </main>
+      </div>
     )
   }
 
@@ -47,7 +47,7 @@ function WishlistPage() {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <h1 className="font-semibold text-2xl tracking-tight">Wishlist</h1>
       <p className="mt-1 mb-6 text-muted-foreground text-sm">
         {items.length} saved {items.length === 1 ? 'product' : 'products'}
@@ -87,6 +87,6 @@ function WishlistPage() {
           </li>
         ))}
       </ul>
-    </main>
+    </div>
   )
 }

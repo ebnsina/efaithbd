@@ -33,21 +33,21 @@ export function EmptyState({
 export function RouteError() {
   const router = useRouter()
   return (
-    <main className="container mx-auto flex min-h-[50vh] max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
+    <div className="container mx-auto flex min-h-[50vh] max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
       <h1 className="font-semibold text-xl">Something went wrong</h1>
       <p className="text-muted-foreground">We couldn't load this page. Please check your connection and try again.</p>
       <Button onClick={() => router.invalidate()}>Try again</Button>
-    </main>
+    </div>
   )
 }
 
 export function RoutePending() {
   return (
-    <main className="container mx-auto max-w-3xl space-y-4 px-4 py-10" aria-busy="true">
+    <div className="container mx-auto max-w-3xl space-y-4 px-4 py-10" aria-busy="true">
       <Skeleton className="h-8 w-1/2" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-5/6" />
       <Skeleton className="h-32 w-full" />
-    </main>
+    </div>
   )
 }

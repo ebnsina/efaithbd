@@ -1,3 +1,4 @@
+import { revalidateLogic } from '@tanstack/react-form'
 import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAppForm } from '@/components/form'
@@ -22,7 +23,8 @@ function LoginPage() {
   const [error, setError] = useState('')
   const form = useAppForm({
     defaultValues: { email: '', password: '' },
-    validators: { onSubmit: loginSchema, onBlur: loginSchema },
+    validationLogic: revalidateLogic(),
+    validators: { onDynamic: loginSchema },
     onSubmit: async ({ value }) => {
       setError('')
       try {
@@ -37,7 +39,7 @@ function LoginPage() {
   })
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center px-4 py-10">
+    <div className="flex min-h-[70vh] items-center justify-center px-4 py-10">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Sign in</CardTitle>
@@ -72,6 +74,6 @@ function LoginPage() {
           </p>
         </CardContent>
       </Card>
-    </main>
+    </div>
   )
 }

@@ -46,7 +46,7 @@ function MyOrdersPage() {
   }
 
   return (
-    <main className="container mx-auto max-w-3xl px-4 py-10">
+    <div className="container mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-semibold text-2xl tracking-tight">My orders</h1>
@@ -117,6 +117,6 @@ function MyOrdersPage() {
           })}
         </ul>
       )}
-    </main>
+    </div>
   )
 }

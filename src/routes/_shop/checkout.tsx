@@ -31,7 +31,7 @@ function CheckoutPage() {
   if (!hydrated || items.length === 0) return <RoutePending />
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="font-semibold text-2xl tracking-tight">Checkout</h1>
         <Link to="/cart" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
@@ -47,6 +47,6 @@ function CheckoutPage() {
           clearCart()
         }}
       />
-    </main>
+    </div>
   )
 }

@@ -25,7 +25,7 @@ function ContactPage() {
   const hasAny = contact.phone || contact.email || contact.address || contact.workingHours
 
   return (
-    <main className="container mx-auto max-w-3xl px-4 py-10">
+    <div className="container mx-auto max-w-3xl px-4 py-10">
       <h1 className="font-semibold text-3xl tracking-tight">Contact us</h1>
       <p className="mt-2 mb-8 whitespace-pre-line text-muted-foreground">
         {contact.description || 'Questions about an order or a product? Reach us any of these ways.'}
@@ -65,7 +65,7 @@ function ContactPage() {
           description="We're still adding our contact details. Please check back shortly."
         />
       )}
-    </main>
+    </div>
   )
 }
 

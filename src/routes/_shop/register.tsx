@@ -1,3 +1,4 @@
+import { revalidateLogic } from '@tanstack/react-form'
 import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAppForm } from '@/components/form'
@@ -22,7 +23,8 @@ function RegisterPage() {
   const [error, setError] = useState('')
   const form = useAppForm({
     defaultValues: { name: '', email: '', phone: '', password: '' },
-    validators: { onSubmit: registerSchema, onBlur: registerSchema },
+    validationLogic: revalidateLogic(),
+    validators: { onDynamic: registerSchema },
     onSubmit: async ({ value }) => {
       setError('')
       try {
@@ -37,7 +39,7 @@ function RegisterPage() {
   })
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center px-4 py-10">
+    <div className="flex min-h-[70vh] items-center justify-center px-4 py-10">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create an account</CardTitle>
@@ -94,6 +96,6 @@ function RegisterPage() {
           </p>
         </CardContent>
       </Card>
-    </main>
+    </div>
   )
 }
