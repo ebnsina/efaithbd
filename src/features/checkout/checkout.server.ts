@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import type { Prisma } from '@/generated/client/client'
 import type { prisma } from '@/server/db.server'
 import { couponDiscount, couponProblem, mergeLines, shippingFits, variantLabel } from './pricing'
@@ -93,4 +94,84 @@ export async function priceCart(db: Db, input: { items: CartLine[]; couponCode: 
     shipping,
     total: subtotal - discount + (shipping?.cost ?? 0),
   }
+}
+
+export class OrderProblem extends Error {}
+
+type OrderDetails = Pick<
+  Prisma.OrderUncheckedCreateInput,
+  | 'userId'
+  | 'customerName'
+  | 'customerPhone'
+  | 'customerAddress'
+  | 'paymentMethod'
+  | 'bkashNumber'
+  | 'bkashTrxId'
+  | 'paymentStatus'
+  | 'orderStatus'
+  | 'notes'
+>
+
+// Prices the cart, takes the stock and the coupon use, and records the order. Run it inside a transaction.
+export async function createOrder(
+  tx: Prisma.TransactionClient,
+  cart: { items: CartLine[]; couponCode: string; shippingMethodId: string },
+  details: OrderDetails,
+) {
+  const quote = await priceCart(tx, cart)
+  if (quote.problems[0]) throw new OrderProblem(quote.problems[0])
+  if (quote.couponError) throw new OrderProblem(quote.couponError)
+  if (details.paymentMethod === 'BKASH' && !quote.bkashAvailable) {
+    throw new OrderProblem('bKash payment is not available right now. Please choose cash on delivery.')
+  }
+  if (quote.shipping?.id !== cart.shippingMethodId) {
+    throw new OrderProblem('That delivery option is no longer available. Please choose another one.')
+  }
+
+  // Conditional decrements, so two orders racing for the last item can't both succeed
+  for (const line of quote.lines) {
+    const where = { stock: { gte: line.quantity } }
+    const data = { stock: { decrement: line.quantity } }
+    const { count } = line.variantId
+      ? await tx.productVariant.updateMany({ where: { id: line.variantId, ...where }, data })
+      : await tx.product.updateMany({ where: { id: line.productId, ...where }, data })
+    if (count === 0) throw new OrderProblem(`${line.name} just sold out. Please update your cart.`)
+  }
+
+  let couponId: string | null = null
+  if (quote.coupon) {
+    const coupon = await tx.coupon.update({
+      where: { code: quote.coupon.code },
+      data: { usageCount: { increment: 1 } },
+    })
+    if (coupon.usageLimit !== null && coupon.usageCount > coupon.usageLimit) {
+      throw new OrderProblem('This coupon has been fully used')
+    }
+    couponId = coupon.id
+  }
+
+  return tx.order.create({
+    data: {
+      ...details,
+      orderNumber: `ORD-${Date.now()}-${randomBytes(5).toString('hex').toUpperCase()}`,
+      bkashNumber: details.paymentMethod === 'BKASH' ? details.bkashNumber : null,
+      bkashTrxId: details.paymentMethod === 'BKASH' ? details.bkashTrxId : null,
+      subtotal: quote.subtotal,
+      discount: quote.discount,
+      shippingCost: quote.shipping.cost,
+      total: quote.total,
+      couponId,
+      shippingMethodId: quote.shipping.id,
+      items: {
+        create: quote.lines.map((line) => ({
+          productId: line.productId,
+          variantId: line.variantId ?? null,
+          quantity: line.quantity,
+          price: line.unitPrice,
+          total: line.total,
+        })),
+      },
+    },
+    select: { id: true, orderNumber: true },
+  })
 }
