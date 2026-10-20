@@ -148,6 +148,37 @@ function SelectField({
   )
 }
 
+function ColorField({ label, description }: BaseProps) {
+  const { field, invalid, errors } = useFieldErrors()
+  const value = (field.state.value as string) ?? ''
+  return (
+    <Field data-invalid={invalid}>
+      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <div className="flex gap-2">
+        <input
+          type="color"
+          value={/^#[0-9a-f]{6}$/i.test(value) ? value : '#000000'}
+          onChange={(e) => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+          aria-label={`${label} picker`}
+          className="h-9 w-12 shrink-0 cursor-pointer rounded-md border bg-transparent p-1"
+        />
+        <Input
+          id={field.name}
+          name={field.name}
+          value={value}
+          onChange={(e) => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+          aria-invalid={invalid}
+          className="font-mono"
+        />
+      </div>
+      {description && <FieldDescription>{description}</FieldDescription>}
+      <FieldError errors={errors} />
+    </Field>
+  )
+}
+
 // Single image stored as a string, or a list when `multiple` is set
 function ImageField({ label, multiple, maxImages }: BaseProps & { multiple?: boolean; maxImages?: number }) {
   const { field, errors } = useFieldErrors()
@@ -186,6 +217,6 @@ function SubmitButton({ label, pendingLabel, className = 'w-full' }: { label: st
 export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   formContext,
-  fieldComponents: { TextField, NumberField, TextareaField, SwitchField, SelectField, ImageField },
+  fieldComponents: { TextField, NumberField, TextareaField, SwitchField, SelectField, ImageField, ColorField },
   formComponents: { SubmitButton },
 })

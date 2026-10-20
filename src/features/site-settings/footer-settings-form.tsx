@@ -1,5 +1,4 @@
 import { useAppForm } from '@/components/form'
-import { ColorField } from './color-field'
 import { type Footer, settingsKeys, useSave } from './queries'
 import { type FooterSettingsInput, footerSettingsSchema } from './schemas'
 import { saveFooterSettings } from './settings.functions'
@@ -56,18 +55,9 @@ export function FooterSettingsForm({ settings: s }: { settings: Footer['settings
         </form.AppField>
         <div className="grid gap-6 sm:grid-cols-2">
           {(['backgroundColor', 'textColor'] as const).map((name) => (
-            <form.Field key={name} name={name}>
-              {(field) => (
-                <ColorField
-                  name={name}
-                  label={name === 'backgroundColor' ? 'Background colour' : 'Text colour'}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={field.state.meta.errors as { message?: string }[]}
-                />
-              )}
-            </form.Field>
+            <form.AppField key={name} name={name}>
+              {(field) => <field.ColorField label={name === 'backgroundColor' ? 'Background colour' : 'Text colour'} />}
+            </form.AppField>
           ))}
         </div>
       </SettingsCard>

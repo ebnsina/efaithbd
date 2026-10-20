@@ -1,14 +1,19 @@
 import { Delete02Icon, FavouriteIcon, ShoppingCart01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { createFileRoute, Link, useHydrated, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound, useHydrated, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { EmptyState, RoutePending } from '@/features/pages/route-states'
+import { siteSettingsQuery } from '@/features/settings/queries'
 import { useMoney } from '@/lib/format'
 import { type WishlistItem, useCart, useWishlist } from '@/lib/store'
 
 export const Route = createFileRoute('/_shop/wishlist')({
+  loader: async ({ context }) => {
+    const settings = await context.queryClient.ensureQueryData(siteSettingsQuery)
+    if (settings && !settings.enableWishlist) throw notFound()
+  },
   head: () => ({ meta: [{ title: 'Wishlist' }, { name: 'robots', content: 'noindex' }] }),
   component: WishlistPage,
 })

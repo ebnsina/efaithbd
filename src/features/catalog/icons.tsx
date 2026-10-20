@@ -1,28 +1,15 @@
-import {
-  CreditCardIcon,
-  CustomerSupportIcon,
-  DeliveryTruck01Icon,
-  GiftIcon,
-  PackageIcon,
-  ReturnRequestIcon,
-  SecurityCheckIcon,
-  Shield01Icon,
-} from '@hugeicons/core-free-icons'
+import { CreditCardIcon, CustomerSupportIcon, DeliveryTruck01Icon, PackageIcon, SecurityCheckIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { highlightIcons } from '@/features/highlights/icons'
 import { cn } from '@/lib/utils'
 
-// Admin-entered icon keys (Highlight.icon, FeatureCard.icon); a few legacy names are kept as aliases
+// The admin's icon keys plus a few legacy names kept as aliases
 const icons = {
-  delivery: DeliveryTruck01Icon,
+  ...Object.fromEntries(Object.entries(highlightIcons).map(([key, { icon }]) => [key, icon])),
   truck: DeliveryTruck01Icon,
-  returns: ReturnRequestIcon,
-  shield: Shield01Icon,
   secure: SecurityCheckIcon,
-  support: CustomerSupportIcon,
   headphones: CustomerSupportIcon,
-  payment: CreditCardIcon,
   'credit-card': CreditCardIcon,
-  gift: GiftIcon,
   package: PackageIcon,
 }
 
