@@ -155,7 +155,7 @@ export function AdminLayout({ user, siteName, children }: { user: SessionUser; s
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="admin-compact">
+      <SidebarInset className="admin-compact min-w-0">
         <header className="flex h-12 items-center gap-2 border-b px-4 md:hidden">
           <SidebarTrigger />
           <span className="font-semibold">Admin</span>

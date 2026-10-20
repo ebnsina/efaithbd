@@ -163,7 +163,16 @@ function ShippingMethodsPage() {
               {table.getHeaderGroups().map((group) => (
                 <TableRow key={group.id}>
                   {group.headers.map((header) => (
-                    <TableHead key={header.id} className={header.column.id === 'drag' ? 'w-10' : undefined}>
+                    <TableHead
+                      key={header.id}
+                      className={
+                        header.column.id === 'drag'
+                          ? 'w-10'
+                          : header.column.id === 'actions'
+                            ? 'sticky right-0 bg-card'
+                            : undefined
+                      }
+                    >
                       <table.FlexRender header={header} />
                     </TableHead>
                   ))}
@@ -231,7 +240,7 @@ function SortableRow({
       className={isDragging ? 'relative z-10 bg-muted' : undefined}
     >
       {row.getAllCells().map((cell) => (
-        <TableCell key={cell.id}>
+        <TableCell key={cell.id} className={cell.column.id === 'actions' ? 'sticky right-0 bg-card' : undefined}>
           {cell.column.id === 'drag' ? (
             <Button
               ref={setActivatorNodeRef}

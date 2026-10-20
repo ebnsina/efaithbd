@@ -193,7 +193,7 @@ export function PurchasePanel({ product, featureCards }: Pick<ProductData, 'prod
       <div className="flex flex-col gap-2 sm:flex-row">
         <Button
           size="lg"
-          className="h-11 flex-1"
+          className="h-11 sm:flex-1"
           disabled={!canBuy}
           onClick={() => {
             add()
@@ -202,7 +202,7 @@ export function PurchasePanel({ product, featureCards }: Pick<ProductData, 'prod
         >
           Buy now
         </Button>
-        <Button size="lg" variant="outline" className="h-11 flex-1" disabled={!canBuy} onClick={add}>
+        <Button size="lg" variant="outline" className="h-11 sm:flex-1" disabled={!canBuy} onClick={add}>
           <HugeiconsIcon icon={ShoppingCart01Icon} />
           Add to cart
         </Button>
