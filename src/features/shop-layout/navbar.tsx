@@ -318,9 +318,9 @@ export function Navbar({ user }: { user: ShopUser }) {
                     </Link>
                   }
                 >
-                  <ul className="grid gap-1 sm:grid-cols-2 lg:grid-cols-3">
+                  <ul className="gap-x-2 sm:columns-2 lg:columns-3">
                     {categories.map((category) => (
-                      <li key={category.id}>
+                      <li key={category.id} className="mb-1 break-inside-avoid">
                         <Link
                           to="/categories/$slug"
                           params={{ slug: category.slug }}
