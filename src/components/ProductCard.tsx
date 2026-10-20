@@ -130,6 +130,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             <img
               src={product.images[0] || '/placeholder.jpg'}
               alt={product.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
             {discount > 0 && (
@@ -222,6 +224,8 @@ export default function ProductCard({ product }: ProductCardProps) {
               <img
                 src={product.images[0] || '/placeholder.jpg'}
                 alt={product.name}
+                loading="lazy"
+                decoding="async"
                 className="w-24 h-24 object-cover rounded-lg"
               />
               <div>

@@ -8,8 +8,6 @@ import FeatureCards from '@/components/FeatureCards';
 import PolicyStrip from '@/components/PolicyStrip';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const siteName = settings?.siteName || 'Online Store';
@@ -35,7 +33,7 @@ export default async function Home() {
   // Fetch all homepage data
   const [settings, banners, productSections, midBanners, featureCards, categories] =
     await Promise.all([
-      prisma.basicSettings.findFirst(),
+      getSiteSettings(),
       prisma.banner.findMany({
         where: { active: true },
         orderBy: { order: 'asc' },

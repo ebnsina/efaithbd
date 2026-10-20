@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --debug-prerender",
+    "build": "next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
@@ -14,10 +14,6 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "create-admin": "tsx scripts/create-admin.ts",
-    "create-shop": "tsx scripts/create-shop.ts",
-    "create-super-admin": "tsx scripts/create-super-admin.ts",
-    "list-shops": "tsx scripts/list-shops.ts",
-    "delete-shop": "tsx scripts/delete-shop.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

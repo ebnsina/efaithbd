@@ -14,6 +14,7 @@ import {
   SquareMenu,
   X,
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -41,8 +42,6 @@ interface Category {
 interface NavbarClientProps {
   siteName: string;
   logo?: string | null;
-  isLoggedIn: boolean;
-  userName?: string | null;
   menuItems?: MenuItem[];
   categories?: Category[];
 }
@@ -50,11 +49,16 @@ interface NavbarClientProps {
 export default function NavbarClient({
   siteName,
   logo,
-  isLoggedIn,
-  userName,
   menuItems = [],
   categories = [],
 }: NavbarClientProps) {
+  // Session is fetched client-side so shop pages stay cacheable (no cookie read on the server)
+  const { data: session } = useQuery<{ user?: { name?: string | null } } | null>({
+    queryKey: ['session'],
+    queryFn: () => fetch('/api/auth/session').then((r) => (r.ok ? r.json() : null)),
+  });
+  const isLoggedIn = !!session?.user;
+  const userName = session?.user?.name;
   const { items } = useCart();
   const { items: wishlistItems } = useWishlist();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -37,16 +37,19 @@ async function main() {
   await prisma.menuItem.deleteMany()
   console.log('✅ Existing data deleted')
 
-  // Create admin user
-  const hashedPassword = await bcrypt.hash('admin123', 10)
+  // Create admin user from .env (same values as `pnpm create-admin`)
+  const adminEmail = process.env.ADMIN_EMAIL
+  const adminPassword = process.env.ADMIN_PASSWORD
+  if (!adminEmail || !adminPassword) throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env')
+  const hashedPassword = await bcrypt.hash(adminPassword, 10)
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@supermart.com' },
+    where: { email: adminEmail },
     update: {},
     create: {
-      email: 'admin@supermart.com',
+      email: adminEmail,
       password: hashedPassword,
-      name: 'Admin',
+      name: process.env.ADMIN_NAME || 'Admin',
       role: 'ADMIN',
     },
   })

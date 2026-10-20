@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import {
@@ -17,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 export default function RegisterPage() {
-  const router = useRouter()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -78,8 +76,7 @@ export default function RegisterPage() {
         })
 
         if (result?.ok) {
-          router.push('/')
-          router.refresh()
+          window.location.href = '/'
         }
       }, 1500)
     } catch (err) {
