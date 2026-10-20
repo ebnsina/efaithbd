@@ -2,7 +2,7 @@ import * as v from 'valibot'
 import { optionalText, requiredText } from '@/features/site-settings/fields'
 
 // Paths the store already uses; a page with one of these links would never be reachable
-export const reservedSlugs = [
+const reservedSlugs = [
   'products',
   'categories',
   'cart',
@@ -36,9 +36,9 @@ export const pageSchema = v.object({
     v.maxLength(80, 'Keep the link under 80 characters'),
     v.check(
       (slug) => !slug || /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug),
-      'Use only English letters, numbers and single dashes, like return-policy'
+      'Use only English letters, numbers and single dashes, like return-policy',
     ),
-    v.check((slug) => !reservedSlugs.includes(slug), 'This link is already used by the store. Choose another.')
+    v.check((slug) => !reservedSlugs.includes(slug), 'This link is already used by the store. Choose another.'),
   ),
   content: requiredText('Write the page content', 50_000),
   metaDescription: optionalText(160),

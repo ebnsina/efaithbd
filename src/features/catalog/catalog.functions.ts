@@ -1,5 +1,5 @@
-import { createServerFn } from '@tanstack/react-start'
 import { notFound } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
 import type { Prisma, ProductSectionType } from '@/generated/client/client'
 import { prisma } from '@/server/db.server'
 import { PRODUCTS_PAGE_SIZE, type ProductSort, productBrowseSchema, slugSchema } from './schemas'
@@ -116,10 +116,7 @@ export const listProducts = createServerFn()
       ...(subcategory && { subcategory: { slug: subcategory } }),
       ...(rating && { rating: { gte: rating } }),
       ...(q && {
-        OR: [
-          { name: { contains: q, mode: 'insensitive' } },
-          { description: { contains: q, mode: 'insensitive' } },
-        ],
+        OR: [{ name: { contains: q, mode: 'insensitive' } }, { description: { contains: q, mode: 'insensitive' } }],
       }),
     }
     const where: Prisma.ProductWhereInput = {

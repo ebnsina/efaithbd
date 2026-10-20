@@ -2,7 +2,7 @@ import { infiniteQueryOptions, useMutation, useQueryClient } from '@tanstack/rea
 import { toast } from 'sonner'
 import { createReview, listReviews, markReviewHelpful } from './reviews.functions'
 
-export const reviewKeys = {
+const reviewKeys = {
   all: ['reviews'] as const,
   product: (productId: string) => [...reviewKeys.all, productId] as const,
 }

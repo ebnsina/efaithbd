@@ -15,7 +15,6 @@ export const checkoutQuoteQuery = (input: QuoteInput) =>
     staleTime: 0,
   })
 
-export const useCheckCoupon = () =>
-  useMutation({ mutationFn: (input: QuoteInput) => getCheckoutQuote({ data: input }) })
+export const useCheckCoupon = () => useMutation({ mutationFn: (input: QuoteInput) => getCheckoutQuote({ data: input }) })
 
 export const usePlaceOrder = () => useMutation({ mutationFn: placeOrder })

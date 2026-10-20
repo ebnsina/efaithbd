@@ -39,7 +39,7 @@ const count = (message: string) =>
 
 export const MAX_PRODUCT_IMAGES = 8
 
-export const variantFormSchema = v.object({
+const variantFormSchema = v.object({
   id: v.string(),
   name: requiredText('Enter the option, like Size'),
   value: requiredText('Enter the choice, like Large'),

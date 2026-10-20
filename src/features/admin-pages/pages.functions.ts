@@ -17,7 +17,7 @@ export const listPages = createServerFn()
         updatedAt: true,
       },
       orderBy: { title: 'asc' },
-    })
+    }),
   )
 
 export const getPage = createServerFn()
@@ -42,8 +42,6 @@ export const savePage = createServerFn({ method: 'POST' })
         ok: false as const,
         error: 'Another page already uses this link. Choose another.',
       }
-    const page = id
-      ? await prisma.page.update({ where: { id }, data: values })
-      : await prisma.page.create({ data: values })
+    const page = id ? await prisma.page.update({ where: { id }, data: values }) : await prisma.page.create({ data: values })
     return { ok: true as const, page }
   })

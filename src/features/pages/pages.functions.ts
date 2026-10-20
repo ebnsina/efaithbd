@@ -8,5 +8,5 @@ export const getPublishedPage = createServerFn()
     prisma.page.findFirst({
       where: { slug: data.slug, published: true },
       select: { title: true, content: true, metaDescription: true, updatedAt: true },
-    })
+    }),
   )

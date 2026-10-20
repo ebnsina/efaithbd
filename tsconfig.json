@@ -6,11 +6,9 @@
   ],
   "exclude": [
     "node_modules",
-    "legacy",
     "src/generated",
     ".output",
-    ".vercel",
-    "prisma/seed.ts"
+    ".vercel"
   ],
   "compilerOptions": {
     "target": "ES2022",

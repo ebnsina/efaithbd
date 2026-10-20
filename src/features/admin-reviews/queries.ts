@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { deleteReview, listAdminReviews, setReviewApproval } from './admin-reviews.functions'
 import type { ReviewSearch } from './schemas'
 
-export const adminReviewKeys = {
+const adminReviewKeys = {
   all: ['admin', 'reviews'] as const,
   list: (search: ReviewSearch) => [...adminReviewKeys.all, 'list', search] as const,
 }

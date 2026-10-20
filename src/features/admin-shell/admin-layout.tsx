@@ -121,6 +121,7 @@ export function AdminLayout({ user, siteName, children }: { user: SessionUser; s
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
+              {/* biome-ignore lint/a11y/useAnchorContent: the button's children become the link content via render */}
               <SidebarMenuButton render={<a href="/" target="_blank" rel="noreferrer" />}>
                 <HugeiconsIcon icon={ArrowUpRight01Icon} />
                 <span>Visit site</span>

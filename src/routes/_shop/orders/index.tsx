@@ -86,19 +86,21 @@ function MyOrdersPage() {
                         <OrderStatusBadge status={order.orderStatus} />
                       </div>
                       <div className="flex items-center gap-2">
-                        {order.items.slice(0, 4).map((item) =>
-                          item.product.images[0] ? (
-                            <img
-                              key={item.id}
-                              src={item.product.images[0]}
-                              alt={item.product.name}
-                              loading="lazy"
-                              className="size-12 rounded-md bg-muted object-cover"
-                            />
-                          ) : (
-                            <div key={item.id} className="size-12 rounded-md bg-muted" />
-                          )
-                        )}
+                        {order.items
+                          .slice(0, 4)
+                          .map((item) =>
+                            item.product.images[0] ? (
+                              <img
+                                key={item.id}
+                                src={item.product.images[0]}
+                                alt={item.product.name}
+                                loading="lazy"
+                                className="size-12 rounded-md bg-muted object-cover"
+                              />
+                            ) : (
+                              <div key={item.id} className="size-12 rounded-md bg-muted" />
+                            ),
+                          )}
                         {order.items.length > 4 && (
                           <span className="text-muted-foreground text-xs">+{order.items.length - 4} more</span>
                         )}

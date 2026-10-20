@@ -10,7 +10,7 @@ export const listBanners = createServerFn()
   .handler(() =>
     prisma.banner.findMany({
       orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
-    })
+    }),
   )
 
 export const getBanner = createServerFn()

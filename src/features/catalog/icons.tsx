@@ -1,4 +1,10 @@
-import { CreditCardIcon, CustomerSupportIcon, DeliveryTruck01Icon, PackageIcon, SecurityCheckIcon } from '@hugeicons/core-free-icons'
+import {
+  CreditCardIcon,
+  CustomerSupportIcon,
+  DeliveryTruck01Icon,
+  PackageIcon,
+  SecurityCheckIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { highlightIcons } from '@/features/highlights/icons'
 import { cn } from '@/lib/utils'

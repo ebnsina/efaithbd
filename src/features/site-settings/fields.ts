@@ -16,7 +16,7 @@ export const optionalText = (max = 200) =>
     v.string(),
     v.trim(),
     v.maxLength(max, `Keep this under ${max} characters`),
-    v.transform((value) => value || null)
+    v.transform((value) => value || null),
   )
 
 export const requiredText = (message: string, max = 200) =>
@@ -27,7 +27,7 @@ export const requiredLink = (message = 'Enter a link') =>
     v.string(),
     v.trim(),
     v.minLength(1, message),
-    v.check((value) => !value || isLink(value), LINK_HINT)
+    v.check((value) => !value || isLink(value), LINK_HINT),
   )
 
 export const optionalLink = () =>
@@ -35,18 +35,18 @@ export const optionalLink = () =>
     v.string(),
     v.trim(),
     v.check((value) => !value || isLink(value), LINK_HINT),
-    v.transform((value) => value || null)
+    v.transform((value) => value || null),
   )
 
 export const requiredImage = (message = 'Add an image') => requiredLink(message)
-export const optionalImage = optionalLink
+export const optionalImage = () => optionalLink()
 
 export const optionalEmail = () =>
   v.pipe(
     v.string(),
     v.trim(),
     v.check((value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), 'Enter a valid email address'),
-    v.transform((value) => value || null)
+    v.transform((value) => value || null),
   )
 
 export const hexColor = () =>

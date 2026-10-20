@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { deleteCoupon, listCoupons, saveCoupon } from './coupons.functions'
 import type { CouponSearch } from './schemas'
 
-export const couponKeys = {
+const couponKeys = {
   all: ['admin', 'coupons'] as const,
   list: (search: CouponSearch) => [...couponKeys.all, 'list', search] as const,
 }

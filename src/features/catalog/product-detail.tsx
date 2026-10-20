@@ -217,7 +217,13 @@ export function PurchasePanel({ product, featureCards }: Pick<ProductData, 'prod
             slug: product.slug,
           }}
         />
-        <Button variant="outline" size="icon" className="rounded-full" aria-label="Share" onClick={() => share(product.name)}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full"
+          aria-label="Share"
+          onClick={() => share(product.name)}
+        >
           <HugeiconsIcon icon={Share08Icon} />
         </Button>
       </div>

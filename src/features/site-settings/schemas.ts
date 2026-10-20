@@ -16,7 +16,7 @@ const optionalPhone = () =>
     v.string(),
     v.trim(),
     v.check((value) => !value || /^\+?[0-9][0-9 -]{5,19}$/.test(value), 'Enter a phone number, like +8801712345678'),
-    v.transform((value) => value || null)
+    v.transform((value) => value || null),
   )
 
 const isTimeZone = (zone: string) => zone === 'UTC' || Intl.supportedValuesOf('timeZone').includes(zone)
@@ -46,7 +46,7 @@ export const basicSettingsSchema = v.pipe(
       v.string(),
       v.trim(),
       v.check((value) => !value || /^01[0-9]{9}$/.test(value), 'Enter an 11-digit number starting with 01'),
-      v.transform((value) => value || null)
+      v.transform((value) => value || null),
     ),
     bkashNote: optionalText(300),
   }),
@@ -54,10 +54,10 @@ export const basicSettingsSchema = v.pipe(
     v.partialCheck(
       [['promoActive'], ['promoText']],
       (input) => !input.promoActive || !!input.promoText,
-      'Write the message to show in the bar'
+      'Write the message to show in the bar',
     ),
-    ['promoText']
-  )
+    ['promoText'],
+  ),
 )
 export type BasicSettingsInput = v.InferInput<typeof basicSettingsSchema>
 
@@ -67,7 +67,7 @@ export const footerSettingsSchema = v.object({
   copyrightText: optionalText(200),
   paymentMethods: v.pipe(
     v.array(v.pipe(v.string(), v.check(isLink, 'Use image links starting with https://'))),
-    v.maxLength(12, 'Add up to 12 payment logos')
+    v.maxLength(12, 'Add up to 12 payment logos'),
   ),
   showPaymentMethods: v.boolean(),
   enableNewsletter: v.boolean(),
@@ -114,16 +114,13 @@ export const platformLabel = (value: string) => socialPlatforms.find((p) => p.va
 export const socialLinkSchema = v.object({
   platform: v.picklist(
     socialPlatforms.map((p) => p.value),
-    'Choose a platform'
+    'Choose a platform',
   ),
   url: v.pipe(
     v.string(),
     v.trim(),
     v.minLength(1, 'Enter the link to your page'),
-    v.check(
-      (value) => !value || (isLink(value) && value.startsWith('https://')),
-      'Use a full link starting with https://'
-    )
+    v.check((value) => !value || (isLink(value) && value.startsWith('https://')), 'Use a full link starting with https://'),
   ),
   active: v.boolean(),
 })
@@ -147,7 +144,7 @@ export const menuItemSchema = v.pipe(
     // The select can't hold an empty value, so "top" stands for no parent
     parentId: v.pipe(
       v.string(),
-      v.transform((value) => (value === TOP_LEVEL ? '' : value))
+      v.transform((value) => (value === TOP_LEVEL ? '' : value)),
     ),
     openInNewTab: v.boolean(),
     megaMenu: v.boolean(),
@@ -156,15 +153,15 @@ export const menuItemSchema = v.pipe(
   }),
   v.forward(
     v.partialCheck([['type'], ['url']], (input) => input.type !== 'CUSTOM' || isLink(input.url), LINK_HINT),
-    ['url']
+    ['url'],
   ),
   v.forward(
     v.partialCheck(
       [['type'], ['targetId']],
       (input) => input.type === 'CUSTOM' || !!input.targetId,
-      'Choose what this item links to'
+      'Choose what this item links to',
     ),
-    ['targetId']
-  )
+    ['targetId'],
+  ),
 )
 export type MenuItemInput = v.InferInput<typeof menuItemSchema>

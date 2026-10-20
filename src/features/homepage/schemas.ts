@@ -13,13 +13,13 @@ export const sectionSchema = v.object({
   title: requiredText('Enter a title', 80),
   type: v.picklist(
     sectionTypes.map((t) => t.value),
-    'Choose which products to show'
+    'Choose which products to show',
   ),
   limit: v.pipe(
     v.number('Enter how many products to show'),
     v.integer('Use a whole number'),
     v.minValue(1, 'Show at least 1 product'),
-    v.maxValue(50, 'Show at most 50 products')
+    v.maxValue(50, 'Show at most 50 products'),
   ),
   active: v.boolean(),
 })
@@ -43,7 +43,7 @@ export const midBannerSchema = v.object({
     v.string(),
     v.regex(/^\d{1,2}$/, 'Choose where to show it'),
     v.transform(Number),
-    v.minValue(1, 'Choose where to show it')
+    v.minValue(1, 'Choose where to show it'),
   ),
   active: v.boolean(),
 })

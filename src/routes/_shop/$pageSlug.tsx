@@ -3,6 +3,7 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 import { Markdown } from '@/features/pages/markdown'
 import { pageQuery } from '@/features/pages/queries'
 import { RouteError, RoutePending } from '@/features/pages/route-states'
+import { siteSettingsQuery } from '@/features/settings/queries'
 import { formatDate } from '@/lib/format'
 
 export const Route = createFileRoute('/_shop/$pageSlug')({
@@ -28,13 +29,14 @@ export const Route = createFileRoute('/_shop/$pageSlug')({
 function ContentPage() {
   const { pageSlug } = Route.useParams()
   const { data: page } = useSuspenseQuery(pageQuery(pageSlug))
+  const { data: settings } = useSuspenseQuery(siteSettingsQuery)
   if (!page) return null
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-10">
       <h1 className="font-semibold text-3xl tracking-tight">{page.title}</h1>
       <p className="mt-2 mb-8 text-muted-foreground text-sm">Last updated {formatDate(page.updatedAt)}</p>
-      <Markdown source={page.content} />
+      <Markdown source={page.content} siteName={settings?.siteName ?? ''} />
     </div>
   )
 }

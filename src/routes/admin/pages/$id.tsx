@@ -2,10 +2,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useAppForm } from '@/components/form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MarkdownPreview } from '@/features/admin-pages/markdown-preview'
 import type { getPage } from '@/features/admin-pages/pages.functions'
 import { pageQuery, useSavePage } from '@/features/admin-pages/queries'
 import { pageSchema, slugify } from '@/features/admin-pages/schemas'
+import { Markdown } from '@/features/pages/markdown'
 import { siteSettingsQuery } from '@/features/settings/queries'
 import { EditLayout, FormActions } from '@/features/site-settings/edit-layout'
 
@@ -119,7 +119,13 @@ function PageForm({ page }: { page?: Awaited<ReturnType<typeof getPage>> }) {
             </CardHeader>
             <CardContent className="max-h-[32rem] overflow-y-auto">
               <form.Subscribe selector={(state) => state.values.content}>
-                {(content) => <MarkdownPreview source={content} siteName={settings?.siteName ?? ''} />}
+                {(content) =>
+                  content.trim() ? (
+                    <Markdown source={content} siteName={settings?.siteName ?? ''} />
+                  ) : (
+                    <p className="text-muted-foreground">Nothing to preview yet.</p>
+                  )
+                }
               </form.Subscribe>
             </CardContent>
           </Card>
@@ -134,9 +140,7 @@ function PageForm({ page }: { page?: Awaited<ReturnType<typeof getPage>> }) {
           )}
         </form.AppField>
         <form.AppField name="published">
-          {(field) => (
-            <field.SwitchField label="Published" description="Turn off to hide the page while you work on it." />
-          )}
+          {(field) => <field.SwitchField label="Published" description="Turn off to hide the page while you work on it." />}
         </form.AppField>
         <FormActions back="/admin/pages">
           <form.AppForm>

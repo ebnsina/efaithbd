@@ -9,7 +9,7 @@ export const paymentMethods = ['COD', 'BKASH'] as const
 
 export type OrderStatus = (typeof orderStatuses)[number]
 export type PaymentStatus = (typeof paymentStatuses)[number]
-export type PaymentMethod = (typeof paymentMethods)[number]
+type PaymentMethod = (typeof paymentMethods)[number]
 
 export const orderStatusLabels: Record<OrderStatus, string> = {
   PENDING: 'Pending',

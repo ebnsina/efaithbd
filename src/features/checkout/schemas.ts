@@ -3,7 +3,7 @@ import * as v from 'valibot'
 export const phoneSchema = v.pipe(
   v.string(),
   v.trim(),
-  v.regex(/^01[3-9]\d{8}$/, 'Enter an 11-digit mobile number, like 01712345678')
+  v.regex(/^01[3-9]\d{8}$/, 'Enter an 11-digit mobile number, like 01712345678'),
 )
 
 // Only ids and quantities come from the browser; every price is read from the database
@@ -13,10 +13,10 @@ export const cartLinesSchema = v.pipe(
       productId: v.pipe(v.string(), v.minLength(1), v.maxLength(64)),
       variantId: v.optional(v.pipe(v.string(), v.maxLength(64))),
       quantity: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(999)),
-    })
+    }),
   ),
   v.minLength(1, 'Your cart is empty'),
-  v.maxLength(100)
+  v.maxLength(100),
 )
 export type CartLine = v.InferOutput<typeof cartLinesSchema>[number]
 
@@ -37,18 +37,18 @@ export const checkoutFormSchema = v.pipe(
     v.partialCheck(
       [['paymentMethod'], ['bkashNumber']],
       (input) => input.paymentMethod !== 'BKASH' || /^01[3-9]\d{8}$/.test(input.bkashNumber),
-      'Enter the bKash number you paid from'
+      'Enter the bKash number you paid from',
     ),
-    ['bkashNumber']
+    ['bkashNumber'],
   ),
   v.forward(
     v.partialCheck(
       [['paymentMethod'], ['bkashTrxId']],
       (input) => input.paymentMethod !== 'BKASH' || /^[A-Z0-9]{6,30}$/.test(input.bkashTrxId),
-      'Enter the transaction ID from your bKash message'
+      'Enter the transaction ID from your bKash message',
     ),
-    ['bkashTrxId']
-  )
+    ['bkashTrxId'],
+  ),
 )
 export type CheckoutForm = v.InferInput<typeof checkoutFormSchema>
 

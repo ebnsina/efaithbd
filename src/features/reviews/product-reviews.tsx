@@ -63,7 +63,11 @@ function ReviewForm({ productId, onDone }: { productId: string; onDone: () => vo
                     }}
                     className={cn('rounded p-1 text-primary', star > field.state.value && 'text-muted-foreground/40')}
                   >
-                    <HugeiconsIcon icon={StarIcon} className="size-7" fill={star <= field.state.value ? 'currentColor' : 'none'} />
+                    <HugeiconsIcon
+                      icon={StarIcon}
+                      className="size-7"
+                      fill={star <= field.state.value ? 'currentColor' : 'none'}
+                    />
                   </button>
                 ))}
               </div>

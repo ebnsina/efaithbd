@@ -101,12 +101,13 @@ export function CheckoutForm({ items, user, onPlaced }: { items: CartItem[]; use
       { items: lines, couponCode: code },
       {
         onSuccess: (result) => {
-          if (result.couponError || !result.coupon) return setCouponMessage(result.couponError ?? "This coupon code isn't valid")
+          if (result.couponError || !result.coupon)
+            return setCouponMessage(result.couponError ?? "This coupon code isn't valid")
           form.setFieldValue('couponCode', result.coupon.code)
           setCouponInput('')
         },
         onError: () => setCouponMessage("We couldn't check this coupon. Please try again."),
-      }
+      },
     )
   }
 
@@ -323,7 +324,10 @@ export function CheckoutForm({ items, user, onPlaced }: { items: CartItem[]; use
             ) : (
               <>
                 {blocked && (
-                  <div role="alert" className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+                  <div
+                    role="alert"
+                    className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm"
+                  >
                     {quote.data.problems.map((problem) => (
                       <p key={problem} className="flex gap-2 text-destructive">
                         <HugeiconsIcon icon={Alert02Icon} className="mt-0.5 size-4 shrink-0" />

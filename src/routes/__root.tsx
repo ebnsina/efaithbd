@@ -23,10 +23,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         ...(settings?.ogImage ? [{ property: 'og:image', content: settings.ogImage }] : []),
         { name: 'twitter:card', content: 'summary_large_image' },
       ],
-      links: [
-        { rel: 'stylesheet', href: appCss },
-        ...(settings?.favicon ? [{ rel: 'icon', href: settings.favicon }] : []),
-      ],
+      links: [{ rel: 'stylesheet', href: appCss }, ...(settings?.favicon ? [{ rel: 'icon', href: settings.favicon }] : [])],
     }
   },
   component: RootComponent,

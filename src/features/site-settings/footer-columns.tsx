@@ -33,7 +33,7 @@ export function FooterColumns({ sections }: { sections: Section[] }) {
   const reorderLinks = useReorderRows<Footer>('footerLink', key, (data, ids) => ({
     ...data,
     sections: data.sections.map((s) =>
-      s.links.some((link) => ids.includes(link.id)) ? { ...s, links: sortByIds(s.links, ids) } : s
+      s.links.some((link) => ids.includes(link.id)) ? { ...s, links: sortByIds(s.links, ids) } : s,
     ),
   }))
   const deleteSection = useDeleteRow('footerSection', key, 'Column')
@@ -307,9 +307,7 @@ function LinkForm({
         )}
       </form.AppField>
       <form.AppField name="sectionId">
-        {(field) => (
-          <field.SelectField label="Column" options={sections.map((s) => ({ value: s.id, label: s.title }))} />
-        )}
+        {(field) => <field.SelectField label="Column" options={sections.map((s) => ({ value: s.id, label: s.title }))} />}
       </form.AppField>
       <form.AppField name="active">{(field) => <field.SwitchField label="Show in the footer" />}</form.AppField>
       <EditDialogFooter>

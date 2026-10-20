@@ -17,7 +17,7 @@ const slug = v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(200))
 const price = v.pipe(v.number(), v.minValue(0), v.maxValue(100_000_000))
 
 // Bad values in the URL fall back to "no filter" instead of showing an error page
-export const productBrowseEntries = {
+const productBrowseEntries = {
   q: listSearchEntries.q,
   page: listSearchEntries.page,
   sort: v.optional(

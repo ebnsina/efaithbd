@@ -7,13 +7,13 @@ const password = process.env.ADMIN_PASSWORD
 if (!email || !password) throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env')
 if (password.length < 12) throw new Error('ADMIN_PASSWORD must be at least 12 characters')
 
-async function main() {
-  const hashed = await bcrypt.hash(password!, 10)
+async function main(email: string, password: string) {
+  const hashed = await bcrypt.hash(password, 10)
   // .env is the source of truth: re-running resets the password and keeps the role ADMIN
   const admin = await prisma.user.upsert({
     where: { email },
     update: { password: hashed, role: 'ADMIN' },
-    create: { email: email!, password: hashed, name: process.env.ADMIN_NAME || 'Admin', role: 'ADMIN' },
+    create: { email, password: hashed, name: process.env.ADMIN_NAME || 'Admin', role: 'ADMIN' },
   })
   const others = await prisma.user.findMany({
     where: { role: 'ADMIN', NOT: { id: admin.id } },
@@ -23,7 +23,7 @@ async function main() {
   if (others.length) console.log(`Other admins still exist: ${others.map((u) => u.email).join(', ')}`)
 }
 
-main()
+main(email, password)
   .catch((e) => {
     console.error(e)
     process.exitCode = 1

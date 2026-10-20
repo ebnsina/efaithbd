@@ -59,9 +59,7 @@ export function BasicSettingsForm() {
         </form.AppField>
         <div className="grid gap-6 md:grid-cols-2">
           <form.AppField name="logo">{(field) => <field.ImageField label="Logo" />}</form.AppField>
-          <form.AppField name="favicon">
-            {(field) => <field.ImageField label="Browser tab icon (favicon)" />}
-          </form.AppField>
+          <form.AppField name="favicon">{(field) => <field.ImageField label="Browser tab icon (favicon)" />}</form.AppField>
         </div>
       </SettingsCard>
 

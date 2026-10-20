@@ -103,19 +103,13 @@ function HighlightForm({ highlight, onDone }: { highlight?: Highlight; onDone: (
           </Field>
         )}
       </form.Field>
-      <form.AppField name="title">
-        {(field) => <field.TextField label="Title" placeholder="Fast delivery" />}
-      </form.AppField>
+      <form.AppField name="title">{(field) => <field.TextField label="Title" placeholder="Fast delivery" />}</form.AppField>
       <form.AppField name="subtitle">
         {(field) => <field.TextField label="Subtitle" placeholder="All over Bangladesh" />}
       </form.AppField>
       <form.AppField name="link">
         {(field) => (
-          <field.TextField
-            label="Link"
-            placeholder="/faq"
-            description="Optional. Where shoppers go when they tap it."
-          />
+          <field.TextField label="Link" placeholder="/faq" description="Optional. Where shoppers go when they tap it." />
         )}
       </form.AppField>
       <form.AppField name="active">{(field) => <field.SwitchField label="Show on the homepage" />}</form.AppField>

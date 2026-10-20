@@ -105,9 +105,7 @@ function HomepagePage() {
           </span>
           <div>
             <div className="font-medium">{row.original.title}</div>
-            {row.original.description && (
-              <div className="text-muted-foreground text-xs">{row.original.description}</div>
-            )}
+            {row.original.description && <div className="text-muted-foreground text-xs">{row.original.description}</div>}
           </div>
         </div>
       ),
@@ -227,11 +225,7 @@ function HomepagePage() {
           title="Feature cards"
           description="Small cards with an icon, such as free delivery or secure payment."
           action={
-            <Link
-              to="/admin/homepage/feature-cards/$id"
-              params={{ id: 'new' }}
-              className={buttonVariants({ size: 'sm' })}
-            >
+            <Link to="/admin/homepage/feature-cards/$id" params={{ id: 'new' }} className={buttonVariants({ size: 'sm' })}>
               <HugeiconsIcon icon={Add01Icon} />
               Add card
             </Link>
@@ -251,11 +245,7 @@ function HomepagePage() {
           title="Banners between sections"
           description="Wide images shown between the product sections."
           action={
-            <Link
-              to="/admin/homepage/mid-banners/$id"
-              params={{ id: 'new' }}
-              className={buttonVariants({ size: 'sm' })}
-            >
+            <Link to="/admin/homepage/mid-banners/$id" params={{ id: 'new' }} className={buttonVariants({ size: 'sm' })}>
               <HugeiconsIcon icon={Add01Icon} />
               Add banner
             </Link>

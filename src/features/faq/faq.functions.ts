@@ -6,5 +6,5 @@ export const listFaqs = createServerFn().handler(() =>
     where: { active: true },
     orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
     select: { id: true, question: true, answer: true },
-  })
+  }),
 )

@@ -3,4 +3,3 @@ import { phoneSchema } from '@/features/checkout/schemas'
 
 export const orderNumberSchema = v.pipe(v.string(), v.trim(), v.maxLength(64))
 export const trackSchema = v.object({ phone: phoneSchema })
-export type TrackInput = v.InferInput<typeof trackSchema>

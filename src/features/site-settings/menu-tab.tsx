@@ -22,10 +22,7 @@ function flatten(items: MenuItem[]) {
   const tops = items.filter((item) => !item.parentId).sort(byOrder)
   const topIds = new Set(tops.map((item) => item.id))
   const orphans = items.filter((item) => item.parentId && !topIds.has(item.parentId))
-  return [
-    ...tops.flatMap((top) => [top, ...items.filter((item) => item.parentId === top.id).sort(byOrder)]),
-    ...orphans,
-  ]
+  return [...tops.flatMap((top) => [top, ...items.filter((item) => item.parentId === top.id).sort(byOrder)]), ...orphans]
 }
 
 export function MenuTab() {
@@ -43,9 +40,7 @@ export function MenuTab() {
     const parentOf = (id: string) => menu.items.find((item) => item.id === id)?.parentId ?? null
     const parent = parentOf(activeId)
     if (parent !== parentOf(overId)) {
-      toast.info(
-        'Drag items within the same level. To move an item under another one, edit it and choose “Show under”.'
-      )
+      toast.info('Drag items within the same level. To move an item under another one, edit it and choose “Show under”.')
       return
     }
     reorder.mutate(ids.filter((id) => parentOf(id) === parent))

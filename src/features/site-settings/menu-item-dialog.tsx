@@ -6,15 +6,7 @@ import { saveMenuItem } from './settings.functions'
 
 export type MenuItem = Menu['items'][number]
 
-export function MenuItemDialog({
-  item,
-  menu,
-  onClose,
-}: {
-  item: MenuItem | 'new' | null
-  menu: Menu
-  onClose: () => void
-}) {
+export function MenuItemDialog({ item, menu, onClose }: { item: MenuItem | 'new' | null; menu: Menu; onClose: () => void }) {
   return (
     <EditDialog
       open={item !== null}

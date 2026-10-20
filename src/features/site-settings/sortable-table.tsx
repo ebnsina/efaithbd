@@ -59,7 +59,7 @@ export function SortableTable<T extends { id: string }>({
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   )
   const ids = (rows ?? emptyRows).map((row) => row.id)
   const colSpan = columns.length + (onReorder ? 1 : 0)
@@ -91,9 +91,7 @@ export function SortableTable<T extends { id: string }>({
                   </TableHead>
                 )}
                 {group.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : <table.FlexRender header={header} />}
-                  </TableHead>
+                  <TableHead key={header.id}>{header.isPlaceholder ? null : <table.FlexRender header={header} />}</TableHead>
                 ))}
               </TableRow>
             ))}

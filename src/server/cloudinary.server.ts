@@ -12,9 +12,9 @@ export function uploadImage(file: File, folder: string) {
       new Promise<string>((resolve, reject) => {
         cloudinary.uploader
           .upload_stream({ folder, resource_type: 'image' }, (error, result) =>
-            error || !result ? reject(error ?? new Error('Upload failed')) : resolve(result.secure_url)
+            error || !result ? reject(error ?? new Error('Upload failed')) : resolve(result.secure_url),
           )
           .end(Buffer.from(bytes))
-      })
+      }),
   )
 }

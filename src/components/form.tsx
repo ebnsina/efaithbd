@@ -200,7 +200,15 @@ function ImageField({ label, multiple, maxImages }: BaseProps & { multiple?: boo
   )
 }
 
-function SubmitButton({ label, pendingLabel, className = 'w-full' }: { label: string; pendingLabel?: string; className?: string }) {
+function SubmitButton({
+  label,
+  pendingLabel,
+  className = 'w-full',
+}: {
+  label: string
+  pendingLabel?: string
+  className?: string
+}) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
@@ -214,7 +222,7 @@ function SubmitButton({ label, pendingLabel, className = 'w-full' }: { label: st
   )
 }
 
-export const { useAppForm, withForm } = createFormHook({
+export const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: { TextField, NumberField, TextareaField, SwitchField, SelectField, ImageField, ColorField },

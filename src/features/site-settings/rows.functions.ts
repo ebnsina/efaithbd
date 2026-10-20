@@ -35,7 +35,7 @@ export const reorderRows = createServerFn({ method: 'POST' })
     v.object({
       table: tableSchema,
       ids: v.pipe(v.array(v.string()), v.maxLength(500)),
-    })
+    }),
   )
   .handler(async ({ data }) => {
     await prisma.$transaction(data.ids.map((id, order) => table(data.table).update({ where: { id }, data: { order } })))

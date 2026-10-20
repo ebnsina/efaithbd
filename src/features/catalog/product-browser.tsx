@@ -1,4 +1,10 @@
-import { ArrowLeft01Icon, ArrowRight01Icon, Cancel01Icon, FilterHorizontalIcon, PackageIcon } from '@hugeicons/core-free-icons'
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Cancel01Icon,
+  FilterHorizontalIcon,
+  PackageIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
@@ -24,7 +30,11 @@ type SearchPatch = Partial<Omit<ProductBrowse, 'category'>> & { category?: strin
 function useSetSearch() {
   const navigate = useNavigate()
   return (patch: SearchPatch) =>
-    navigate({ to: '.', search: (prev: Record<string, unknown>) => ({ ...prev, page: undefined, ...patch }), resetScroll: false })
+    navigate({
+      to: '.',
+      search: (prev: Record<string, unknown>) => ({ ...prev, page: undefined, ...patch }),
+      resetScroll: false,
+    })
 }
 
 function FilterLink({ patch, active, children }: { patch: SearchPatch; active: boolean; children: ReactNode }) {
@@ -39,10 +49,7 @@ function FilterLink({ patch, active, children }: { patch: SearchPatch; active: b
         active && 'bg-primary/10 font-medium text-primary',
       )}
     >
-      <span
-        className={cn('size-3.5 shrink-0 rounded-full border', active && 'border-4 border-primary')}
-        aria-hidden
-      />
+      <span className={cn('size-3.5 shrink-0 rounded-full border', active && 'border-4 border-primary')} aria-hidden />
       {children}
     </Link>
   )
@@ -68,9 +75,12 @@ function PriceFilter({ search, range }: { search: ProductBrowse; range?: { min: 
       noValidate
       onSubmit={(e) => {
         e.preventDefault()
-        const values = [min, max].map((v) => (v.trim() === '' || Number.isNaN(Number(v)) ? undefined : Math.max(0, Number(v))))
+        const values = [min, max].map((v) =>
+          v.trim() === '' || Number.isNaN(Number(v)) ? undefined : Math.max(0, Number(v)),
+        )
         // Swap a reversed range rather than showing nothing
-        const [lo, hi] = values[0] !== undefined && values[1] !== undefined && values[0] > values[1] ? [values[1], values[0]] : values
+        const [lo, hi] =
+          values[0] !== undefined && values[1] !== undefined && values[0] > values[1] ? [values[1], values[0]] : values
         setSearch({ minPrice: lo, maxPrice: hi })
       }}
     >
@@ -80,9 +90,25 @@ function PriceFilter({ search, range }: { search: ProductBrowse; range?: { min: 
         </p>
       )}
       <div className="flex items-center gap-2">
-        <Input type="number" inputMode="numeric" min={0} placeholder="Min" aria-label="Minimum price" value={min} onChange={(e) => setMin(e.target.value)} />
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          placeholder="Min"
+          aria-label="Minimum price"
+          value={min}
+          onChange={(e) => setMin(e.target.value)}
+        />
         <span className="text-muted-foreground">–</span>
-        <Input type="number" inputMode="numeric" min={0} placeholder="Max" aria-label="Maximum price" value={max} onChange={(e) => setMax(e.target.value)} />
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          placeholder="Max"
+          aria-label="Maximum price"
+          value={max}
+          onChange={(e) => setMax(e.target.value)}
+        />
       </div>
       <Button type="submit" variant="outline" size="sm" className="w-full">
         Apply price
@@ -164,7 +190,10 @@ function Pager({ page, pageCount }: { page: number; pageCount: number }) {
   )
   const link = (target: number, children: ReactNode, label: string, disabled = false) =>
     disabled ? (
-      <span className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'pointer-events-none opacity-50')} aria-hidden>
+      <span
+        className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'pointer-events-none opacity-50')}
+        aria-hidden
+      >
         {children}
       </span>
     ) : (
@@ -214,26 +243,33 @@ export function ProductBrowser({
   const categoryName = categories?.find((c) => c.slug === search.category)?.name
 
   type Chip = { key: string; label: string; patch: SearchPatch }
-  const chips = ([
-    search.q && { key: 'q', label: `“${search.q}”`, patch: { q: '' } },
-    categoryName && { key: 'category', label: categoryName, patch: { category: undefined, subcategory: undefined } },
-    subName && { key: 'subcategory', label: subName, patch: { subcategory: undefined } },
-    (search.minPrice !== undefined || search.maxPrice !== undefined) && {
-      key: 'price',
-      label:
-        search.maxPrice === undefined
-          ? `From ${money(search.minPrice ?? 0)}`
-          : `${money(search.minPrice ?? 0)} – ${money(search.maxPrice)}`,
-      patch: { minPrice: undefined, maxPrice: undefined },
-    },
-    search.rating && { key: 'rating', label: `${search.rating}★ & up`, patch: { rating: undefined } },
-  ] as (Chip | false | '' | 0 | undefined)[]).filter((chip): chip is Chip => !!chip)
+  const chips = (
+    [
+      search.q && { key: 'q', label: `“${search.q}”`, patch: { q: '' } },
+      categoryName && { key: 'category', label: categoryName, patch: { category: undefined, subcategory: undefined } },
+      subName && { key: 'subcategory', label: subName, patch: { subcategory: undefined } },
+      (search.minPrice !== undefined || search.maxPrice !== undefined) && {
+        key: 'price',
+        label:
+          search.maxPrice === undefined
+            ? `From ${money(search.minPrice ?? 0)}`
+            : `${money(search.minPrice ?? 0)} – ${money(search.maxPrice)}`,
+        patch: { minPrice: undefined, maxPrice: undefined },
+      },
+      search.rating && { key: 'rating', label: `${search.rating}★ & up`, patch: { rating: undefined } },
+    ] as (Chip | false | '' | 0 | undefined)[]
+  ).filter((chip): chip is Chip => !!chip)
   const clearAll = () =>
-    setSearch({ q: '', subcategory: undefined, minPrice: undefined, maxPrice: undefined, rating: undefined, ...(categories && { category: undefined }) })
+    setSearch({
+      q: '',
+      subcategory: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+      rating: undefined,
+      ...(categories && { category: undefined }),
+    })
 
-  const filters = (
-    <Filters search={search} categories={categories} subcategories={subcategories} range={data?.priceRange} />
-  )
+  const filters = <Filters search={search} categories={categories} subcategories={subcategories} range={data?.priceRange} />
   const from = data && data.rowCount > 0 ? (search.page - 1) * PRODUCTS_PAGE_SIZE + 1 : 0
   const to = data ? Math.min(search.page * PRODUCTS_PAGE_SIZE, data.rowCount) : 0
 
@@ -266,16 +302,15 @@ export function ProductBrowser({
                 <SheetHeader>
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
-                <div className="px-4 pb-6" onClickCapture={(e) => (e.target as HTMLElement).closest('a') && setFiltersOpen(false)}>
+                <div
+                  className="px-4 pb-6"
+                  onClickCapture={(e) => (e.target as HTMLElement).closest('a') && setFiltersOpen(false)}
+                >
                   {filters}
                 </div>
               </SheetContent>
             </Sheet>
-            <Select
-              items={productSorts}
-              value={search.sort}
-              onValueChange={(value) => value && setSearch({ sort: value })}
-            >
+            <Select items={productSorts} value={search.sort} onValueChange={(value) => value && setSearch({ sort: value })}>
               <SelectTrigger className="w-48" aria-label="Sort products">
                 <SelectValue />
               </SelectTrigger>
@@ -315,6 +350,7 @@ export function ProductBrowser({
           {products.isPending ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }, (_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
                 <Skeleton key={i} className="aspect-[3/4] rounded-xl" />
               ))}
             </div>

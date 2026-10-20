@@ -4,8 +4,8 @@ import { ProductBrowser } from '@/features/catalog/product-browser'
 import { productListQuery } from '@/features/catalog/queries'
 import { productBrowseDefaults, productBrowseSchema } from '@/features/catalog/schemas'
 import { siteSettingsQuery } from '@/features/settings/queries'
-import { ShopError } from '@/features/shop-layout/shop-error'
 import { shopLayoutQuery } from '@/features/shop-layout/queries'
+import { ShopError } from '@/features/shop-layout/shop-error'
 
 export const Route = createFileRoute('/_shop/products/')({
   validateSearch: productBrowseSchema,

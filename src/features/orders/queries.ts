@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import { getOrder, listMyOrders, trackOrders } from './orders.functions'
 
-export const orderKeys = {
+const orderKeys = {
   all: ['orders'] as const,
   detail: (orderNumber: string) => [...orderKeys.all, 'detail', orderNumber] as const,
   // Keyed by user so a cached list never survives a switch to another account

@@ -41,9 +41,7 @@ export function FooterSettingsForm({ settings: s }: { settings: Footer['settings
     >
       <SettingsCard title="Footer" description="The block at the bottom of every page.">
         <form.AppField name="logo">{(field) => <field.ImageField label="Footer logo" />}</form.AppField>
-        <form.AppField name="description">
-          {(field) => <field.TextareaField label="About text" rows={3} />}
-        </form.AppField>
+        <form.AppField name="description">{(field) => <field.TextareaField label="About text" rows={3} />}</form.AppField>
         <form.AppField name="copyrightText">
           {(field) => (
             <field.TextField
@@ -70,10 +68,7 @@ export function FooterSettingsForm({ settings: s }: { settings: Footer['settings
         <form.AppField name="newsletterText">{(field) => <field.TextareaField label="Text" rows={2} />}</form.AppField>
       </SettingsCard>
 
-      <SettingsCard
-        title="Payment logos"
-        description="Logos of the ways shoppers can pay, like bKash or cash on delivery."
-      >
+      <SettingsCard title="Payment logos" description="Logos of the ways shoppers can pay, like bKash or cash on delivery.">
         <form.AppField name="showPaymentMethods">
           {(field) => <field.SwitchField label="Show payment logos" />}
         </form.AppField>

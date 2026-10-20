@@ -31,7 +31,8 @@ export function couponProblem(coupon: Coupon | null, subtotal: number, currencyS
   if (now < coupon.validFrom) return "This coupon can't be used yet"
   if (now > coupon.validTo) return 'This coupon has expired'
   if (coupon.usageLimit !== null && coupon.usageCount >= coupon.usageLimit) return 'This coupon has been fully used'
-  if (coupon.minPurchase && subtotal < coupon.minPurchase) return `Spend at least ${currencySymbol}${number.format(coupon.minPurchase)} to use this coupon`
+  if (coupon.minPurchase && subtotal < coupon.minPurchase)
+    return `Spend at least ${currencySymbol}${number.format(coupon.minPurchase)} to use this coupon`
   return null
 }
 

@@ -2,7 +2,7 @@ import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { getCategory, getHomepage, getProduct, listCategories, listProducts } from './catalog.functions'
 import type { ProductBrowse } from './schemas'
 
-export const catalogKeys = {
+const catalogKeys = {
   all: ['catalog'] as const,
   home: () => [...catalogKeys.all, 'home'] as const,
   products: (search: ProductBrowse) => [...catalogKeys.all, 'products', search] as const,

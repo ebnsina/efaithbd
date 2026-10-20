@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { EmptyState, RoutePending } from '@/features/pages/route-states'
 import { siteSettingsQuery } from '@/features/settings/queries'
 import { useMoney } from '@/lib/format'
-import { type WishlistItem, useCart, useWishlist } from '@/lib/store'
+import { useCart, useWishlist, type WishlistItem } from '@/lib/store'
 
 export const Route = createFileRoute('/_shop/wishlist')({
   loader: async ({ context }) => {
@@ -30,6 +30,7 @@ function WishlistPage() {
   if (items.length === 0) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-12">
+        <h1 className="sr-only">Your wishlist</h1>
         <EmptyState
           icon={FavouriteIcon}
           title="Your wishlist is empty"

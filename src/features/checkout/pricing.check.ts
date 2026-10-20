@@ -36,7 +36,7 @@ assert.deepStrictEqual(
   [
     { productId: 'a', quantity: 4 },
     { productId: 'a', variantId: 'x', quantity: 2 },
-  ]
+  ],
 )
 
 assert.equal(shippingFits({ minOrder: null, maxOrder: null }, 10), true)

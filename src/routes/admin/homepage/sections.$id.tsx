@@ -56,9 +56,7 @@ function SectionForm({ section }: { section?: Awaited<ReturnType<typeof getSecti
           form.handleSubmit()
         }}
       >
-        <form.AppField name="title">
-          {(field) => <field.TextField label="Title" placeholder="New arrivals" />}
-        </form.AppField>
+        <form.AppField name="title">{(field) => <field.TextField label="Title" placeholder="New arrivals" />}</form.AppField>
         <form.AppField name="type">
           {(field) => (
             <field.SelectField

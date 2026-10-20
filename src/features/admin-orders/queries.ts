@@ -4,7 +4,7 @@ import type { ListResult } from '@/lib/list-search'
 import { getAdminOrder, listAdminOrders, updateOrder } from './admin-orders.functions'
 import type { AdminOrderSearch, UpdateOrderInput } from './schemas'
 
-export const adminOrderKeys = {
+const adminOrderKeys = {
   all: ['admin', 'orders'] as const,
   lists: ['admin', 'orders', 'list'] as const,
   list: (search: AdminOrderSearch) => [...adminOrderKeys.lists, search] as const,

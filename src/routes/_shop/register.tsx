@@ -42,7 +42,9 @@ function RegisterPage() {
     <div className="flex min-h-[70vh] items-center justify-center px-4 py-10">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create an account</CardTitle>
+          <CardTitle className="text-xl">
+            <h1>Create an account</h1>
+          </CardTitle>
           <CardDescription>Keep all your orders in one place</CardDescription>
         </CardHeader>
         <CardContent>
@@ -55,9 +57,7 @@ function RegisterPage() {
               form.handleSubmit()
             }}
           >
-            <form.AppField name="name">
-              {(field) => <field.TextField label="Full name" autoComplete="name" />}
-            </form.AppField>
+            <form.AppField name="name">{(field) => <field.TextField label="Full name" autoComplete="name" />}</form.AppField>
             <form.AppField name="email">
               {(field) => <field.TextField label="Email" type="email" autoComplete="email" />}
             </form.AppField>

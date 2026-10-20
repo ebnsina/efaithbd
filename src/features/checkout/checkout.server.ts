@@ -43,7 +43,7 @@ export async function priceCart(db: Db, input: { items: CartLine[]; couponCode: 
       problems.push(
         stock > 0
           ? `Only ${stock} of ${product.name} left. Please lower the quantity in your cart.`
-          : `${product.name} is out of stock. Please remove it from your cart.`
+          : `${product.name} is out of stock. Please remove it from your cart.`,
       )
     }
     const unitPrice = product.price + (variant?.price ?? 0)
@@ -94,4 +94,3 @@ export async function priceCart(db: Db, input: { items: CartLine[]; couponCode: 
     total: subtotal - discount + (shipping?.cost ?? 0),
   }
 }
-

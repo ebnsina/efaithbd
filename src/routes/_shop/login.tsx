@@ -42,7 +42,9 @@ function LoginPage() {
     <div className="flex min-h-[70vh] items-center justify-center px-4 py-10">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Sign in</CardTitle>
+          <CardTitle className="text-xl">
+            <h1>Sign in</h1>
+          </CardTitle>
           <CardDescription>See your orders and check out faster</CardDescription>
         </CardHeader>
         <CardContent>

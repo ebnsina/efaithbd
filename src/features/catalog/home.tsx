@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import {
   Carousel,
   type CarouselApi,
@@ -109,7 +109,10 @@ export function BannerCarousel({ banners }: { banners: Homepage['banners'] }) {
         <CarouselContent>
           {banners.map((banner, i) => (
             <CarouselItem key={banner.id}>
-              <MaybeLink url={banner.link} className="relative block aspect-[16/7] overflow-hidden rounded-xl bg-muted md:aspect-[16/6]">
+              <MaybeLink
+                url={banner.link}
+                className="relative block aspect-[16/7] overflow-hidden rounded-xl bg-muted md:aspect-[16/6]"
+              >
                 <img
                   src={imageSrc(banner.image, 1600)}
                   alt={banner.title ?? ''}
@@ -198,7 +201,10 @@ export function ProductRow({ section }: { section: Homepage['sections'][number] 
 export function MidBanner({ banner }: { banner: Homepage['midBanners'][number] }) {
   return (
     <section className="container mx-auto px-4 pt-10">
-      <MaybeLink url={banner.link} className="relative block aspect-[16/7] overflow-hidden rounded-xl bg-muted md:aspect-[16/5]">
+      <MaybeLink
+        url={banner.link}
+        className="relative block aspect-[16/7] overflow-hidden rounded-xl bg-muted md:aspect-[16/5]"
+      >
         <img
           src={imageSrc(banner.image, 1600)}
           alt={banner.title ?? ''}

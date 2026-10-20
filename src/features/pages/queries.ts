@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import { getPublishedPage } from './pages.functions'
 
-export const pageKeys = {
+const pageKeys = {
   all: ['pages'] as const,
   detail: (slug: string) => [...pageKeys.all, slug] as const,
 }

@@ -33,7 +33,7 @@ export function ImageUpload({ images, onChange, maxImages = 5, label }: ImageUpl
           const data = new FormData()
           data.append('file', file)
           return uploadImageFn({ data }).then((result) => result.url)
-        })
+        }),
       )
       onChange([...images, ...urls])
     } catch (error) {

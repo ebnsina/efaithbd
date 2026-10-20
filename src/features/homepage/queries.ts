@@ -35,7 +35,7 @@ export type Homepage = Awaited<ReturnType<typeof getHomepage>>
 export function useSaveHomepageItem<I>(
   save: (args: { data: { id?: string; values: I } }) => Promise<unknown>,
   id: string | undefined,
-  noun: string
+  noun: string,
 ) {
   const queryClient = useQueryClient()
   return useMutation({

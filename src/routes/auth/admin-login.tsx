@@ -1,8 +1,8 @@
 import { LockPasswordIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { revalidateLogic } from '@tanstack/react-form'
 import { createFileRoute, Link, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
-import { revalidateLogic } from '@tanstack/react-form'
 import { useAppForm } from '@/components/form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FieldError } from '@/components/ui/field'
@@ -41,7 +41,9 @@ function AdminLogin() {
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <HugeiconsIcon icon={LockPasswordIcon} />
           </div>
-          <CardTitle className="text-xl">Admin login</CardTitle>
+          <CardTitle className="text-xl">
+            <h1>Admin login</h1>
+          </CardTitle>
           <CardDescription>Sign in to manage your store</CardDescription>
         </CardHeader>
         <CardContent>

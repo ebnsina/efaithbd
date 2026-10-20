@@ -85,9 +85,7 @@ function AnswerForm({ productId, questionId, onDone }: { productId: string; ques
         form.handleSubmit()
       }}
     >
-      <form.AppField name="answer">
-        {(field) => <field.TextareaField label="Your answer" rows={2} />}
-      </form.AppField>
+      <form.AppField name="answer">{(field) => <field.TextareaField label="Your answer" rows={2} />}</form.AppField>
       {error && <FieldError>{error}</FieldError>}
       <div className="flex gap-2">
         <form.AppForm>

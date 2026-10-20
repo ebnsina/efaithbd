@@ -7,7 +7,7 @@ import {
   Menu01Icon,
   Search01Icon,
   ShoppingCart01Icon,
-  UserIcon,
+  type UserIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -25,35 +25,36 @@ import { cn } from '@/lib/utils'
 import { DbLink } from './db-link'
 import { shopLayoutQuery } from './queries'
 
-export type ShopUser = { name: string; isAdmin: boolean } | null
+type ShopUser = { name: string; isAdmin: boolean } | null
 
 function SearchForm({ className, onDone }: { className?: string; onDone?: () => void }) {
   const navigate = useNavigate()
   const [q, setQ] = useState('')
   return (
-    <form
-      role="search"
-      className={cn('relative', className)}
-      onSubmit={(e) => {
-        e.preventDefault()
-        navigate({ to: '/products', search: { q: q.trim() } })
-        onDone?.()
-      }}
-    >
-      <HugeiconsIcon
-        icon={Search01Icon}
-        className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 size-4 text-muted-foreground"
-      />
-      <Input
-        type="search"
-        name="q"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search products"
-        aria-label="Search products"
-        className="h-10 bg-background pl-9 text-foreground"
-      />
-    </form>
+    <search>
+      <form
+        className={cn('relative', className)}
+        onSubmit={(e) => {
+          e.preventDefault()
+          navigate({ to: '/products', search: { q: q.trim() } })
+          onDone?.()
+        }}
+      >
+        <HugeiconsIcon
+          icon={Search01Icon}
+          className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 size-4 text-muted-foreground"
+        />
+        <Input
+          type="search"
+          name="q"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search products"
+          aria-label="Search products"
+          className="h-10 bg-background pl-9 text-foreground"
+        />
+      </form>
+    </search>
   )
 }
 
@@ -81,7 +82,17 @@ function useLogout() {
   }
 }
 
-function NavIconLink({ to, label, icon, count }: { to: '/cart' | '/wishlist'; label: string; icon: typeof UserIcon; count: number }) {
+function NavIconLink({
+  to,
+  label,
+  icon,
+  count,
+}: {
+  to: '/cart' | '/wishlist'
+  label: string
+  icon: typeof UserIcon
+  count: number
+}) {
   return (
     <Link to={to} className="flex items-center gap-2 rounded-md p-2 hover:bg-primary-foreground/15" aria-label={label}>
       <span className="relative">
@@ -111,7 +122,8 @@ function HoverMenu({ trigger, children, wide }: { trigger: ReactNode; children: 
   )
 }
 
-const barLink = 'flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 font-medium text-sm hover:bg-primary-foreground/15'
+const barLink =
+  'flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 font-medium text-sm hover:bg-primary-foreground/15'
 const menuLink = 'block rounded-md px-3 py-2 text-sm hover:bg-muted'
 
 export function Navbar({ user }: { user: ShopUser }) {
@@ -168,12 +180,7 @@ export function Navbar({ user }: { user: ShopUser }) {
                     <ul className="mt-1 space-y-0.5 pl-3">
                       {categories.map((category) => (
                         <li key={category.id}>
-                          <Link
-                            to="/categories/$slug"
-                            params={{ slug: category.slug }}
-                            className={menuLink}
-                            onClick={close}
-                          >
+                          <Link to="/categories/$slug" params={{ slug: category.slug }} className={menuLink} onClick={close}>
                             {category.name}
                           </Link>
                         </li>
@@ -183,7 +190,12 @@ export function Navbar({ user }: { user: ShopUser }) {
                 )}
                 {menuItems.map((item) => (
                   <div key={item.id}>
-                    <DbLink url={item.url} newTab={item.openInNewTab} className={cn(menuLink, 'font-medium')} onClick={close}>
+                    <DbLink
+                      url={item.url}
+                      newTab={item.openInNewTab}
+                      className={cn(menuLink, 'font-medium')}
+                      onClick={close}
+                    >
                       {item.label}
                     </DbLink>
                     {item.children.map((child) => (
@@ -244,7 +256,10 @@ export function Navbar({ user }: { user: ShopUser }) {
           <div className="ml-auto flex items-center gap-1 md:ml-0">
             {user ? (
               <div className="hidden items-center gap-1 lg:flex">
-                <Link to="/orders" className="flex flex-col rounded-md px-2 py-1 leading-tight hover:bg-primary-foreground/15">
+                <Link
+                  to="/orders"
+                  className="flex flex-col rounded-md px-2 py-1 leading-tight hover:bg-primary-foreground/15"
+                >
                   <span className="text-xs opacity-80">Hello, {user.name}</span>
                   <span className="font-medium text-sm">Account & orders</span>
                 </Link>

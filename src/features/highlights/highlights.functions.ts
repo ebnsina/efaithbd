@@ -9,7 +9,7 @@ export const listHighlights = createServerFn()
   .handler(() =>
     prisma.highlight.findMany({
       orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
-    })
+    }),
   )
 
 export const saveHighlight = createServerFn({ method: 'POST' })

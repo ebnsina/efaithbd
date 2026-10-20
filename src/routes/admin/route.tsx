@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import { getCurrentUser } from '@/features/auth/auth.functions'
 import { AdminLayout } from '@/features/admin-shell/admin-layout'
+import { getCurrentUser } from '@/features/auth/auth.functions'
 import { siteSettingsQuery } from '@/features/settings/queries'
 
 export const Route = createFileRoute('/admin')({

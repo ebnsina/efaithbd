@@ -28,6 +28,7 @@ function CartPage() {
   if (items.length === 0) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-12">
+        <h1 className="sr-only">Your cart</h1>
         <EmptyState
           icon={ShoppingCart01Icon}
           title="Your cart is empty"
@@ -142,9 +143,7 @@ function CartPage() {
               <span className="text-muted-foreground">Worked out at checkout</span>
             </div>
             <Separator />
-            <p className="text-muted-foreground text-xs">
-              Prices and stock are checked again when you place your order.
-            </p>
+            <p className="text-muted-foreground text-xs">Prices and stock are checked again when you place your order.</p>
           </CardContent>
           <CardFooter className="flex-col gap-2">
             <Link to="/checkout" className={buttonVariants({ className: 'w-full', size: 'lg' })}>

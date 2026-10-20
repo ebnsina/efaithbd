@@ -12,7 +12,7 @@ import {
 } from './admin-questions.functions'
 import type { QuestionSearch } from './schemas'
 
-export const adminQuestionKeys = {
+const adminQuestionKeys = {
   all: ['admin', 'questions'] as const,
   list: (search: QuestionSearch) => [...adminQuestionKeys.all, 'list', search] as const,
   detail: (id: string) => [...adminQuestionKeys.all, 'detail', id] as const,

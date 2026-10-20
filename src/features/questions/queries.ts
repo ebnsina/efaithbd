@@ -1,7 +1,7 @@
 import { infiniteQueryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import { answerQuestion, askQuestion, listQuestions } from './questions.functions'
 
-export const questionKeys = {
+const questionKeys = {
   all: ['questions'] as const,
   product: (productId: string) => [...questionKeys.all, productId] as const,
 }

@@ -23,7 +23,7 @@ export type Menu = Awaited<ReturnType<typeof getMenu>>
 // Saves that may be refused with { ok: false, error } still count as failures for the toast
 export function useSave<I, R>(
   save: (values: I) => Promise<R>,
-  { invalidate, success, failure }: { invalidate: QueryKey[]; success: string; failure: string }
+  { invalidate, success, failure }: { invalidate: QueryKey[]; success: string; failure: string },
 ) {
   const queryClient = useQueryClient()
   return useMutation({

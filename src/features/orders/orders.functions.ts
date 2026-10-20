@@ -84,5 +84,5 @@ export const trackOrders = createServerFn()
         createdAt: true,
         _count: { select: { items: true } },
       },
-    })
+    }),
   )

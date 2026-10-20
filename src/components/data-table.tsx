@@ -19,7 +19,7 @@ import { type ListResult, type ListSearch, PAGE_SIZE } from '@/lib/list-search'
 export const dataTableFeatures = tableFeatures({ rowSortingFeature, rowPaginationFeature })
 export type DataColumn<T extends RowData> = ColumnDef<typeof dataTableFeatures, T>
 
-export type TableFilter = { name: string; label: string; options: { value: string; label: string }[] }
+type TableFilter = { name: string; label: string; options: { value: string; label: string }[] }
 
 const ALL = '__all'
 const emptyRows: never[] = []

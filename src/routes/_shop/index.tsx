@@ -1,14 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Fragment } from 'react'
-import {
-  BannerCarousel,
-  CategoryStrip,
-  FeatureCards,
-  HighlightStrip,
-  MidBanner,
-  ProductRow,
-} from '@/features/catalog/home'
+import { BannerCarousel, CategoryStrip, FeatureCards, HighlightStrip, MidBanner, ProductRow } from '@/features/catalog/home'
 import { homepageQuery } from '@/features/catalog/queries'
 
 export const Route = createFileRoute('/_shop/')({

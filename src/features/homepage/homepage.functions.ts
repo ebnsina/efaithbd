@@ -68,5 +68,5 @@ export const saveMidBanner = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .validator(withId(midBannerSchema))
   .handler(({ data: { id, values } }) =>
-    id ? prisma.midBanner.update({ where: { id }, data: values }) : prisma.midBanner.create({ data: values })
+    id ? prisma.midBanner.update({ where: { id }, data: values }) : prisma.midBanner.create({ data: values }),
   )
